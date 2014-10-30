@@ -57,6 +57,7 @@ public class WebdavUrlStreamHandler extends URLStreamHandler {
     
     logger.debug("HTTP URL with credentials: " + completeUrl.toString());
     
-    return new URL(completeUrl.toString()).openConnection();
+    URLConnection connection = new URL(completeUrl.toString()).openConnection();
+    return new WebdavUrlConnection(userData, connection);
   }
 }
