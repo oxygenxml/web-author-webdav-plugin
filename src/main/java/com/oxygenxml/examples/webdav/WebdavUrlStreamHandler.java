@@ -39,7 +39,9 @@ public class WebdavUrlStreamHandler extends URLStreamHandler {
     StringBuilder completeUrl = new StringBuilder();
     completeUrl.append(protocol).append("://");
     if (credentials != null) {
-      completeUrl.append(credentials.getUserName()).append(":").append(credentials.getPassword()).append("@");
+      String encodedUserName = EntryPoint.encodeUrl(credentials.getUserName());
+      String encodedPasswd = EntryPoint.encodeUrl(new String(credentials.getPassword()));
+      completeUrl.append(encodedUserName).append(":").append(encodedPasswd).append("@");
     }
     completeUrl.append(url.getHost());
     if (url.getPort() != -1) {
