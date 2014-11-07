@@ -1,7 +1,7 @@
 Browse and Auth pages
 =====================
 
-In order to customize the user experience with the WebDAV integration by changing the following HTML files.
+In order to customize the user interface of the oXygen XML Author WebApp integration with an WebDAV-enabled server, you can change the following HTML files:
 
 The Browse page
 ---------------
