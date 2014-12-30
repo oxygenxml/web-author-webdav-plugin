@@ -38,5 +38,5 @@ In order to use the plugin, starting from the Webapp SDK project, one needs to:
 - add the LoginServlet to the web.xml file
 - copy the plugin.js in the `src/main/webapp/app/` folder.
 
-The URL that needs to be passed to the webapp is the WebDAV URL, prefixed with `webdav-` (e.g. webdav-https://webdav-server.com/file.xml).
+The URL that needs to be passed to the webapp is the WebDAV URL, prefixed with `webdav-` (e.g. `webdav-https://webdav-server.com/file.xml`).
 
