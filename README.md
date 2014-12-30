@@ -30,3 +30,13 @@ The entire authentication failure handling should be implemented on the client-s
 
 The implementation can be found in the `plugin.js` file which should be present in the `app/` folder of the webapp `.war`.
 
+Using the plugin
+================
+
+In order to use the plugin, starting from the Webapp SDK project, one needs to:
+- add a dependency in the bundle-plugins to this artifact
+- add the LoginServlet to the web.xml file
+- copy the plugin.js in the `src/main/webapp/app/` folder.
+
+The URL that needs to be passed to the webapp is the WebDAV URL, prefixed with `webdav-` (e.g. webdav-https://webdav-server.com/file.xml).
+
