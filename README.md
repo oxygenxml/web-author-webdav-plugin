@@ -34,8 +34,28 @@ Using the plugin
 ================
 
 In order to use the plugin, starting from the Webapp SDK project, one needs to:
-- add a dependency in the bundle-plugins to this artifact
+- build the artifact from the current project: `mvn install`
+- add a dependency in the bundle-plugins pom.xml file to this artifact (use the latest version):
+```
+		<dependency>
+			<groupId>com.oxygenxml.samples</groupId>
+      <artifactId>webapp-webdav-integration</artifactId>
+			<version>1.0.0</version>
+			<type>jar</type>
+			<classifier>plugin</classifier>
+		</dependency>
+```
 - add the LoginServlet to the web.xml file
+```
+  <servlet>
+    <servlet-name>WebDAV login servlet</servlet-name>
+    <servlet-class>com.oxygenxml.examples.webdav.LoginServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>WebDAV login servlet</servlet-name>
+    <url-pattern>/login</url-pattern>
+  </servlet-mapping>
+```
 - copy the plugin.js in the `src/main/webapp/app/` folder.
 
 The URL that needs to be passed to the webapp is the WebDAV URL, prefixed with `webdav-` (e.g. `webdav-https://webdav-server.com/file.xml`).
