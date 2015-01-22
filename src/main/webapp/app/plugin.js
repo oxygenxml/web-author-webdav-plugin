@@ -1,4 +1,4 @@
-goog.events.listen(workspace, sync.Workspace.EventType.BEFORE_EDITOR_LOADED, function(e) {
+goog.events.listen(workspace, sync.api.Workspace.EventType.BEFORE_EDITOR_LOADED, function(e) {
   // The editor is about to be loaded.
   var editor = e.editor;
 
