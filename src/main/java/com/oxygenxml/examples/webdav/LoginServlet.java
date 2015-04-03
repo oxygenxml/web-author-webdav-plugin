@@ -10,12 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
+
 /**
  * Servlet used to receive user credentials and propagate them to the 
  * URLStreamHandler.
  */
 @SuppressWarnings("serial")
-public class LoginServlet extends HttpServlet {
+public class LoginServlet extends HttpServlet implements WebappServletPluginExtension{
   
   /**
    * Logger for logging.
@@ -27,7 +29,7 @@ public class LoginServlet extends HttpServlet {
    * Receives the user and the password for a given host. 
    */
   @Override
-  protected void doPost(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
+  public void doPost(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
     String userId = httpRequest.getSession().getId();
     
     String user = httpRequest.getParameter("user");
@@ -38,5 +40,15 @@ public class LoginServlet extends HttpServlet {
     // Store the user and password.
     WebdavUrlStreamHandler.credentials.put(userId, 
         new PasswordAuthentication(user, passwd.toCharArray()));
+  }
+  
+  @Override
+  public void doGet(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
+    super.doGet(httpRequest, httpResponse);
+  }
+      
+  @Override
+  public String getPath() {
+    return "login";
   }
 }
