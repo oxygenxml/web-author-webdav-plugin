@@ -20,7 +20,7 @@ goog.events.listen(workspace, sync.api.Workspace.EventType.BEFORE_EDITOR_LOADED,
         var user = document.getElementById('webdav-name').value;
         var passwd = document.getElementById('webdav-passwd').value;
         var request = new goog.net.XhrIo();
-        request.send('../login?user=' + encodeURIComponent(user) + "&passwd=" + encodeURIComponent(passwd), 'POST');
+        request.send('../plugins-dispatcher/login?user=' + encodeURIComponent(user) + "&passwd=" + encodeURIComponent(passwd), 'POST');
 
         goog.events.listenOnce(request, goog.net.EventType.COMPLETE, function() {
           // After the user was logged in, retry the operation that failed.
