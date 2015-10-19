@@ -3,6 +3,8 @@ package com.oxygenxml.examples.webdav;
 import java.net.URLStreamHandler;
 
 import ro.sync.exml.plugin.urlstreamhandler.URLStreamHandlerPluginExtension;
+import ro.sync.exml.workspace.api.Platform;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 
 /**
@@ -21,7 +23,8 @@ public class WebdavURLHandlerExtension implements URLStreamHandlerPluginExtensio
    */
   @Override
   public URLStreamHandler getURLStreamHandler(String protocol) {
-    if (protocol.startsWith(WEBDAV)) {
+    boolean isWebapp = Platform.WEBAPP.equals(PluginWorkspaceProvider.getPluginWorkspace().getPlatform());
+    if (isWebapp && protocol.startsWith(WEBDAV)) {
       return new WebdavUrlStreamHandler();
     }
     return null;

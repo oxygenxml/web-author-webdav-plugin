@@ -1,70 +1,33 @@
-WebDAV Support for oXygen XML Author WebApp
+WebDAV Support for oXygen XML WebApp
 ===============================================
 
-This project is a very simple integration of oXygen XML Author WebApp with a WebDAV-enabled server, which can be extended with more features or can be adapted to work with any CMS.
+This project is a very simple integration of oXygen XML WebApp with a WebDAV-enabled server, which can be extended with more features or can be adapted to work with any CMS.
 
-The main building blocks of the project are described below. In order to follow the provided descriptions you can take a look at the `basic` branch of the code which is the easiest to understand, but which misses several features.
+Identifying the requesting user
+----------------------
 
-Authentication Flow
--------------------
+In order to implement a CMS connector, in oXygen one needs to implement a `URLStreamHandlerPluginExtension`, that returns an `URLStreamHandler` for the protocol used to communicate with the CMS.
 
-In order to access a file hosted on a WebDAV server, besides the file URL, the server also requires the user credential. oXygen XML Author WebApp requires the user to provide these credentials in order to forward them to the WebDAV server. In this plugin the credential have to be input in a separate page the first time you open a file on that server.
+In order to support authentication in the multi-user context of the oXygen Webapp, the `URLStreamHandler` instance should 
+extend `URLStreamHandlerWithContext`. The difference from `URLStreamHandler` is that the `openConnectionInContext` method receives the session ID that uniquely identifies the user on behalf of which we are accessing the given URL. 
 
-The authentication flow contains 4 URLs:
- - The **browsing page**: [browse.html](https://github.com/oxygenxml/webapp-webdav-integration/blob/basic/src/main/webapp/webdav/browse.html) which prompts the users for the WebDAV URL to be opened.
- - The **authentication page**: [auth.html](https://github.com/oxygenxml/webapp-webdav-integration/blob/basic/src/main/webapp/webdav/auth.html) which prompts the users for the credentials for a given URL and sends them to the server.
- - The **webapp page**, in which the user is able to edit the XML document.
- - The **dispatcher page** which is not an HTML page, but an URL handled by the [com.oxygenxml.examples.webdav.EntryPoint](https://github.com/oxygenxml/webapp-webdav-integration/blob/basic/src/main/java/com/oxygenxml/examples/webdav/EntryPoint.java) servlet and which is responsible with redirecting the user either to the **authentication page**, or to the webapp page if the credentials have already been provided. It is also responsible with recording the user credentials provided in the **authentication page**.
+Credentials management
+--------------------
 
-The sequence of URLs accessed by a user is the following:
+When the user logs in, one needs to associate some credentials with the context ID.
+ The simplest implementation would be to create a login servlet which implements the WebappServletPluginExtension interface and declare it as a WebappServlet extension in the plugin.xml file. The servlet would associate the user/passwd or the CMS session id with the context ID in a static Map.
 
-  - first time: browse page -> dispatching page -> authentication page -> dispatching page -> webapp
-  - next times: browse page -> dispatching page -> webapp
+Auth failure
+-------------
 
-User Management
----------------
+If the `URLStreamHandler` fails to authenticate with the CMS, it should throw an UserActionRequiredException. This exception will carry a WebappMessage that will be sent to the client-side JavaScript code. 
 
-The oXygen XML Author WebApp is left with the task of linking URLs to user credentials which are entered separately. The servlet container (e.g. Tomcat) uses a cookie to track the user session. We associate the credentials that the user provided with that session and we also include the id of that session in the URL passed to WebApp. 
+The entire authentication failure handling should be implemented on the client-side. The basic steps are:
+- listen for authentication failure messages
+- pop-up an auth window
+- send the updated credentials to the login servlet
+- retry the user action
 
-So, before passing it to WebApp, the WebDAV URL of the file is transformed like this: 
+The implementation can be found in the `plugin.js` file from the `app/` folder in the webapp `.war`.
 
-`http://example.com/path/to/file.xml`
-
-becomes 
-
-`webdav-http://USER_ID@example.com/path/to/file.xml`
-
-Note that we also changed the URL scheme to a custom one.
-
-
-The Custom Protocol Plugin
---------------------------
-
-In order to read and write files identified by `webdav-http` URLs, oXygen XML Author WebApp needs a `URLStreamHandlerPluginExtension` which returns an  [WebdavUrlStreamHandler](https://github.com/oxygenxml/webapp-webdav-integration/blob/basic/src/main/java/com/oxygenxml/examples/webdav/WebdavUrlStreamHandler.java). This plugin extension, strips the user id from the URL, identifies the corresponding username and password and composes a link of the form: 
-
-`http://user:passwd@example.com/path/to/file.xml`
-
-which is handled by the builtin protocol handler to connect to the WebDAV server.
-
-Note that we did not use this kind of URL from the beginning since it appears in the user browser's address bar, which is not desirable from a security point of view.
-
-Bonus points
-------------
-
-### Extra security
-
-The solution presented above has the drawback that the URL is linked with the user currently accessing the document. So, if shared and if another person opens the document using the link and saves it, the WebDAV server will record the first user as the author of the edit. Moreover, the second person might not even have access to edit that document.
-
-The solution is to check that the user which is making the request to the WebApp is the same as the user whose id is inside the URL. To this end we store the user id in a ThreadLocal variable before the request execution starts and clear it afterwards. This way, if a link is shared with other people they will be forced to provide *their* credentials before accessing the resource.
-
-You can find the required changes in the `upgraded_security` branch of the project. The changes can be reviewed [here](https://github.com/oxygenxml/webapp-webdav-integration/compare/basic...upgraded_security).
-
-In order to be able to set and reset the ThreadLocal variable before and after every request, the plugin has to register a Filter object - [WebdavManagerFilter](https://github.com/oxygenxml/webapp-webdav-integration/blob/upgraded_security/src/main/java/com/oxygenxml/examples/webdav/WebdavManagerFilter.java). 
-
-
-###Failed Login
-
-One point missed in the above discussion is that the user may mistype the username or password. In this case, the user should be redirected to the authentication page again in order to provide the correct ones.
-
-The proposed solution achieves this by catching errors thrown by the `URLConnection` to the WebDav server and reseting the credentials that the user entered for that URL. You can find the implementation in the `full` branch of the project. The changes can be reviewed [here](https://github.com/oxygenxml/webapp-webdav-integration/compare/upgraded_security...full).
-
+The URL that needs to be passed to the webapp is the WebDAV URL, prefixed with `webdav-` (e.g. `webdav-https://webdav-server.com/file.xml`).

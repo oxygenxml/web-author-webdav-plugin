@@ -1,0 +1,27 @@
+<component>
+	<fileSets>
+		<fileSet>
+			<directory>web</directory>
+			<outputDirectory>/web</outputDirectory>
+			<includes>
+				<include>**/*</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+
+	<files>
+		<file>
+			<source>target/build/${project.build.finalName}.jar</source>
+			<outputDirectory>/lib</outputDirectory>
+		</file>
+		<file>
+			<source>plugin.xml</source>
+			<outputDirectory>/</outputDirectory>
+			<filtered>true</filtered>
+		</file>
+		<file>
+			<source>README.md</source>
+			<outputDirectory>/</outputDirectory>
+		</file>
+	</files>
+</component>

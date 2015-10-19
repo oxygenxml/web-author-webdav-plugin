@@ -1,0 +1,30 @@
+.webdav-config-dialog {
+    text-align: center;
+    width: 350px;
+}
+
+.webdav-config-dialog input {
+    width: 80%;
+}
+
+.webdav-login-dialog label {
+    text-align: right;
+    display: block;
+}
+
+.webdav-login-dialog input {
+    width: 175px;
+}
+
+@media only screen and (max-width: 550px) {
+    .webdav-config-dialog {
+        width: auto;
+    }
+    .webdav-login-dialog label {
+        text-align: left;
+    }
+    .webdav-login-dialog input {
+        width: 100%;
+        display: block;
+    }
+}

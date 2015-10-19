@@ -4,17 +4,19 @@
 
 <plugin
  id="com.oxygenxml.examples.webdav.CustomProtocol"
- name="DbxCustomProtocol"
- description="An example of a custom protocol implementation that connects to the user's Dropbox."
+ name="WebDAVCustomProtocol"
+ description="An example of a custom protocol implementation that connects the user to a WevDAV server."
  version="${project.version}"
  vendor="SyncRO"
- class="com.oxygenxml.examples.webdav.WebdavPlugin"
- classLoaderType="preferOxygenResources">
+ class="com.oxygenxml.sdksamples.webdav.WebdavPlugin">
  <runtime>
-  <librariesFolder name="lib" scope="global"/>
+  <librariesFolder name="lib"/>
  </runtime>
  
  <extension type="URLHandler" 
-  class="com.oxygenxml.examples.webdav.WebdavURLHandlerExtension"/>
- 
+  class="com.oxygenxml.sdksamples.webdav.WebdavURLHandlerExtension"/>
+ <extension type="WebappServlet" 
+  class="com.oxygenxml.sdksamples.webdav.LoginServlet"/>
+ <extension type="WebappStaticResourcesFolder" 
+  path="resources/" href="webdav"/> 
 </plugin>
