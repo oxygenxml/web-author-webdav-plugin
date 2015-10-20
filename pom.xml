@@ -4,11 +4,11 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.oxygenxml.samples</groupId>
-		<artifactId>oxygen-sample-plugins</artifactId>
-		<version>18.0-SNAPSHOT</version>
+		<groupId>com.oxygenxml</groupId>
+		<artifactId>oxygen-superpom</artifactId>
+		<version>17.1.0</version>
 	</parent>
-	<artifactId>oxygen-sample-w-e-b-dav-plugin</artifactId>
+	<artifactId>webapp-webdav-plugin</artifactId>
 
 	<properties>	
 		<oxygen.sdk.version>17.1.0</oxygen.sdk.version>
