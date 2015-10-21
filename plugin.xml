@@ -8,15 +8,15 @@
  description="An example of a custom protocol implementation that connects the user to a WevDAV server."
  version="${project.version}"
  vendor="SyncRO"
- class="com.oxygenxml.sdksamples.webdav.WebdavPlugin">
+ class="com.oxygenxml.examples.webdav.WebdavPlugin">
  <runtime>
   <librariesFolder name="lib"/>
  </runtime>
  
  <extension type="URLHandler" 
-  class="com.oxygenxml.sdksamples.webdav.WebdavURLHandlerExtension"/>
+  class="com.oxygenxml.examples.webdav.WebdavURLHandlerExtension"/>
  <extension type="WebappServlet" 
-  class="com.oxygenxml.sdksamples.webdav.LoginServlet"/>
+  class="com.oxygenxml.examples.webdav.LoginServlet"/>
  <extension type="WebappStaticResourcesFolder" 
   path="resources/" href="webdav"/> 
 </plugin>
