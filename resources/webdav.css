@@ -1,6 +1,6 @@
 .webdav-config-dialog {
     text-align: center;
-    width: 350px;
+    width: 100%;
 }
 
 .webdav-config-dialog input {
@@ -28,3 +28,30 @@
         display: block;
     }
 }
+
+.webdav-domain-edit,
+.domain-icon {
+    margin-right: 5px;
+    display:inline-block;
+    background: 50% 50% no-repeat;
+    background-size: 16px 16px;
+    width: 16px;
+    height:16px;
+}
+
+.webdav-domain-edit {
+    display: none;
+    float: right;
+    padding-right: 5px;
+    margin:0;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAXUlEQVR42mNgGBKgoKAgAYj/Q3ECJZrBmCLNRBuASzNRXhhemj8AsQExmgWA+ABZmpEMUQDiC+RqBtnugOQVA1JTG8jWCVCvbIAaCKIboDgAZAFWg////08RptgAAMDo/Jm25cdCAAAAAElFTkSuQmCC);
+    height: 32px;
+    width: 20px;
+    background-color: lightgrey;
+    border-color: #ccc;
+}
+
+.file-browser-repo-config-area:hover > .webdav-domain-edit {
+    display: inline-block;
+}
+
