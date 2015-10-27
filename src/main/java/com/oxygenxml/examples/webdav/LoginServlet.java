@@ -38,15 +38,19 @@ public class LoginServlet extends WebappServletPluginExtension{
   @Override
   public void doPost(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
     String userId = httpRequest.getSession().getId();
-    
-    String user = httpRequest.getParameter("user");
-    String passwd = httpRequest.getParameter("passwd");
-    
-    logger.debug("Credentials submitted for session: " + userId +  ". user - " + user + ", passwd - " + passwd);
-
-    // Store the user and password.
-    WebdavUrlStreamHandler.credentials.put(userId, 
-        new PasswordAuthentication(user, passwd.toCharArray()));
+    String action = httpRequest.getParameter("action");
+    if ("logout".equals(action)) {
+      WebdavUrlStreamHandler.credentials.remove(userId);
+    } else {
+      String user = httpRequest.getParameter("user");
+      String passwd = httpRequest.getParameter("passwd");
+      
+      logger.debug("Credentials submitted for session: " + userId +  ". user - " + user + ", passwd - " + passwd);
+      
+      // Store the user and password.
+      WebdavUrlStreamHandler.credentials.put(userId, 
+          new PasswordAuthentication(user, passwd.toCharArray()));
+    }
   }
       
   @Override
