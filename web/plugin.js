@@ -92,7 +92,8 @@
   WebdavFileBrowser.prototype.renderRepoEditing = function(element) {
     var url = this.getCurrentFolderUrl();
     var latestUrl = localStorage.getItem('webdav.latestUrl');
-    var editUrl = url || latestUrl;
+    // if none was set we let it empty.
+    var editUrl = url || latestUrl || '';
     if (editUrl && (editUrl.indexOf('webdav-') == 0)) {
       editUrl = editUrl.substring(7);
     }
