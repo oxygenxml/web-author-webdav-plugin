@@ -37,12 +37,6 @@
 		     <version>${oxygen.sdk.version}</version>
 		     <classifier>classes</classifier>
 		     <scope>provided</scope>
-		     <exclusions>
-		     	<exclusion>
-		     		<artifactId>servlet-api</artifactId>
-		     		<groupId>javax.servlet</groupId>
-		     	</exclusion>
-		     </exclusions>
 		</dependency>
 	</dependencies>
 	<build>

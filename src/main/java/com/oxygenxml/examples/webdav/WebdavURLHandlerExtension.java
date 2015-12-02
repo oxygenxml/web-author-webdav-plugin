@@ -21,7 +21,6 @@ public class WebdavURLHandlerExtension implements URLStreamHandlerPluginExtensio
   /**
    * @see ro.sync.exml.plugin.urlstreamhandler.URLStreamHandlerPluginExtension#getURLStreamHandler(java.lang.String)
    */
-  @Override
   public URLStreamHandler getURLStreamHandler(String protocol) {
     boolean isWebapp = Platform.WEBAPP.equals(PluginWorkspaceProvider.getPluginWorkspace().getPlatform());
     if (isWebapp && protocol.startsWith(WEBDAV)) {

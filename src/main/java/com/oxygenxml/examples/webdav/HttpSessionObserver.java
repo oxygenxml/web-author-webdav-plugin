@@ -13,11 +13,9 @@ import javax.servlet.http.HttpSessionListener;
  *
  */
 public class HttpSessionObserver implements HttpSessionListener {
-  @Override
   public void sessionCreated(HttpSessionEvent session) {
   }
 
-  @Override
   public void sessionDestroyed(HttpSessionEvent session) {
     WebdavUrlStreamHandler.credentials.remove(session.getSession().getId());
   }
