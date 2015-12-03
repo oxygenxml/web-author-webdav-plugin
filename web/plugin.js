@@ -22,7 +22,7 @@
         var dialog1 = workspace.createDialog();
         dialog1.getElement().innerHTML =
           '<div class="webdav-login-dialog">' +
-            '<label>Name: <input id="webdav-name" type="text" autocorrect="off" autocapitalize="none" /></label>' +
+            '<label>Name: <input id="webdav-name" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
             '<label>Password: <input id="webdav-passwd" type="password"/></label>' +
           '</div>';
         dialog1.setTitle('Authentication Required');
