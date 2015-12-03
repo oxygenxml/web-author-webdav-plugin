@@ -1,5 +1,6 @@
 package com.oxygenxml.examples.webdav;
 
+import java.net.PasswordAuthentication;
 import java.net.URL;
 
 import ro.sync.ecss.extensions.api.webapp.plugin.LockHandlerWithContext;
@@ -37,7 +38,14 @@ public class WebdavLockHandler extends LockHandlerWithContext {
   @Override
   public void updateLock(String sessionId, URL url, int timeoutSeconds) throws LockException {
     url = WebdavUrlStreamHandler.addCredentials(sessionId, url);
-    new WebdavLockHelper().updateLock(sessionId, url, timeoutSeconds);
+    WebdavLockHelper lockHelper = new WebdavLockHelper();
+
+    PasswordAuthentication passwordAuthentication = WebdavUrlStreamHandler.credentials.get(sessionId);
+    if (passwordAuthentication != null) {
+      lockHelper.setLockOwner(sessionId, passwordAuthentication.getUserName());
+    }
+
+    lockHelper.updateLock(sessionId, url, timeoutSeconds);
   }
 
   /**
