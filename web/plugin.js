@@ -63,7 +63,7 @@
 
   // A webdav-specific file browser.
   WebdavFileBrowser = function() {
-    var latestUrl = localStorage.getItem('webdav.latestUrl');
+    var latestUrl = this.getLatestUrl();
     sync.api.FileBrowsingDialog.call(this, {
       initialUrl: latestUrl
     });
@@ -91,9 +91,9 @@
   /** @override */
   WebdavFileBrowser.prototype.renderRepoEditing = function(element) {
     var url = this.getCurrentFolderUrl();
-    var latestUrl = localStorage.getItem('webdav.latestUrl');
+  var latestUrl = this.getLatestUrl();
     // if none was set we let it empty.
-    var editUrl = url || latestUrl || '';
+    var editUrl = latestUrl || url || '';
     if (editUrl && (editUrl.indexOf('webdav-') == 0)) {
       editUrl = editUrl.substring(7);
     }
@@ -146,6 +146,22 @@
     }
     return processedUrl;
   };
+
+  /**
+   * Getter of the last usedUrl.
+   *
+   * @return {String} the last set url.
+   */
+  WebdavFileBrowser.prototype.getLatestUrl = function () {
+    var latestUrl = localStorage.getItem('webdav.latestUrl');
+    // if the latest url is not in local storage we check if the
+    // webdav-server-plugin is installed and we use it.
+  if(!latestUrl && (typeof webdavServerPluginUrl !== 'undefined')) {
+      latestUrl = webdavServerPluginUrl;
+    }
+
+    return latestUrl;
+  }
 
   /**
    * Register all the needed listeners on the file browser.
