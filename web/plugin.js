@@ -91,7 +91,7 @@
   /** @override */
   WebdavFileBrowser.prototype.renderRepoEditing = function(element) {
     var url = this.getCurrentFolderUrl();
-  var latestUrl = this.getLatestUrl();
+    var latestUrl = this.getLatestUrl();
     // if none was set we let it empty.
     var editUrl = latestUrl || url || '';
     if (editUrl && (editUrl.indexOf('webdav-') == 0)) {
@@ -102,11 +102,34 @@
     goog.events.removeAll(button);
 
     element.style.paddingLeft = '5px';
+
+    // the webdavServerPlugin additional content.
+    var wevdavServerPluginContent = '';
+    // if the webdav-server-plugin is installed display a button to use it.
+    if(webdavServerPluginUrl) {
+      wevdavServerPluginContent =
+      '<div class="webdav-builtin-server">' +
+        '<div class="webdav-use-builtin-btn">Use builtin server</div>' +
+        '<input disabled class="webdav-builtin-url" value="' + webdavServerPluginUrl + '">' +
+      '</div>';
+    }
+
     element.innerHTML =
-            '<div class="webdav-config-dialog">' +
-              '<label>Server URL: <input id="webdav-browse-url" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
-            '</div>';
+      '<div class="webdav-config-dialog">' +
+        '<label>Server URL: <input id="webdav-browse-url" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
+        wevdavServerPluginContent +
+      '</div>';
     element.querySelector('#webdav-browse-url').value = editUrl;
+
+    // handle click on the Use builtin server button.
+    if(webdavServerPluginUrl) {
+      var useBuiltinServerBtn = element.querySelector('.webdav-builtin-server .webdav-use-builtin-btn');
+      goog.events.listen(useBuiltinServerBtn, goog.events.EventType.CLICK,
+        goog.bind(function(){
+          // set the builtin server url in the url config input field.
+          this.openUrl(webdavServerPluginUrl, false);
+      }, this));
+    }
   };
 
   /** @override */
@@ -141,7 +164,7 @@
       processedUrl = 'webdav-' + processedUrl;
     }
     // if the url does not end in a '/' we add it.
-    if(!(processedUrl.substring(processedUrl.length - 1) ==  "/")) {
+    if(!(processedUrl.substring(processedUrl.length - 1) == "/")) {
       processedUrl = processedUrl + "/"
     }
     return processedUrl;
@@ -152,11 +175,11 @@
    *
    * @return {String} the last set url.
    */
-  WebdavFileBrowser.prototype.getLatestUrl = function () {
+  WebdavFileBrowser.prototype.getLatestUrl = function() {
     var latestUrl = localStorage.getItem('webdav.latestUrl');
     // if the latest url is not in local storage we check if the
     // webdav-server-plugin is installed and we use it.
-  if(!latestUrl && (typeof webdavServerPluginUrl !== 'undefined')) {
+    if(!latestUrl && (typeof webdavServerPluginUrl !== 'undefined')) {
       latestUrl = webdavServerPluginUrl;
     }
 
@@ -169,7 +192,7 @@
    * @param {sync.api.FileBrowsingDialog} fileBrowser
    *  the file browser on which to listen.
    */
-  var registerFileBrowserListeners = function (fileBrowser) {
+  var registerFileBrowserListeners = function(fileBrowser) {
     // handle the user action required event.
     var eventTarget = fileBrowser.getEventTarget();
     goog.events.listen(eventTarget,

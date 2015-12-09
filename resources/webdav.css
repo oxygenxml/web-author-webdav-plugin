@@ -55,3 +55,28 @@
     display: inline-block;
 }
 
+.webdav-builtin-server {
+    text-align: left;
+    padding-top:20px;
+}
+
+.webdav-builtin-server .webdav-use-builtin-btn {
+    border: solid 1px #D9D9D9;
+    border-radius:4px;
+    display:inline-block;
+    background-color: #DEDEDE;
+    height:2em;
+    padding:0px 10px;
+}
+/*changes button styles on hover.*/
+.webdav-builtin-server .webdav-use-builtin-btn:hover {
+    background-color: #d1d1d1;
+    border-color: #337AB7;
+    cursor: pointer;
+}
+
+.webdav-builtin-server .webdav-builtin-url {
+    display: inline-block;
+    width: 65%;
+    margin-left: 5px;
+}
