@@ -7,9 +7,7 @@
 
     if (url.match(/^webdav-https?:/)) {
       goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function(e) {
-        workspace.setUrlChooser(new sync.api.FileBrowsingDialog({
-          initialUrl: url
-        }));
+        workspace.setUrlChooser(fileBrowser);
       });
 
       // The editor is about to be loaded.
@@ -62,7 +60,7 @@
   });
 
   // A webdav-specific file browser.
-  WebdavFileBrowser = function() {
+  var WebdavFileBrowser = function() {
     var latestUrl = this.getLatestUrl();
     sync.api.FileBrowsingDialog.call(this, {
       initialUrl: latestUrl
@@ -89,6 +87,7 @@
       goog.events.listen(button, goog.events.EventType.CLICK,
         goog.bind(this.switchToRepoConfig, this, element))
     }
+    this.dialog.setPreferredSize(null, 460);
   };
 
   /** @override */
@@ -132,6 +131,7 @@
           this.openUrl(webdavServerPluginUrl, false);
         }, this));
     }
+    this.dialog.setPreferredSize(null, 150);
   };
 
   /** @override */
@@ -186,7 +186,7 @@
     }
 
     return latestUrl;
-  }
+  };
 
   /**
    * Register all the needed listeners on the file browser.
