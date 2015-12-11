@@ -22,8 +22,8 @@
         var dialog1 = workspace.createDialog();
         dialog1.getElement().innerHTML =
           '<div class="webdav-login-dialog">' +
-            '<label>Name: <input id="webdav-name" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
-            '<label>Password: <input id="webdav-passwd" type="password"/></label>' +
+          '<label>Name: <input id="webdav-name" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
+          '<label>Password: <input id="webdav-passwd" type="password"/></label>' +
           '</div>';
         dialog1.setTitle('Authentication Required');
         dialog1.show();
@@ -67,6 +67,9 @@
     sync.api.FileBrowsingDialog.call(this, {
       initialUrl: latestUrl
     });
+
+    // whether the webdav server plugin is installed.
+    this.isServerPluginInstalled = typeof webdavServerPluginUrl !== 'undefined' && webdavServerPluginUrl;
   };
   goog.inherits(WebdavFileBrowser, sync.api.FileBrowsingDialog);
 
@@ -102,33 +105,32 @@
     goog.events.removeAll(button);
 
     element.style.paddingLeft = '5px';
-
     // the webdavServerPlugin additional content.
     var wevdavServerPluginContent = '';
     // if the webdav-server-plugin is installed display a button to use it.
-    if(webdavServerPluginUrl) {
+    if(this.isServerPluginInstalled) {
       wevdavServerPluginContent =
-      '<div class="webdav-builtin-server">' +
+        '<div class="webdav-builtin-server">' +
         '<div class="webdav-use-builtin-btn">Use builtin server</div>' +
         '<input disabled class="webdav-builtin-url" value="' + webdavServerPluginUrl + '">' +
-      '</div>';
+        '</div>';
     }
 
     element.innerHTML =
       '<div class="webdav-config-dialog">' +
-        '<label>Server URL: <input id="webdav-browse-url" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
-        wevdavServerPluginContent +
+      '<label>Server URL: <input id="webdav-browse-url" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
+      wevdavServerPluginContent +
       '</div>';
     element.querySelector('#webdav-browse-url').value = editUrl;
 
     // handle click on the Use builtin server button.
-    if(webdavServerPluginUrl) {
+    if(this.isServerPluginInstalled) {
       var useBuiltinServerBtn = element.querySelector('.webdav-builtin-server .webdav-use-builtin-btn');
       goog.events.listen(useBuiltinServerBtn, goog.events.EventType.CLICK,
         goog.bind(function(){
           // set the builtin server url in the url config input field.
           this.openUrl(webdavServerPluginUrl, false);
-      }, this));
+        }, this));
     }
   };
 
@@ -179,7 +181,7 @@
     var latestUrl = localStorage.getItem('webdav.latestUrl');
     // if the latest url is not in local storage we check if the
     // webdav-server-plugin is installed and we use it.
-    if(!latestUrl && (typeof webdavServerPluginUrl !== 'undefined')) {
+    if(!latestUrl && this.isServerPluginInstalled) {
       latestUrl = webdavServerPluginUrl;
     }
 
@@ -196,36 +198,36 @@
     // handle the user action required event.
     var eventTarget = fileBrowser.getEventTarget();
     goog.events.listen(eventTarget,
-        sync.api.FileBrowsingDialog.EventTypes.USER_ACTION_REQUIRED,
-        function () {
-          var loginDialog = workspace.createDialog();
-          loginDialog.getElement().innerHTML =
-              '<div class="webdav-login-dialog">' +
-                '<label>Name: <input id="webdav-browse-name" type="text" autocorrect="off" autocapitalize="none" autofocus /></label>' +
-                '<label>Password: <input id="webdav-browse-passwd" type="password"/></label>' +
-              '</div>';
-          loginDialog.setTitle('Login');
+      sync.api.FileBrowsingDialog.EventTypes.USER_ACTION_REQUIRED,
+      function () {
+        var loginDialog = workspace.createDialog();
+        loginDialog.getElement().innerHTML =
+          '<div class="webdav-login-dialog">' +
+          '<label>Name: <input id="webdav-browse-name" type="text" autocorrect="off" autocapitalize="none" autofocus /></label>' +
+          '<label>Password: <input id="webdav-browse-passwd" type="password"/></label>' +
+          '</div>';
+        loginDialog.setTitle('Login');
 
-          loginDialog.show();
+        loginDialog.show();
 
-          loginDialog.onSelect(function (key) {
-            if (key == 'ok') {
-              // Send the user and password to the login servlet.
-              var user = document.getElementById('webdav-browse-name').value;
-              var passwd = document.getElementById('webdav-browse-passwd').value;
-              var request = new goog.net.XhrIo();
-              request.send('../plugins-dispatcher/login?user=' + encodeURIComponent(user) + "&passwd=" + encodeURIComponent(passwd), 'POST');
-              // the login servlet response
-              goog.events.listenOnce(request, goog.net.EventType.COMPLETE,
-                  function (e) {
-                    if (e.type == 'complete') {
-                      fileBrowser.refresh();
-                    }
-                  });
-            }
-            loginDialog.dispose();
-          });
+        loginDialog.onSelect(function (key) {
+          if (key == 'ok') {
+            // Send the user and password to the login servlet.
+            var user = document.getElementById('webdav-browse-name').value;
+            var passwd = document.getElementById('webdav-browse-passwd').value;
+            var request = new goog.net.XhrIo();
+            request.send('../plugins-dispatcher/login?user=' + encodeURIComponent(user) + "&passwd=" + encodeURIComponent(passwd), 'POST');
+            // the login servlet response
+            goog.events.listenOnce(request, goog.net.EventType.COMPLETE,
+              function (e) {
+                if (e.type == 'complete') {
+                  fileBrowser.refresh();
+                }
+              });
+          }
+          loginDialog.dispose();
         });
+      });
   };
 
   // create the connection configurator.
