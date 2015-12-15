@@ -6,8 +6,8 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
@@ -29,14 +29,14 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
    * Credentials store.
    */
   public static final Map<String, PasswordAuthentication> credentials = 
-      new HashMap<String, PasswordAuthentication>();
+      new ConcurrentHashMap<String, PasswordAuthentication>();
 
   @Override
   protected URLConnection openConnectionInContext(String contextId, URL url, Proxy proxy) throws IOException {
     URL completeUrl = addCredentials(contextId, url);
     
     URLConnection urlConnection = completeUrl.openConnection();
-    return new WebdavUrlConnection(urlConnection);
+    return new WebdavUrlConnection(contextId, urlConnection);
   }
 
 

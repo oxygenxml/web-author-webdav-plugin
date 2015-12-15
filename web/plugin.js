@@ -44,7 +44,7 @@
                 editor.getActionsManager().invokeAction('Author/Refresh_references');
               } else if (context == sync.api.Editor.WebappMessageReceived.Context.SAVE) {
                 // Currently there is no API to re-try saving, but it will be.
-                editor.getActionsManager().invokeAction('Author/Save', function() {});
+                editor.getActionsManager().getActionById('Author/Save').actionPerformed(function() {});
               } else if (context == sync.api.Editor.WebappMessageReceived.Context.IMAGE) {
                 // The browser failed to retrieve an image - reload it.
                 var images = document.querySelectorAll('img[data-src]');

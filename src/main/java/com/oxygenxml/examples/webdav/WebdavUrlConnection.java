@@ -4,11 +4,13 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URLConnection;
 
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
 import ro.sync.ecss.extensions.api.webapp.plugin.FilterURLConnection;
 import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
+import ro.sync.net.protocol.http.WebdavLockHelper;
 
 /**
  * Wrapper over an URLConnection that reports 401 exceptions as 
@@ -19,12 +21,19 @@ import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 public class WebdavUrlConnection extends FilterURLConnection {
 
   /**
+   * The session ID.
+   */
+  private String contextId;
+
+  /**
    * Constructor method for the URLConnection wrapper.
+   * @param contextId The session ID.
    * 
    * @param delegate the wrapped URLConnection.
    */
-  protected WebdavUrlConnection(URLConnection delegate) {
+  protected WebdavUrlConnection(String contextId, URLConnection delegate) {
     super(delegate);
+    this.contextId = contextId;
   }
   
   @Override
@@ -50,6 +59,9 @@ public class WebdavUrlConnection extends FilterURLConnection {
   
   @Override
   public OutputStream getOutputStream() throws IOException {
+    // Before trying to save a resource, add the lock header if we have one.
+    new WebdavLockHelper().addLockHeader(
+        this.contextId, (HttpURLConnection) delegateConnection);
     try {
       return new FilterOutputStream(super.getOutputStream()) {
         @Override
