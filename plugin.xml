@@ -18,6 +18,8 @@
   class="com.oxygenxml.examples.webdav.WebdavURLHandlerExtension"/>
  <extension type="WebappServlet" 
   class="com.oxygenxml.examples.webdav.LoginServlet"/>
+ <extension type="WebappServlet" 
+  class="com.oxygenxml.examples.webdav.WebdavUrlInfo"/>
  <extension type="WebappStaticResourcesFolder" 
   path="resources/" href="webdav"/> 
  <extension type="LockHandlerFactory"

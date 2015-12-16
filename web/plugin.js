@@ -1,4 +1,35 @@
 (function(){
+
+  /**
+   * Login the user and call this callback at the end.
+   *
+   * @param {function} authenticated The callback when the user was authenticated - successfully or not.
+   */
+  function login(authenticated) {
+    // pop-up an authentication window,
+    var dialog1 = workspace.createDialog();
+    dialog1.getElement().innerHTML =
+      '<div class="webdav-login-dialog">' +
+      '<label>Name: <input id="webdav-name" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
+      '<label>Password: <input id="webdav-passwd" type="password"/></label>' +
+      '</div>';
+    dialog1.setTitle('Authentication Required');
+    dialog1.show();
+
+    dialog1.onSelect(function (key) {
+      if (key == 'ok') {
+        // Send the user and password to the login servlet which runs in the webapp.
+        var user = document.getElementById('webdav-name').value;
+        var passwd = document.getElementById('webdav-passwd').value;
+        goog.net.XhrIo.send(
+          '../plugins-dispatcher/login?user=' + encodeURIComponent(user) + "&passwd=" + encodeURIComponent(passwd),
+          authenticated,
+          'POST');
+      }
+      dialog1.dispose();
+    });
+  }
+
   goog.events.listen(workspace, sync.api.Workspace.EventType.BEFORE_EDITOR_LOADED, function(e) {
     var url = e.options.url;
     // If the URL starts with http:, use thw webdav protocol handler.
@@ -17,42 +48,23 @@
         var context = e.context;
 
         // pop-up an authentication window,
-        var dialog1 = workspace.createDialog();
-        dialog1.getElement().innerHTML =
-          '<div class="webdav-login-dialog">' +
-          '<label>Name: <input id="webdav-name" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
-          '<label>Password: <input id="webdav-passwd" type="password"/></label>' +
-          '</div>';
-        dialog1.setTitle('Authentication Required');
-        dialog1.show();
-
-        dialog1.onSelect(function(key) {
-          if (key == 'ok') {
-            // Send the user and password to the login servlet which runs in the webapp.
-            var user = document.getElementById('webdav-name').value;
-            var passwd = document.getElementById('webdav-passwd').value;
-            var request = new goog.net.XhrIo();
-            request.send('../plugins-dispatcher/login?user=' + encodeURIComponent(user) + "&passwd=" + encodeURIComponent(passwd), 'POST');
-
-            goog.events.listenOnce(request, goog.net.EventType.COMPLETE, function() {
-              // After the user was logged in, retry the operation that failed.
-              if (context == sync.api.Editor.WebappMessageReceived.Context.LOAD) {
-                // If the document was loading, we try to reload the whole webapp.
-                window.location.reload();
-              } else if (context == sync.api.Editor.WebappMessageReceived.Context.EDITING) {
-                // During editing, only references can trigger re-authentication. Refresh them.
-                editor.getActionsManager().invokeAction('Author/Refresh_references');
-              } else if (context == sync.api.Editor.WebappMessageReceived.Context.SAVE) {
-                // Currently there is no API to re-try saving, but it will be.
-                editor.getActionsManager().getActionById('Author/Save').actionPerformed(function() {});
-              } else if (context == sync.api.Editor.WebappMessageReceived.Context.IMAGE) {
-                // The browser failed to retrieve an image - reload it.
-                var images = document.querySelectorAll('img[data-src]');
-                for (var i = 0; i < images.length; i++) {
-                  images[i].src = goog.dom.dataset.get(images[i], 'src');
-                }
-              }
-            });
+        login(function() {
+          // After the user was logged in, retry the operation that failed.
+          if (context == sync.api.Editor.WebappMessageReceived.Context.LOAD) {
+            // If the document was loading, we try to reload the whole webapp.
+            window.location.reload();
+          } else if (context == sync.api.Editor.WebappMessageReceived.Context.EDITING) {
+            // During editing, only references can trigger re-authentication. Refresh them.
+            editor.getActionsManager().invokeAction('Author/Refresh_references');
+          } else if (context == sync.api.Editor.WebappMessageReceived.Context.SAVE) {
+            // Currently there is no API to re-try saving, but it will be.
+            editor.getActionsManager().getActionById('Author/Save').actionPerformed(function() {});
+          } else if (context == sync.api.Editor.WebappMessageReceived.Context.IMAGE) {
+            // The browser failed to retrieve an image - reload it.
+            var images = document.querySelectorAll('img[data-src]');
+            for (var i = 0; i < images.length; i++) {
+              images[i].src = goog.dom.dataset.get(images[i], 'src');
+            }
           }
         });
       });
@@ -63,7 +75,8 @@
   var WebdavFileBrowser = function() {
     var latestUrl = this.getLatestUrl();
     sync.api.FileBrowsingDialog.call(this, {
-      initialUrl: latestUrl
+      initialUrl: latestUrl,
+      root: this.getLatestRootUrl()
     });
 
     // whether the webdav server plugin is installed.
@@ -140,13 +153,49 @@
     // if an url was provided we instantiate the file browsing dialog.
     if(url) {
       var processedUrl = this.processURL(url);
-      localStorage.setItem('webdav.latestUrl', processedUrl);
-      // if a file name was provided we transfer it.
-      var fileName = this.getFileName();
-      if (fileName) {
-        processedUrl += fileName;
-      }
-      this.openUrl(processedUrl, false, e);
+      this.requestUrlInfo_(processedUrl);
+    }
+    e.preventDefault();
+  };
+
+  /**
+   * Request the URL info from the server.
+   *
+   * @param {string} url The URL about which we ask for information.
+   *
+   * @private
+   */
+  WebdavFileBrowser.prototype.requestUrlInfo_ = function (url) {
+    goog.net.XhrIo.send(
+      '../plugins-dispatcher/webdav-url-info?url=' + encodeURIComponent(url),
+      goog.bind(this.handleUrlInfoReceived, this, url));
+  };
+
+  /**
+   * URL information received from the server, we can open that URL in the dialog.
+   *
+   * @param {string} url The URL about which we requested info.
+   * @param {goog.events.Event} e The XHR event.
+   */
+  WebdavFileBrowser.prototype.handleUrlInfoReceived = function (url, e) {
+    var request = /** {@type goog.net.XhrIo} */ (e.target);
+    var status = request.getStatus();
+
+    if (status == 200) {
+      var info = request.getResponseJson();
+      var isFile = info.type === 'FILE';
+
+      var rootUrl = this.processURL(info.rootUrl);
+      var urlObj = new sync.util.Url(url);
+      localStorage.setItem('webdav.latestUrl', urlObj.getFolderUrl());
+      localStorage.setItem('webdav.latestRootUrl', rootUrl);
+
+      this.setRootUrl(rootUrl);
+      this.openUrl(url, isFile, null);
+    } else if (status == 401) {
+      login(goog.bind(this.requestUrlInfo_, this, url));
+    } else {
+      this.showErrorMessage('Cannot open this URL');
     }
   };
 
@@ -165,11 +214,19 @@
     if(!(url.indexOf('webdav-') == 0)) {
       processedUrl = 'webdav-' + processedUrl;
     }
-    // if the url does not end in a '/' we add it.
-    if(!(processedUrl.substring(processedUrl.length - 1) == "/")) {
-      processedUrl = processedUrl + "/"
-    }
     return processedUrl;
+  };
+
+  /**
+   *
+   * @return {string} the latest root url.
+   */
+  WebdavFileBrowser.prototype.getLatestRootUrl = function() {
+    var lastRootUrl = localStorage.getItem('webdav.latestRootUrl');
+    if (!lastRootUrl && this.isServerPluginInstalled) {
+      lastRootUrl = webdavServerPluginUrl;
+    }
+    return lastRootUrl;
   };
 
   /**
@@ -200,32 +257,8 @@
     goog.events.listen(eventTarget,
       sync.api.FileBrowsingDialog.EventTypes.USER_ACTION_REQUIRED,
       function () {
-        var loginDialog = workspace.createDialog();
-        loginDialog.getElement().innerHTML =
-          '<div class="webdav-login-dialog">' +
-          '<label>Name: <input id="webdav-browse-name" type="text" autocorrect="off" autocapitalize="none" autofocus /></label>' +
-          '<label>Password: <input id="webdav-browse-passwd" type="password"/></label>' +
-          '</div>';
-        loginDialog.setTitle('Login');
-
-        loginDialog.show();
-
-        loginDialog.onSelect(function (key) {
-          if (key == 'ok') {
-            // Send the user and password to the login servlet.
-            var user = document.getElementById('webdav-browse-name').value;
-            var passwd = document.getElementById('webdav-browse-passwd').value;
-            var request = new goog.net.XhrIo();
-            request.send('../plugins-dispatcher/login?user=' + encodeURIComponent(user) + "&passwd=" + encodeURIComponent(passwd), 'POST');
-            // the login servlet response
-            goog.events.listenOnce(request, goog.net.EventType.COMPLETE,
-              function (e) {
-                if (e.type == 'complete') {
-                  fileBrowser.refresh();
-                }
-              });
-          }
-          loginDialog.dispose();
+        login(function() {
+            fileBrowser.refresh();
         });
       });
   };
