@@ -14,12 +14,12 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
   /**
    * Flag indicating whether documents should be locked on open.
    */
-  private final String LOCKING_ENABLED = "lock_on_open";
+  final static String LOCKING_ENABLED = "lock_on_open";
   
   @Override
   public void init() throws ServletException {
     super.init();
-    setDefaultOptions(ImmutableMap.of(LOCKING_ENABLED, "true"));
+    setDefaultOptions(ImmutableMap.of(LOCKING_ENABLED, "on"));
   }
   
   @Override
@@ -32,13 +32,21 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
    */
   @Override
   public String getOptionsForm() {
+    String optionValue = getOption(LOCKING_ENABLED, "on");
+    boolean isLockEnabled = "on".equals(optionValue);
     return "<div style='font-family:robotolight, Arial, Helvetica, sans-serif;font-size:0.85em;font-weight: lighter'>"
             + "<form style='text-align:left;line-height: 1.7em;'>"
               + "<label style='margin-bottom:6px;display:block;overflow:hidden'>"
-                + "<input name=\"lock_on_open\" type=\"checkbox\"> Lock resources on open"
+                + "<input name=\"lock_on_open\" type=\"checkbox\" value=\"on\"" + 
+                      (isLockEnabled ? "checked" : "") + "> Lock resources on open"
               + "</label>"
             + "</form>"
           + "</div>";
+  }
+  
+  @Override
+  protected void setOption(String key, String value) {
+    super.setOption(key, value);
   }
   
   /**
@@ -47,7 +55,7 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
   @Override
   public String getOptionsJson() {
     return "{\"lock_on_open\":\"" 
-        + getOption(LOCKING_ENABLED, "true")
+        + getOption(LOCKING_ENABLED, "on")
         + "\"}";
   }
 }

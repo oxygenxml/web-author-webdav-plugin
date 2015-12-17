@@ -5,6 +5,8 @@ import java.net.URL;
 
 import ro.sync.ecss.extensions.api.webapp.plugin.LockHandlerWithContext;
 import ro.sync.exml.plugin.lock.LockException;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
+import ro.sync.exml.workspace.api.options.WSOptionsStorage;
 import ro.sync.net.protocol.http.WebdavLockHelper;
 
 /**
@@ -53,6 +55,8 @@ public class WebdavLockHandler extends LockHandlerWithContext {
    */
   @Override
   public boolean isLockEnabled() {
-    return true;
+    WSOptionsStorage optionsStorage = PluginWorkspaceProvider.getPluginWorkspace().getOptionsStorage();
+    String optionValue = optionsStorage.getOption(WebdavPluginConfigExtension.LOCKING_ENABLED, "on");
+    return "on".equals(optionValue);
   }
 }
