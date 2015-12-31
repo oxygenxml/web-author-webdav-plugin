@@ -14,7 +14,7 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
   /**
    * Flag indicating whether documents should be locked on open.
    */
-  final static String LOCKING_ENABLED = "lock_on_open";
+  final static String LOCKING_ENABLED = "webdav.lock_on_open";
   
   @Override
   public void init() throws ServletException {
