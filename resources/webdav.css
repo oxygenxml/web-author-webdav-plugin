@@ -40,8 +40,10 @@
 }
 
 .webdav-domain-edit {
-    display: none;
-    float: right;
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    right: 0;
     padding-right: 5px;
     margin:0;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAXUlEQVR42mNgGBKgoKAgAYj/Q3ECJZrBmCLNRBuASzNRXhhemj8AsQExmgWA+ABZmpEMUQDiC+RqBtnugOQVA1JTG8jWCVCvbIAaCKIboDgAZAFWg////08RptgAAMDo/Jm25cdCAAAAAElFTkSuQmCC);
@@ -49,10 +51,6 @@
     width: 20px;
     background-color: lightgrey;
     border-color: #ccc;
-}
-
-.file-browser-repo-config-area:hover > .webdav-domain-edit {
-    display: inline-block;
 }
 
 .webdav-builtin-server {
