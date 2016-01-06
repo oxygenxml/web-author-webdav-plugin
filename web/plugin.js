@@ -14,6 +14,7 @@
       '<label>Password: <input id="webdav-passwd" type="password"/></label>' +
       '</div>';
     dialog1.setTitle('Authentication Required');
+    dialog1.setPreferredSize(300, null);
     dialog1.show();
 
     dialog1.onSelect(function (key) {
@@ -90,7 +91,6 @@
     if (url) {
       element.style.paddingLeft = '5px';
       element.title = "Server URL";
-      goog.dom.classlist.add(element, 'vertical-align-children');
       element.innerHTML = '<div class="domain-icon" style="' +
         'background-image: url(' + sync.util.getImageUrl('/images/SharePointWeb16.png', sync.util.getHdpiFactor()) + ');"></div>' +
         new sync.util.Url(url).getDomain() +
@@ -144,7 +144,7 @@
           this.openUrl(webdavServerPluginUrl, false);
         }, this));
     }
-    this.dialog.setPreferredSize(null, 150);
+    this.dialog.setPreferredSize(null, 190);
   };
 
   /** @override */

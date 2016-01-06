@@ -1,32 +1,12 @@
-.webdav-config-dialog {
-    text-align: center;
-    width: 100%;
-}
-
-.webdav-config-dialog input {
-    width: 80%;
-}
-
 .webdav-login-dialog label {
-    text-align: right;
+    text-align: left;
     display: block;
 }
 
+.webdav-config-dialog input,
 .webdav-login-dialog input {
-    width: 175px;
-}
-
-@media only screen and (max-width: 550px) {
-    .webdav-config-dialog {
-        width: auto;
-    }
-    .webdav-login-dialog label {
-        text-align: left;
-    }
-    .webdav-login-dialog input {
-        width: 100%;
-        display: block;
-    }
+    width: 100%;
+    display: block;
 }
 
 .webdav-domain-edit,
@@ -49,6 +29,8 @@
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAXUlEQVR42mNgGBKgoKAgAYj/Q3ECJZrBmCLNRBuASzNRXhhemj8AsQExmgWA+ABZmpEMUQDiC+RqBtnugOQVA1JTG8jWCVCvbIAaCKIboDgAZAFWg////08RptgAAMDo/Jm25cdCAAAAAElFTkSuQmCC);
     height: 32px;
     width: 20px;
+}
+.webdav-domain-edit:hover {
     background-color: lightgrey;
     border-color: #ccc;
 }
