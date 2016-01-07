@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -112,8 +113,14 @@ public class WebdavUrlInfo extends WebappServletPluginExtension {
       public void run() {
         String candidateRoot = urlWithCredentials.getProtocol() + "://" + urlWithCredentials.getAuthority();
         String[] pathParts = urlWithCredentials.getPath().split("/");
+        
+        if (logger.isDebugEnabled()) {
+          logger.debug(Arrays.toString(pathParts));
+        }
+        
         for (String pathPart: pathParts) {
           if (Thread.interrupted()) {
+            logger.debug("Time's up searching for server root URL");
             break;
           }
           candidateRoot += pathPart + "/";
@@ -122,9 +129,10 @@ public class WebdavUrlInfo extends WebappServletPluginExtension {
           try {
             candidateResourceType = getResourceType(new URL(candidateRoot));
           } catch (IOException e) {
-            logger.error(e, e);
+            logger.debug(e, e);
           }
           if (candidateResourceType == ResourceType.COLLECTION) {
+            logger.debug("Found server root URL: " + candidateRoot);
             break;
           }
         }

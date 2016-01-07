@@ -184,7 +184,11 @@
     if (status == 200) {
       var info = request.getResponseJson();
       var isFile = info.type === 'FILE';
-
+      // Make sure folder urls end with '/'.
+      if (!isFile && url.lastIndexOf('/') !== url.length - 1) {
+        url = url + '/';
+      }
+      
       var rootUrl = this.processURL(info.rootUrl);
       var urlObj = new sync.util.Url(url);
       localStorage.setItem('webdav.latestUrl', urlObj.getFolderUrl());
