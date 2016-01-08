@@ -6,12 +6,14 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContext;
+import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 import ro.sync.util.URLUtil;
 
 /**
@@ -28,8 +30,11 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
   /**
    * Credentials store.
    */
-  public static final Map<String, PasswordAuthentication> credentials = 
-      new ConcurrentHashMap<String, PasswordAuthentication>();
+  public static final Cache<String, PasswordAuthentication> credentials = 
+      CacheBuilder.newBuilder()
+        .concurrencyLevel(10)
+        .maximumSize(10000)
+        .build();
 
   @Override
   protected URLConnection openConnectionInContext(String contextId, URL url, Proxy proxy) throws IOException {
@@ -47,10 +52,10 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
    * @param url The URL.
    * @return The URL with credentials. 
    */
-  public static URL addCredentials(String contextId, URL url) {
+  public static URL addCredentials(String contextId, URL url) throws UserActionRequiredException {
     // Obtain the credentials for the current user.
-    PasswordAuthentication userCredentials = credentials.get(contextId);
-    
+    PasswordAuthentication userCredentials = credentials.getIfPresent(contextId);
+
     String protocol = url.getProtocol().substring(WebdavURLHandlerExtension.WEBDAV.length());
 
     // Build the complete URL that contains the user and password in it.

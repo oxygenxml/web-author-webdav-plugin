@@ -3,7 +3,10 @@ package com.oxygenxml.examples.webdav;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 
+import org.apache.log4j.Logger;
+
 import ro.sync.ecss.extensions.api.webapp.plugin.LockHandlerWithContext;
+import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 import ro.sync.exml.plugin.lock.LockException;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.exml.workspace.api.options.WSOptionsStorage;
@@ -15,13 +18,23 @@ import ro.sync.net.protocol.http.WebdavLockHelper;
  * @author cristi_talau
  */
 public class WebdavLockHandler extends LockHandlerWithContext {
+  /**
+   * Logger for logging.
+   */
+  private static final Logger logger = Logger.getLogger(WebdavLockHandler.class.getName());
 
   /**
    * @see LockHandlerWithContext#isSaveAllowed(String, URL, int)
    */
   @Override
   public boolean isSaveAllowed(String sessionId, URL url, int timeoutSeconds) {
-    url = WebdavUrlStreamHandler.addCredentials(sessionId, url);
+    try {
+      url = WebdavUrlStreamHandler.addCredentials(sessionId, url);
+    } catch (UserActionRequiredException e) {
+      // The user should be already authenticated. Anyway, we cannot do anything 
+      // from this method call.
+      logger.debug(e, e);
+    }
     return new WebdavLockHelper().isSaveAllowed(sessionId, url, timeoutSeconds);
   }
 
@@ -30,7 +43,13 @@ public class WebdavLockHandler extends LockHandlerWithContext {
    */
   @Override
   public void unlock(String sessionId, URL url) throws LockException {
-    url = WebdavUrlStreamHandler.addCredentials(sessionId, url);
+    try {
+      url = WebdavUrlStreamHandler.addCredentials(sessionId, url);
+    } catch (UserActionRequiredException e) {
+      // The user should be already authenticated. Anyway, we cannot do anything 
+      // from this method call.
+      logger.debug(e, e);
+    }
     new WebdavLockHelper().unlock(sessionId, url);
   }
 
@@ -39,10 +58,16 @@ public class WebdavLockHandler extends LockHandlerWithContext {
    */
   @Override
   public void updateLock(String sessionId, URL url, int timeoutSeconds) throws LockException {
-    url = WebdavUrlStreamHandler.addCredentials(sessionId, url);
+    try {
+      url = WebdavUrlStreamHandler.addCredentials(sessionId, url);
+    } catch (UserActionRequiredException e) {
+      // The user should be already authenticated. Anyway, we cannot do anything 
+      // from this method call.
+      logger.debug(e, e);
+    }
     WebdavLockHelper lockHelper = new WebdavLockHelper();
 
-    PasswordAuthentication passwordAuthentication = WebdavUrlStreamHandler.credentials.get(sessionId);
+    PasswordAuthentication passwordAuthentication = WebdavUrlStreamHandler.credentials.getIfPresent(sessionId);
     if (passwordAuthentication != null) {
       lockHelper.setLockOwner(sessionId, passwordAuthentication.getUserName());
     }

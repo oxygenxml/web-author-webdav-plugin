@@ -3,14 +3,11 @@ package com.oxygenxml.examples.webdav;
 import java.io.IOException;
 import java.net.PasswordAuthentication;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-
-import com.oxygenxml.examples.webdav.HttpSessionObserver;
 
 import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
 
@@ -26,12 +23,6 @@ public class LoginServlet extends WebappServletPluginExtension{
   private static final Logger logger = Logger.getLogger(
       LoginServlet.class.getName());
 
-  @Override
-  public void init() {
-    ServletContext servletContext = getServletConfig().getServletContext();
-    servletContext.addListener(HttpSessionObserver.class);
-  }
-  
   /**
    * Receives the user and the password for a given host. 
    */
@@ -40,7 +31,7 @@ public class LoginServlet extends WebappServletPluginExtension{
     String userId = httpRequest.getSession().getId();
     String action = httpRequest.getParameter("action");
     if ("logout".equals(action)) {
-      WebdavUrlStreamHandler.credentials.remove(userId);
+      WebdavUrlStreamHandler.credentials.invalidate(userId);
     } else {
       String user = httpRequest.getParameter("user");
       String passwd = httpRequest.getParameter("passwd");
