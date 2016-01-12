@@ -149,7 +149,9 @@
           this.openUrl(webdavServerPluginUrl, false);
         }, this));
     }
-    this.dialog.setPreferredSize(null, 190);
+
+    var prefferedHeight = this.isServerPluginInstalled ? 230 : 190;
+    this.dialog.setPreferredSize(null, prefferedHeight);
   };
 
   /** @override */
