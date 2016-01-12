@@ -81,7 +81,12 @@
     });
 
     // whether the webdav server plugin is installed.
-    this.isServerPluginInstalled = typeof webdavServerPluginUrl !== 'undefined' && webdavServerPluginUrl;
+    setTimeout(goog.bind(function(){
+      this.isServerPluginInstalled = false;
+    	if(typeof webdavServerPluginUrl !== 'undefined' && webdavServerPluginUrl) {
+	      this.isServerPluginInstalled = true;
+      }
+    }, this), 0);
   };
   goog.inherits(WebdavFileBrowser, sync.api.FileBrowsingDialog);
 
