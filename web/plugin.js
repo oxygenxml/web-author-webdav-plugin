@@ -128,7 +128,7 @@
     if(this.isServerPluginInstalled) {
       wevdavServerPluginContent =
         '<div class="webdav-builtin-server">' +
-        '<div class="webdav-use-builtin-btn">Use builtin server</div>' +
+        '<div class="webdav-use-builtin-btn">Use built-in server</div>' +
         '<input disabled class="webdav-builtin-url" value="' + webdavServerPluginUrl + '">' +
         '</div>';
     }
