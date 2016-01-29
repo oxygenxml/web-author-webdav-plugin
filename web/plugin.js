@@ -145,7 +145,7 @@
       var useBuiltinServerBtn = element.querySelector('.webdav-builtin-server .webdav-use-builtin-btn');
       goog.events.listen(useBuiltinServerBtn, goog.events.EventType.CLICK,
         goog.bind(function(){
-          var processedUrl = this.processURL(url);
+          var processedUrl = this.processURL(webdavServerPluginUrl);
           var urlInfo = {
             type: 'FOLDER',
             rootUrl: processedUrl
