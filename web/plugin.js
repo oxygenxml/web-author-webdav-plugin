@@ -83,8 +83,8 @@
     // whether the webdav server plugin is installed.
     setTimeout(goog.bind(function(){
       this.isServerPluginInstalled = false;
-    	if(typeof webdavServerPluginUrl !== 'undefined' && webdavServerPluginUrl) {
-	      this.isServerPluginInstalled = true;
+      if(typeof webdavServerPluginUrl !== 'undefined' && webdavServerPluginUrl) {
+        this.isServerPluginInstalled = true;
       }
     }, this), 0);
   };
@@ -145,8 +145,12 @@
       var useBuiltinServerBtn = element.querySelector('.webdav-builtin-server .webdav-use-builtin-btn');
       goog.events.listen(useBuiltinServerBtn, goog.events.EventType.CLICK,
         goog.bind(function(){
-          // set the builtin server url in the url config input field.
-          this.openUrl(webdavServerPluginUrl, false);
+          var processedUrl = this.processURL(url);
+          var urlInfo = {
+            type: 'FOLDER',
+            rootUrl: processedUrl
+          };
+          this.setUrlInfo(processedUrl, urlInfo);
         }, this));
     }
 
@@ -190,19 +194,8 @@
 
     if (status == 200) {
       var info = request.getResponseJson();
-      var isFile = info.type === 'FILE';
-      // Make sure folder urls end with '/'.
-      if (!isFile && url.lastIndexOf('/') !== url.length - 1) {
-        url = url + '/';
-      }
-      
-      var rootUrl = this.processURL(info.rootUrl);
-      var urlObj = new sync.util.Url(url);
-      localStorage.setItem('webdav.latestUrl', urlObj.getFolderUrl());
-      localStorage.setItem('webdav.latestRootUrl', rootUrl);
+      this.setUrlInfo(url, info);
 
-      this.setRootUrl(rootUrl);
-      this.openUrl(url, isFile, null);
     } else if (status == 401) {
       login(goog.bind(this.requestUrlInfo_, this, url));
     } else {
@@ -211,6 +204,26 @@
   };
 
 
+  /**
+   * Sets the information received about the url.
+   *
+   * @param info the available url information.
+   */
+  WebdavFileBrowser.prototype.setUrlInfo = function(url, info) {
+    var isFile = info.type === 'FILE';
+    // Make sure folder urls end with '/'.
+    if (!isFile && url.lastIndexOf('/') !== url.length - 1) {
+      url = url + '/';
+    }
+
+    var rootUrl = this.processURL(info.rootUrl);
+    var urlObj = new sync.util.Url(url);
+    localStorage.setItem('webdav.latestUrl', urlObj.getFolderUrl());
+    localStorage.setItem('webdav.latestRootUrl', rootUrl);
+
+    this.setRootUrl(rootUrl);
+    this.openUrl(url, isFile, null);
+  }
   /**
    * Further processes the url.
    *
@@ -269,7 +282,7 @@
       sync.api.FileBrowsingDialog.EventTypes.USER_ACTION_REQUIRED,
       function () {
         login(function() {
-            fileBrowser.refresh();
+          fileBrowser.refresh();
         });
       });
   };
