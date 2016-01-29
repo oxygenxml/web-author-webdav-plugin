@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>com.oxygenxml</groupId>
 		<artifactId>oxygen-superpom</artifactId>
-		<version>17.1.1-SNAPSHOT</version>
+		<version>18.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>webapp-webdav-plugin</artifactId>
 
 	<properties>	
-		<oxygen.sdk.version>17.1.1-SNAPSHOT</oxygen.sdk.version>
+		<oxygen.sdk.version>18.0-SNAPSHOT</oxygen.sdk.version>
 	</properties>
 
 	<dependencies>
