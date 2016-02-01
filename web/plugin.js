@@ -97,7 +97,8 @@
       element.style.paddingLeft = '5px';
       element.title = "Server URL";
       element.innerHTML = '<div class="domain-icon" style="' +
-        'background-image: url(' + sync.util.getImageUrl('/images/SharePointWeb16.png', sync.util.getHdpiFactor()) + ');"></div>' +
+        'background-image: url(' + sync.util.getImageUrl('/images/SharePointWeb16.png', sync.util.getHdpiFactor()) +
+        ');vertical-align: middle"></div>' +
         new sync.util.Url(url).getDomain() +
         '<div class="webdav-domain-edit"></div>';
       var button = element.querySelector('.webdav-domain-edit');
