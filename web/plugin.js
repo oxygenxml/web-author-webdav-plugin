@@ -6,6 +6,8 @@
    * @param {function} authenticated The callback when the user was authenticated - successfully or not.
    */
   function login(authenticated) {
+    localStorage.removeItem('webdav.user');
+
     // pop-up an authentication window,
     var dialog1 = workspace.createDialog();
     dialog1.getElement().innerHTML =
@@ -24,7 +26,10 @@
         var passwd = document.getElementById('webdav-passwd').value;
         goog.net.XhrIo.send(
           '../plugins-dispatcher/login?user=' + encodeURIComponent(user) + "&passwd=" + encodeURIComponent(passwd),
-          authenticated,
+          function () {
+            localStorage.setItem('webdav.user', user);
+            authenticated();
+          },
           'POST');
       }
       dialog1.dispose();
@@ -38,6 +43,11 @@
     e.options.url = url;
 
     if (url.match(/^webdav-https?:/)) {
+      var loggedInUser = localStorage.getItem('webdav.user');
+      if (loggedInUser) {
+        e.options.userName = loggedInUser;
+      }
+
       goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function(e) {
         workspace.setUrlChooser(fileBrowser);
       });
@@ -97,7 +107,8 @@
       element.style.paddingLeft = '5px';
       element.title = "Server URL";
       element.innerHTML = '<div class="domain-icon" style="' +
-        'background-image: url(' + sync.util.getImageUrl('/images/SharePointWeb16.png', sync.util.getHdpiFactor()) + ');"></div>' +
+        'background-image: url(' + sync.util.getImageUrl('/images/SharePointWeb16.png', sync.util.getHdpiFactor()) +
+        ');vertical-align: middle"></div>' +
         new sync.util.Url(url).getDomain() +
         '<div class="webdav-domain-edit"></div>';
       var button = element.querySelector('.webdav-domain-edit');
