@@ -52,8 +52,22 @@
         workspace.setUrlChooser(fileBrowser);
       });
 
-      // The editor is about to be loaded.
+        // The editor is about to be loaded.
       var editor = e.editor;
+
+      // Register the toolbar actions.
+      goog.events.listenOnce(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function(e) {
+        var logoutAction = new LogOutAction(editor);
+        var logoutActionId = 'WebDAV/Logout';
+        editor.getActionsManager().registerAction(logoutActionId, logoutAction);
+        var toolbar = e.actionsConfiguration.toolbars[0];
+        var moreMenu = toolbar.children[toolbar.children.length - 1];
+        moreMenu.children.push(
+          {id: logoutActionId, type: "action"}
+        );
+      });
+
+
       // Listen for messages sent from the server-side code.
       goog.events.listen(editor, sync.api.Editor.EventTypes.CUSTOM_MESSAGE_RECEIVED, function(e) {
         var context = e.context;
@@ -81,6 +95,70 @@
       });
     }
   });
+
+  /**
+   * The Log out action for Github
+   *
+   * @constructor
+   */
+  function LogOutAction (editor) {
+    this.editor = editor;
+  }
+  goog.inherits(LogOutAction, sync.actions.AbstractAction);
+
+  /**
+   * Constructs and returns the log-out confirmation dialog.
+   *
+   * @return {sync.api.Dialog} The dialog used to confirm teh log-out action.
+   */
+  LogOutAction.prototype.getDialog = function() {
+    if (!this.dialog) {
+      this.dialog = workspace.createDialog();
+      this.dialog.setTitle('Log out');
+      this.dialog.setButtonConfiguration([{key: 'yes', caption: 'Logout'}, {key: 'no', caption: 'Cancel'}]);
+
+      var dialogHtml = '<div><div>';
+      dialogHtml += 'Are you sure you want to log-out? ';
+      if (this.editor.isDirty()) {
+        dialogHtml += '<b>All your unsaved changes will be lost</b>'
+      }
+      dialogHtml += '</div></div>';
+
+      this.dialog.getElement().innerHTML = dialogHtml;
+    }
+    return this.dialog;
+  };
+
+  /**
+   * Called when the Logout button is clicked
+   *
+   * @override
+   */
+  LogOutAction.prototype.actionPerformed = function() {
+    this.dialog = this.getDialog();
+    this.dialog.onSelect(goog.bind(function (actionName, e) {
+      if (actionName == 'yes') {
+        e.preventDefault();
+        goog.net.XhrIo.send(
+          '../plugins-dispatcher/login?action=logout',
+          goog.bind(function () {
+            localStorage.removeItem('webdav.latestUrl');
+            localStorage.removeItem('webdav.latestRootUrl');
+            localStorage.removeItem('webdav.user');
+            this.editor.setDirty(false);
+            window.location.reload();
+          }, this),
+          'POST');
+      }
+    }, this));
+    this.dialog.setPreferredSize(320, 185);
+    this.dialog.show();
+  };
+
+  /** @override */
+  LogOutAction.prototype.getDisplayName = function() {
+    return "Logout";
+  };
 
   // A webdav-specific file browser.
   var WebdavFileBrowser = function() {
