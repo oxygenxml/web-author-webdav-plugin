@@ -1,5 +1,6 @@
 WebDAV Support for oXygen XML WebApp
 ===============================================
+[![Build Status](https://api.travis-ci.org/oxygenxml/webapp-webdav-integration.svg?branch=BRANCH_OXYGEN_RELEASE_17_1)](https://travis-ci.org/oxygenxml/webapp-webdav-integration)
 
 This project is a very simple integration of oXygen XML WebApp with a WebDAV-enabled server, which can be extended with more features or can be adapted to work with any CMS.
 
