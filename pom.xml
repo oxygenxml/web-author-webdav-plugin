@@ -11,8 +11,17 @@
 	<artifactId>webapp-webdav-plugin</artifactId>
 
 	<properties>	
-		<oxygen.sdk.version>18.0-SNAPSHOT</oxygen.sdk.version>
+		<oxygen.sdk.version>${project.version}</oxygen.sdk.version>
 	</properties>
+
+  <repositories>
+    <repository>
+      <id>oxygenxml</id>
+      <name>oXygen XML SDK Maven Repository</name>
+      <url>http://oxygenxml.com/maven/</url>
+    </repository>
+  </repositories>
+
 
 	<dependencies>
 		<dependency>
