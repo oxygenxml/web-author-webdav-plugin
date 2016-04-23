@@ -11,7 +11,7 @@
 	<artifactId>webapp-webdav-plugin</artifactId>
 
 	<properties>	
-		<oxygen.sdk.version>${project.version}</oxygen.sdk.version>
+		<oxygen.sdk.version>18.0.0</oxygen.sdk.version>
 	</properties>
 
   <repositories>
