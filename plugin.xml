@@ -4,7 +4,7 @@
 
 <plugin
  id="com.oxygenxml.examples.webdav.CustomProtocol"
- name="WebDAVPlugin"
+ name="WebDAV Connector"
  description="Plugin that enables oXygen XML Web Author to connect to a server with WebDAV support."
  version="${project.nosnapshot.version}"
  vendor="SyncRO"

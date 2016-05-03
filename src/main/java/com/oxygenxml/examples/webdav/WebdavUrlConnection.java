@@ -7,6 +7,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 
+import org.apache.commons.io.IOUtils;
+
+import com.google.common.io.Closeables;
+
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
 import ro.sync.ecss.extensions.api.webapp.plugin.FilterURLConnection;
 import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
@@ -98,6 +102,19 @@ public class WebdavUrlConnection extends FilterURLConnection {
           "Authentication required", 
           true));  
     } else {
+      if (delegateConnection instanceof HttpURLConnection) {
+        String serverMessage = null;
+        InputStream errorStream = null;
+        try {
+          errorStream = ((HttpURLConnection) this.delegateConnection).getErrorStream();
+          serverMessage = IOUtils.toString(errorStream);
+        } catch (Exception ex) {
+          Closeables.closeQuietly(errorStream);
+        }
+        if (serverMessage != null && serverMessage.contains("<body") && serverMessage.contains("</body")) {
+          throw new IOException(serverMessage, e);
+        }
+      }
       throw e;
     }
   }
