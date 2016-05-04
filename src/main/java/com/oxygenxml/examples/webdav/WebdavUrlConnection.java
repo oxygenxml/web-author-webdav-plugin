@@ -14,6 +14,7 @@ import com.google.common.io.Closeables;
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
 import ro.sync.ecss.extensions.api.webapp.plugin.FilterURLConnection;
 import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
+import ro.sync.exml.plugin.urlstreamhandler.CacheableUrlConnection;
 import ro.sync.net.protocol.http.WebdavLockHelper;
 
 /**
@@ -22,7 +23,8 @@ import ro.sync.net.protocol.http.WebdavLockHelper;
  * 
  * @author cristi_talau
  */
-public class WebdavUrlConnection extends FilterURLConnection {
+public class WebdavUrlConnection extends FilterURLConnection 
+    implements CacheableUrlConnection {
 
   /**
    * The session ID.
