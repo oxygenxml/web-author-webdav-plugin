@@ -113,7 +113,7 @@ public class WebdavUrlConnection extends FilterURLConnection
         } catch (Exception ex) {
           Closeables.closeQuietly(errorStream);
         }
-        if (serverMessage != null && serverMessage.contains("<body") && serverMessage.contains("</body")) {
+        if (serverMessage != null && !serverMessage.contains("<body") && !serverMessage.contains("</body")) {
           throw new IOException(serverMessage, e);
         }
       }
