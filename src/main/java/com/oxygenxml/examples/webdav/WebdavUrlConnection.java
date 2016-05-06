@@ -1,21 +1,37 @@
 package com.oxygenxml.examples.webdav;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
+import java.net.URL;
 import java.net.URLConnection;
 
 import org.apache.commons.io.IOUtils;
+import org.tmatesoft.svn.core.SVNDepth;
+import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
+import org.tmatesoft.svn.core.wc.ISVNOptions;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNRevision;
+import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import com.google.common.io.Closeables;
+import com.google.common.io.Files;
 
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
 import ro.sync.ecss.extensions.api.webapp.plugin.FilterURLConnection;
 import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 import ro.sync.exml.plugin.urlstreamhandler.CacheableUrlConnection;
 import ro.sync.net.protocol.http.WebdavLockHelper;
+import ro.sync.util.URLUtil;
 
 /**
  * Wrapper over an URLConnection that reports 401 exceptions as 
@@ -85,6 +101,52 @@ public class WebdavUrlConnection extends FilterURLConnection
       // Unreachable.
       return null;
     }
+  }
+
+  /**
+   * Returns an output stream to an SVN server.
+   * 
+   * @return
+   * @throws MalformedURLException
+   * @throws IOException
+   * @throws FileNotFoundException
+   */
+  public OutputStream getOutputStreamToSVNServer() throws MalformedURLException, IOException, FileNotFoundException {
+    PasswordAuthentication credentials = WebdavUrlStreamHandler.credentials.getIfPresent(this.contextId);
+    if (credentials == null) {
+      // TODO: throw exception.
+    }
+    ISVNOptions options = SVNWCUtil.createDefaultOptions(true);
+    ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(
+        credentials.getUserName(), 
+        credentials.getPassword());
+    final SVNClientManager manager = SVNClientManager.newInstance(options, authManager);
+    File tempDir = Files.createTempDir();
+    
+    URL parentURL = URLUtil.getParentURL(url);
+    try {
+      manager.getUpdateClient().doCheckout(SVNURL.parseURIEncoded(parentURL.toExternalForm()), 
+          tempDir, SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.EMPTY, true);
+    } catch (SVNException e) {
+      throw new IOException("Could not checkout the parent folder of.", e);
+    }
+    
+    String fileName = URLUtil.extractFileName(url);
+    
+    final File file = new File(tempDir, fileName);
+    
+    return new FilterOutputStream(new FileOutputStream(file)) {
+      public void close() throws IOException {
+        super.close();
+        try {
+          manager.getWCClient().doAdd(file, false, false, false, SVNDepth.FILES, false, true);
+          manager.getCommitClient().doCommit(new File[]{file}, 
+              true, "msg", null, null, false, false, SVNDepth.INFINITY);
+        } catch (SVNException e) {
+          throw new IOException("Could not checkout the parent folder of.", e);
+        }
+      };
+    };
   }
 
   /**

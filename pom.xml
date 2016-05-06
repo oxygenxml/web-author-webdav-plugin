@@ -36,7 +36,14 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>17.0</version>
+      <scope>provided</scope>
 		</dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
 		<dependency>
 		     <groupId>com.oxygenxml</groupId>
 		     <artifactId>oxygen-webapp</artifactId>
@@ -44,6 +51,11 @@
 		     <classifier>classes</classifier>
 		     <scope>provided</scope>
 		</dependency>
+    <dependency>
+      <groupId>org.tmatesoft.svnkit</groupId>
+      <artifactId>svnkit</artifactId>
+      <version>1.8.12</version>
+    </dependency>
 	</dependencies>
 	<build>
 	  <finalName>${project.artifactId}-${project.nosnapshot.version}</finalName>
