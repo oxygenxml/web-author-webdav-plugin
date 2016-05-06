@@ -29,7 +29,6 @@ import com.google.common.io.Files;
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
 import ro.sync.ecss.extensions.api.webapp.plugin.FilterURLConnection;
 import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
-import ro.sync.exml.plugin.urlstreamhandler.CacheableUrlConnection;
 import ro.sync.net.protocol.http.WebdavLockHelper;
 import ro.sync.util.URLUtil;
 
@@ -39,8 +38,7 @@ import ro.sync.util.URLUtil;
  * 
  * @author cristi_talau
  */
-public class WebdavUrlConnection extends FilterURLConnection 
-    implements CacheableUrlConnection {
+public class WebdavUrlConnection extends FilterURLConnection {
 
   /**
    * The session ID.
@@ -128,7 +126,7 @@ public class WebdavUrlConnection extends FilterURLConnection
       manager.getUpdateClient().doCheckout(SVNURL.parseURIEncoded(parentURL.toExternalForm()), 
           tempDir, SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.EMPTY, true);
     } catch (SVNException e) {
-      throw new IOException("Could not checkout the parent folder of.", e);
+      throw new IOException(e.getMessage(), e);
     }
     
     String fileName = URLUtil.extractFileName(url);
