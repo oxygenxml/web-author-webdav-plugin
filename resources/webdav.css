@@ -21,14 +21,11 @@
 
 .webdav-domain-edit {
     display: inline-block;
-    position: absolute;
-    top: 0;
-    right: 0;
     padding-right: 5px;
-    margin:0;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAXUlEQVR42mNgGBKgoKAgAYj/Q3ECJZrBmCLNRBuASzNRXhhemj8AsQExmgWA+ABZmpEMUQDiC+RqBtnugOQVA1JTG8jWCVCvbIAaCKIboDgAZAFWg////08RptgAAMDo/Jm25cdCAAAAAElFTkSuQmCC);
-    height: 32px;
     width: 20px;
+    height: 20px;
+    margin: 0 0 0 10px;
 }
 .webdav-domain-edit:hover {
     background-color: lightgrey;

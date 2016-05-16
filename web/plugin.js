@@ -194,7 +194,7 @@
       goog.events.listen(button, goog.events.EventType.CLICK,
         goog.bind(this.switchToRepoConfig, this, element))
     }
-    this.dialog.setPreferredSize(null, 460);
+    this.dialog.setPreferredSize(null, 700);
   };
 
   /** @override */
