@@ -26,6 +26,7 @@
     width: 20px;
     height: 20px;
     margin: 0 0 0 10px;
+    vertical-align: middle;
 }
 .webdav-domain-edit:hover {
     background-color: lightgrey;

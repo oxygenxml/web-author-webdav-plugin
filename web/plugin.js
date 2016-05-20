@@ -160,7 +160,11 @@
     return "Logout";
   };
 
-  // A webdav-specific file browser.
+  /**
+   * Webdav url chooser.
+   *
+   * @constructor
+   */
   var WebdavFileBrowser = function() {
     var latestUrl = this.getLatestUrl();
     sync.api.FileBrowsingDialog.call(this, {
@@ -168,11 +172,24 @@
       root: this.getLatestRootUrl()
     });
 
-    // whether the webdav server plugin is installed.
+    //  Wait for other plugins javscript to run and set variabled.
     setTimeout(goog.bind(function(){
+      // whether the webdav server plugin is installed.
       this.isServerPluginInstalled = false;
       if(typeof webdavServerPluginUrl !== 'undefined' && webdavServerPluginUrl) {
         this.isServerPluginInstalled = true;
+      }
+      // enforce the url if it is set.
+      if (window.webdav_connector_enforced_url) {
+        this.enforcedUrl = window.webdav_connector_enforced_url;
+        this.setRootUrl(this.enforcedUrl);
+        var initialUrl = localStorage.getItem('webdav.latestUrl');
+        // if localstorage latest url is not from the enforced url we override it.
+        if (!(initialUrl && initialUrl.startsWith(this.enforcedUrl))) {
+          initialUrl = this.enforcedUrl;
+          localStorage.setItem('webdav.latestUrl', this.enforcedUrl);
+        }
+        this.setInitialUrl_(initialUrl);
       }
     }, this), 0);
   };
@@ -184,67 +201,82 @@
     if (url) {
       element.style.paddingLeft = '5px';
       element.title = "Server URL";
-      element.innerHTML = '<div class="domain-icon" style="' +
+      var content = '<div class="domain-icon" style="' +
         'background-image: url(' + sync.util.getImageUrl('/images/SharePointWeb16.png', sync.util.getHdpiFactor()) +
         ');vertical-align: middle"></div>' +
-        new sync.util.Url(url).getDomain() +
-        '<div class="webdav-domain-edit"></div>';
+        new sync.util.Url(url).getDomain();
+
+      if(this.enforcedUrl) {
+        // repo editing is disabled for enforced repositories.
+      } else {
+        content += '<div class="webdav-domain-edit"></div>';
+      }
+
+      element.innerHTML = content;
       var button = element.querySelector('.webdav-domain-edit');
-      button.title = "Edit server URL";
-      goog.events.listen(button, goog.events.EventType.CLICK,
-        goog.bind(this.switchToRepoConfig, this, element))
+      if(button) {
+        button.title = "Edit server URL";
+        goog.events.listen(button, goog.events.EventType.CLICK,
+          goog.bind(this.switchToRepoConfig, this, element))
+      }
     }
     this.dialog.setPreferredSize(null, 700);
   };
 
   /** @override */
   WebdavFileBrowser.prototype.renderRepoEditing = function(element) {
-    var url = this.getCurrentFolderUrl();
-    var latestUrl = this.getLatestUrl();
-    // if none was set we let it empty.
-    var editUrl = latestUrl || url || '';
-    if (editUrl && (editUrl.indexOf('webdav-') == 0)) {
-      editUrl = editUrl.substring(7);
-    }
-    var button = element.querySelector('.webdav-domain-edit');
-    element.title = "";
-    goog.events.removeAll(button);
+    // repo editing enabled only of there is no enforced url.
+    if(this.enforcedUrl) {
+      // disable the repo editing
+      // this should never be the case as the edit button is disabled.
+      this.retrieveAllChildrenForUrl(this.enforcedUrl);
+    } else {
+      var url = this.getCurrentFolderUrl();
+      var latestUrl = this.getLatestUrl();
+      // if none was set we let it empty.
+      var editUrl = latestUrl || url || '';
+      if (editUrl && (editUrl.indexOf('webdav-') == 0)) {
+        editUrl = editUrl.substring(7);
+      }
+      var button = element.querySelector('.webdav-domain-edit');
+      element.title = "";
+      goog.events.removeAll(button);
 
-    element.style.paddingLeft = '5px';
-    // the webdavServerPlugin additional content.
-    var wevdavServerPluginContent = '';
-    // if the webdav-server-plugin is installed display a button to use it.
-    if(this.isServerPluginInstalled) {
-      wevdavServerPluginContent =
-        '<div class="webdav-builtin-server">' +
-        '<div class="webdav-use-builtin-btn">Use built-in server</div>' +
-        '<input readonly class="webdav-builtin-url" value="' + webdavServerPluginUrl + '">' +
+      element.style.paddingLeft = '5px';
+      // the webdavServerPlugin additional content.
+      var wevdavServerPluginContent = '';
+      // if the webdav-server-plugin is installed display a button to use it.
+      if (this.isServerPluginInstalled) {
+        wevdavServerPluginContent =
+          '<div class="webdav-builtin-server">' +
+          '<div class="webdav-use-builtin-btn">Use built-in server</div>' +
+          '<input readonly class="webdav-builtin-url" value="' + webdavServerPluginUrl + '">' +
+          '</div>';
+      }
+      element.innerHTML =
+        '<div class="webdav-config-dialog">' +
+        '<label>Server URL: <input id="webdav-browse-url" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
+        wevdavServerPluginContent +
         '</div>';
+      element.querySelector('#webdav-browse-url').value = editUrl;
+
+      // handle click on the Use builtin server button.
+      if (this.isServerPluginInstalled) {
+        var useBuiltinServerBtn = element.querySelector('.webdav-builtin-server .webdav-use-builtin-btn');
+        goog.events.listen(useBuiltinServerBtn, goog.events.EventType.CLICK,
+          goog.bind(function() {
+            var processedUrl = this.processURL(webdavServerPluginUrl);
+            var urlInfo = {
+              type: 'FOLDER',
+              rootUrl: processedUrl
+            };
+            this.setUrlInfo(processedUrl, urlInfo);
+          }, this));
+      }
+
+      var prefferedHeight = this.isServerPluginInstalled ? 230 : 190;
+      this.dialog.setPreferredSize(null, prefferedHeight);
     }
-
-    element.innerHTML =
-      '<div class="webdav-config-dialog">' +
-      '<label>Server URL: <input id="webdav-browse-url" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
-      wevdavServerPluginContent +
-      '</div>';
-    element.querySelector('#webdav-browse-url').value = editUrl;
-
-    // handle click on the Use builtin server button.
-    if(this.isServerPluginInstalled) {
-      var useBuiltinServerBtn = element.querySelector('.webdav-builtin-server .webdav-use-builtin-btn');
-      goog.events.listen(useBuiltinServerBtn, goog.events.EventType.CLICK,
-        goog.bind(function(){
-          var processedUrl = this.processURL(webdavServerPluginUrl);
-          var urlInfo = {
-            type: 'FOLDER',
-            rootUrl: processedUrl
-          };
-          this.setUrlInfo(processedUrl, urlInfo);
-        }, this));
-    }
-
-    var prefferedHeight = this.isServerPluginInstalled ? 230 : 190;
-    this.dialog.setPreferredSize(null, prefferedHeight);
   };
 
   /** @override */
@@ -338,6 +370,10 @@
     var lastRootUrl = localStorage.getItem('webdav.latestRootUrl');
     if (!lastRootUrl && this.isServerPluginInstalled) {
       lastRootUrl = webdavServerPluginUrl;
+    }
+    // enforce
+    if(this.enforcedUrl) {
+      lastRootUrl = this.enforcedUrl;
     }
     return lastRootUrl;
   };
