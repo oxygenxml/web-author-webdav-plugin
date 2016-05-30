@@ -37,7 +37,7 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
     return "<div style='font-family:robotolight, Arial, Helvetica, sans-serif;font-size:0.85em;font-weight: lighter'>"
             + "<form style='text-align:left;line-height: 1.7em;'>"
               + "<label style='margin-bottom:6px;display:block;overflow:hidden'>"
-                + "<input name=\"lock_on_open\" type=\"checkbox\" value=\"on\"" + 
+                + "<input name='" + LOCKING_ENABLED + "' type=\"checkbox\" value=\"on\"" + 
                       (isLockEnabled ? "checked" : "") + "> Lock resources on open"
               + "</label>"
             + "</form>"
