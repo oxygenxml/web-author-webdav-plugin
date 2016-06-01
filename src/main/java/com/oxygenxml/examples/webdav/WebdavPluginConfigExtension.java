@@ -47,12 +47,16 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
               + "</label>"
 
               + "<label style='margin-top:6px;display:block;overflow:hidden'>"
-                + "Enforced URL: "
+                + "Imposed server: "
                 + "<input placeholder='Enforced URL' name='" + ENFORCED_URL
                 + "' type='text' style='color:#606060;background-color:#FAFAFA;"
                 + "-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;display: inline-block;"
                 + "width:75%;border-radius:4px;border:1px solid #E4E4E4;padding:6px 4px' value='" + enforcedUrl + "'/>"
               + "</label>"
+              + "<div style='background-color: lightyellow;border: 1px solid #dadab4; padding: 8px;margin-top: 5px;'>"
+              + "Note: Once a server is imposed the user will be able to browse only the enforced servers "
+              + "set in the above input or by other plugins thru the javascript API."
+              + "</div>"
             + "</form>"
           + "</div>";
   }
