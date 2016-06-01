@@ -171,6 +171,14 @@
       initialUrl: latestUrl,
       root: this.getLatestRootUrl()
     });
+    // enforced servers array.
+    this.enforcedServers = [];
+    var enforcedServer = sync.options.PluginsOptions.getClientOption('enforced_webdav_server');
+    if(enforcedServer) {
+      this.addEnforcedUrl(enforcedServer);
+    }
+    /** Declare a global method to register an enforced URL */
+    window.addEnforcedWebdavUrl = goog.bind(this.addEnforcedUrl, this);
 
     //  Wait for other plugins javscript to run and set variabled.
     setTimeout(goog.bind(function(){
@@ -179,9 +187,9 @@
       if(typeof webdavServerPluginUrl !== 'undefined' && webdavServerPluginUrl) {
         this.isServerPluginInstalled = true;
       }
-      // enforce the url if it is set.
-      if (window.webdav_connector_enforced_url) {
-        this.enforcedUrl = window.webdav_connector_enforced_url;
+
+      if(this.enforcedServers.length > 0) {
+        this.enforcedUrl = this.enforcedServers[0];
         this.setRootUrl(this.enforcedUrl);
         var initialUrl = localStorage.getItem('webdav.latestUrl');
         // if localstorage latest url is not from the enforced url we override it.
@@ -195,6 +203,17 @@
   };
   goog.inherits(WebdavFileBrowser, sync.api.FileBrowsingDialog);
 
+  /**
+   * Processes and adds the url to the enforced servers list.
+   *
+   * @param url the url to enforce.
+   */
+  WebdavFileBrowser.prototype.addEnforcedUrl = function(url) {
+    if(url) {
+      this.enforcedServers.push(this.processURL(url));
+    }
+  };
+
   /** @override */
   WebdavFileBrowser.prototype.renderRepoPreview = function(element) {
     var url = this.getCurrentFolderUrl();
@@ -205,10 +224,9 @@
         'background-image: url(' + sync.util.getImageUrl('/images/SharePointWeb16.png', sync.util.getHdpiFactor()) +
         ');vertical-align: middle"></div>' +
         new sync.util.Url(url).getDomain();
-
-      if(this.enforcedUrl) {
-        // repo editing is disabled for enforced repositories.
-      } else {
+      // add an edit button only of there are no enforced servers
+      // or there are more than one enforced server.
+      if(this.enforcedServers.length != 1) {
         content += '<div class="webdav-domain-edit"></div>';
       }
 
@@ -225,11 +243,21 @@
 
   /** @override */
   WebdavFileBrowser.prototype.renderRepoEditing = function(element) {
-    // repo editing enabled only of there is no enforced url.
-    if(this.enforcedUrl) {
-      // disable the repo editing
-      // this should never be the case as the edit button is disabled.
-      this.retrieveAllChildrenForUrl(this.enforcedUrl);
+    if(this.enforcedServers.length > 0) {
+      var dialogContent = '<div class="enforced-servers-config">' +
+        'Server URL: <select id="webdav-browse-url">';
+      var i;
+      for(i = 0; i < this.enforcedServers.length; i++) {
+        var serverUrl = this.enforcedServers[i];
+        if(serverUrl) {
+          dialogContent += '<option value="' + serverUrl + '" '
+          dialogContent += (serverUrl == localStorage.getItem('webdav.latestEnforcedURL') ? 'selected' : '') + '>';
+          dialogContent += serverUrl;
+          dialogContent += '</option>';
+        }
+      }
+      dialogContent += '</select></div>';
+      element.innerHTML = dialogContent;
     } else {
       var url = this.getCurrentFolderUrl();
       var latestUrl = this.getLatestUrl();
@@ -273,19 +301,25 @@
             this.setUrlInfo(processedUrl, urlInfo);
           }, this));
       }
-
-      var prefferedHeight = this.isServerPluginInstalled ? 230 : 190;
-      this.dialog.setPreferredSize(null, prefferedHeight);
     }
+    var prefferedHeight = this.isServerPluginInstalled && this.enforcedServers.length == 0 ? 230 : 190;
+    this.dialog.setPreferredSize(null, prefferedHeight);
   };
 
   /** @override */
   WebdavFileBrowser.prototype.handleOpenRepo = function(element, e) {
     var url = document.getElementById('webdav-browse-url').value;
+
     // if an url was provided we instantiate the file browsing dialog.
     if(url) {
-      var processedUrl = this.processURL(url);
-      this.requestUrlInfo_(processedUrl);
+      if(this.enforcedServers.length > 0) {
+        this.enforcedUrl = url;
+        this.setUrlInfo(url, {rootUrl: url});
+        localStorage.setItem('webdav.latestEnforcedURL', this.enforcedUrl);
+      } else {
+        var processedUrl = this.processURL(url);
+        this.requestUrlInfo_(processedUrl);
+      }
     }
     e.preventDefault();
   };
@@ -312,11 +346,9 @@
   WebdavFileBrowser.prototype.handleUrlInfoReceived = function (url, e) {
     var request = /** {@type goog.net.XhrIo} */ (e.target);
     var status = request.getStatus();
-
     if (status == 200) {
       var info = request.getResponseJson();
       this.setUrlInfo(url, info);
-
     } else if (status == 401) {
       login(goog.bind(this.requestUrlInfo_, this, url));
     } else {
@@ -367,13 +399,9 @@
    * @return {string} the latest root url.
    */
   WebdavFileBrowser.prototype.getLatestRootUrl = function() {
-    var lastRootUrl = localStorage.getItem('webdav.latestRootUrl');
+    var lastRootUrl = this.enforcedUrl || localStorage.getItem('webdav.latestRootUrl');
     if (!lastRootUrl && this.isServerPluginInstalled) {
       lastRootUrl = webdavServerPluginUrl;
-    }
-    // enforce
-    if(this.enforcedUrl) {
-      lastRootUrl = this.enforcedUrl;
     }
     return lastRootUrl;
   };
