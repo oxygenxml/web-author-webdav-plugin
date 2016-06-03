@@ -47,12 +47,10 @@
       if (loggedInUser) {
         e.options.userName = loggedInUser;
       }
+      // set the workspace UrlChooser
+      workspace.setUrlChooser(fileBrowser);
 
-      goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function(e) {
-        workspace.setUrlChooser(fileBrowser);
-      });
-
-        // The editor is about to be loaded.
+      // The editor is about to be loaded.
       var editor = e.editor;
 
       // Register the toolbar actions.
