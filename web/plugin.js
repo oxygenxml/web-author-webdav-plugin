@@ -185,17 +185,30 @@
       if(typeof webdavServerPluginUrl !== 'undefined' && webdavServerPluginUrl) {
         this.isServerPluginInstalled = true;
       }
-
       if(this.enforcedServers.length > 0) {
-        this.enforcedUrl = this.enforcedServers[0];
-        this.setRootUrl(this.enforcedUrl);
+        this.enforcedUrl = null;
         var initialUrl = localStorage.getItem('webdav.latestUrl');
-        // if localstorage latest url is not from the enforced url we override it.
-        if (!(initialUrl && initialUrl.startsWith(this.enforcedUrl))) {
-          initialUrl = this.enforcedUrl;
-          localStorage.setItem('webdav.latestUrl', this.enforcedUrl);
+        var i = 0;
+        // try to determine the initial enforced url.
+        for(i = 0; i < this.enforcedServers.length; i++) {
+          if (initialUrl && initialUrl.startsWith(this.enforcedServers[i])) {
+            this.enforcedUrl = this.enforcedServers[i];
+            break;
+          }
         }
-        this.setInitialUrl_(initialUrl);
+        // no default was determined and we have only one enforcedUrl
+        if(!this.enforcedUrl && this.enforcedServers.length == 1) {
+          this.enforcedUrl = this.enforcedServers[0];
+          initialUrl = this.enforcedUrl;
+        }
+        // enforce detected URL.
+        if(this.enforcedUrl) {
+          this.setRootUrl(this.enforcedUrl);
+          this.setInitialUrl_(initialUrl);
+          this.candidateUrl = initialUrl;
+          localStorage.setItem('webdav.latestRootUrl', this.enforcedUrl);
+          localStorage.setItem('webdav.latestUrl', initialUrl);
+        }
       }
     }, this), 0);
   };
