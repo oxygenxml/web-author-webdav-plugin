@@ -231,7 +231,8 @@
     if (url) {
       element.style.paddingLeft = '5px';
       element.title = "Server URL";
-      var content = '<div class="domain-icon" style="' +
+      var content = '<div class="webdav-repo-preview">' +
+        '<div class="domain-icon" style="' +
         'background-image: url(' + sync.util.getImageUrl('/images/SharePointWeb16.png', sync.util.getHdpiFactor()) +
         ');vertical-align: middle"></div>' +
         new sync.util.Url(url).getDomain();
@@ -240,7 +241,7 @@
       if(this.enforcedServers.length != 1) {
         content += '<div class="webdav-domain-edit"></div>';
       }
-
+      content += '</div>'
       element.innerHTML = content;
       var button = element.querySelector('.webdav-domain-edit');
       if(button) {

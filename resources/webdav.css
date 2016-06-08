@@ -27,10 +27,8 @@
     height: 20px;
     margin: 0 0 0 10px;
     vertical-align: middle;
-}
-.webdav-domain-edit:hover {
-    background-color: lightgrey;
-    border-color: #ccc;
+    border: 1px solid transparent;
+    border-radius: 2px;
 }
 
 .webdav-builtin-server {
@@ -66,4 +64,18 @@
 
 .enforced-servers-config #webdav-browse-url {
     width: 70%;
+}
+
+.webdav-repo-preview {
+    display: inline-block;
+}
+
+.webdav-repo-preview:hover .webdav-domain-edit {
+    background-color: #e6e6e6;
+}
+
+.webdav-repo-preview:hover .webdav-domain-edit:hover {
+    background-color: #dbdbdb;
+    border-color: #b8b8b8;
+    cursor: pointer;
 }
