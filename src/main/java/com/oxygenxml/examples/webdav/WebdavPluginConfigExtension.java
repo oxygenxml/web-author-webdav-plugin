@@ -1,8 +1,8 @@
 package com.oxygenxml.examples.webdav;
 
-import javax.servlet.ServletException;
+import java.util.HashMap;
 
-import com.google.common.collect.ImmutableMap;
+import javax.servlet.ServletException;
 
 import ro.sync.ecss.extensions.api.webapp.plugin.PluginConfigExtension;
 
@@ -21,7 +21,11 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
   @Override
   public void init() throws ServletException {
     super.init();
-    setDefaultOptions(ImmutableMap.of(LOCKING_ENABLED, "on"));
+    HashMap<String, String> defaultOptions = new HashMap<String, String>();
+    defaultOptions.put(LOCKING_ENABLED, "on");
+    defaultOptions.put(ENFORCED_URL, "");
+    
+    setDefaultOptions(defaultOptions);
   }
   
   @Override
@@ -55,7 +59,7 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
               + "</label>"
               + "<div style='background-color: lightyellow;border: 1px solid #dadab4; padding: 8px;margin-top: 5px;'>"
               + "Note: Once a server is imposed the user will be able to browse only the enforced servers "
-              + "set in the above input or by other plugins thru the javascript API."
+              + "set in the above input or by other plugins through the javascript API."
               + "</div>"
             + "</form>"
           + "</div>";
