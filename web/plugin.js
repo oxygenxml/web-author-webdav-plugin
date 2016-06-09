@@ -191,7 +191,7 @@
         var i = 0;
         // try to determine the initial enforced url.
         for(i = 0; i < this.enforcedServers.length; i++) {
-          if (initialUrl && initialUrl.startsWith(this.enforcedServers[i])) {
+          if (initialUrl && initialUrl.indexOf(this.enforcedServers[i]) == 0) {
             this.enforcedUrl = this.enforcedServers[i];
             break;
           }
