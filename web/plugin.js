@@ -165,9 +165,19 @@
    */
   var WebdavFileBrowser = function() {
     var latestUrl = this.getLatestUrl();
+    var latestRootUrl = this.getLatestRootUrl();
+    var currDocUrl = decodeURIComponent(sync.util.getURLParameter('url'));
+
+    // if the current root and url are not set we use
+    // the current document url.
+    if(!latestUrl && !latestRootUrl && currDocUrl) {
+      this.requestUrlInfo_(currDocUrl,
+        goog.bind(this.setUrlInfo, this));
+    }
+
     sync.api.FileBrowsingDialog.call(this, {
       initialUrl: latestUrl,
-      root: this.getLatestRootUrl()
+      root: latestRootUrl
     });
     // enforced servers array.
     this.enforcedServers = [];
@@ -310,7 +320,7 @@
               type: 'FOLDER',
               rootUrl: processedUrl
             };
-            this.setUrlInfo(processedUrl, urlInfo);
+            this.openUrlInfo(processedUrl, urlInfo);
           }, this));
       }
     }
@@ -326,7 +336,7 @@
     if(url) {
       if(this.enforcedServers.length > 0) {
         this.enforcedUrl = url;
-        this.setUrlInfo(url, {rootUrl: url});
+        this.openUrlInfo(url, {rootUrl: url});
         localStorage.setItem('webdav.latestEnforcedURL', this.enforcedUrl);
       } else {
         var processedUrl = this.processURL(url);
@@ -340,29 +350,34 @@
    * Request the URL info from the server.
    *
    * @param {string} url The URL about which we ask for information.
+   * @param {function} opt_callback callback method to replace the openUrlInfo method.
    *
    * @private
    */
-  WebdavFileBrowser.prototype.requestUrlInfo_ = function (url) {
+  WebdavFileBrowser.prototype.requestUrlInfo_ = function (url, opt_callback) {
+    var callback = opt_callback || goog.bind(this.openUrlInfo, this);
+
     goog.net.XhrIo.send(
       '../plugins-dispatcher/webdav-url-info?url=' + encodeURIComponent(url),
-      goog.bind(this.handleUrlInfoReceived, this, url));
+      goog.bind(this.handleUrlInfoReceived, this, url, callback));
   };
 
   /**
    * URL information received from the server, we can open that URL in the dialog.
    *
    * @param {string} url The URL about which we requested info.
+   * @param {function} callback the callback method.
+   *
    * @param {goog.events.Event} e The XHR event.
    */
-  WebdavFileBrowser.prototype.handleUrlInfoReceived = function (url, e) {
+  WebdavFileBrowser.prototype.handleUrlInfoReceived = function (url, callback, e) {
     var request = /** {@type goog.net.XhrIo} */ (e.target);
     var status = request.getStatus();
     if (status == 200) {
       var info = request.getResponseJson();
-      this.setUrlInfo(url, info);
+      callback(url, info);
     } else if (status == 401) {
-      login(goog.bind(this.requestUrlInfo_, this, url));
+      login(goog.bind(this.requestUrlInfo_, this, url, callback));
     } else {
       this.showErrorMessage('Cannot open this URL');
     }
@@ -370,25 +385,39 @@
 
 
   /**
-   * Sets the information received about the url.
+   * Opens the url and sets it's url info.
    *
+   * @param url the url to open.
    * @param info the available url information.
+   *
    */
-  WebdavFileBrowser.prototype.setUrlInfo = function(url, info) {
+  WebdavFileBrowser.prototype.openUrlInfo = function(url, info) {
     var isFile = info.type === 'FILE';
     // Make sure folder urls end with '/'.
     if (!isFile && url.lastIndexOf('/') !== url.length - 1) {
       url = url + '/';
     }
 
+    this.setUrlInfo(url, info);
+    this.openUrl(url, isFile, null);
+  }
+
+  /**
+   * Sets the information received about the url.
+   *
+   * @param url the url whose info to set.
+   * @param info the available url information.
+   *
+   */
+  WebdavFileBrowser.prototype.setUrlInfo = function(url, info) {
     var rootUrl = this.processURL(info.rootUrl);
     var urlObj = new sync.util.Url(url);
     localStorage.setItem('webdav.latestUrl', urlObj.getFolderUrl());
     localStorage.setItem('webdav.latestRootUrl', rootUrl);
 
     this.setRootUrl(rootUrl);
-    this.openUrl(url, isFile, null);
-  }
+  };
+
   /**
    * Further processes the url.
    *
