@@ -482,11 +482,13 @@
   registerFileBrowserListeners(fileBrowser);
   goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function(e) {
     var currDocUrl = e.editor.getUrl();
-    // if the current root and url are not set we use the current document url.
 
-    if (!fileBrowser.getLatestUrl() && !fileBrowser.getLatestRootUrl() && currDocUrl) {
-      fileBrowser.requestUrlInfo_(currDocUrl,
-        goog.bind(fileBrowser.setUrlInfo, fileBrowser));
+    // if the current root and url are not set we use the current document url.
+    if (currDocUrl && currDocUrl.match(/^webdav-https?:/)) {
+      if (!fileBrowser.getLatestUrl() && !fileBrowser.getLatestRootUrl()) {
+        fileBrowser.requestUrlInfo_(currDocUrl,
+          goog.bind(fileBrowser.setUrlInfo, fileBrowser));
+      }
     }
   });
 
