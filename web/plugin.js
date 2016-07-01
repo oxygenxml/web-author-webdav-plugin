@@ -1,25 +1,29 @@
 (function(){
 
+
   /**
    * Login the user and call this callback at the end.
    *
    * @param {function} authenticated The callback when the user was authenticated - successfully or not.
    */
+  var loginDialog_ = null;
   function login(authenticated) {
     localStorage.removeItem('webdav.user');
 
     // pop-up an authentication window,
-    var dialog1 = workspace.createDialog();
-    dialog1.getElement().innerHTML =
-      '<div class="webdav-login-dialog">' +
-      '<label>Name: <input id="webdav-name" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
-      '<label>Password: <input id="webdav-passwd" type="password"/></label>' +
-      '</div>';
-    dialog1.setTitle('Authentication Required');
-    dialog1.setPreferredSize(300, null);
-    dialog1.show();
+    if (!loginDialog_) {
+      loginDialog_ = workspace.createDialog();
+      loginDialog_.getElement().innerHTML =
+        '<div class="webdav-login-dialog">' +
+        '<label>Name: <input id="webdav-name" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
+        '<label>Password: <input id="webdav-passwd" type="password"/></label>' +
+        '</div>';
+      loginDialog_.setTitle('Authentication Required');
+      loginDialog_.setPreferredSize(300, null);
+    }
 
-    dialog1.onSelect(function (key) {
+    loginDialog_.show();
+    loginDialog_.onSelect(function (key) {
       if (key == 'ok') {
         // Send the user and password to the login servlet which runs in the webapp.
         var user = document.getElementById('webdav-name').value;
@@ -32,7 +36,6 @@
           },
           'POST');
       }
-      dialog1.dispose();
     });
   }
 
