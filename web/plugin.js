@@ -486,7 +486,7 @@
 
     if (!fileBrowser.getLatestUrl() && !fileBrowser.getLatestRootUrl() && currDocUrl) {
       fileBrowser.requestUrlInfo_(currDocUrl,
-        goog.bind(this.setUrlInfo, this));
+        goog.bind(fileBrowser.setUrlInfo, fileBrowser));
     }
   });
 
