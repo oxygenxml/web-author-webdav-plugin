@@ -1,6 +1,4 @@
-(function(){
-
-
+(function() {
   /**
    * Login the user and call this callback at the end.
    *
@@ -42,9 +40,6 @@
   goog.events.listen(workspace, sync.api.Workspace.EventType.BEFORE_EDITOR_LOADED, function(e) {
     var url = e.options.url;
     // If the URL starts with http:, use thw webdav protocol handler.
-
-    e.options.url = url;
-
     if (url.match(/^webdav-https?:/)) {
       var loggedInUser = localStorage.getItem('webdav.user');
       if (loggedInUser) {
@@ -62,6 +57,7 @@
         var logoutActionId = 'WebDAV/Logout';
         editor.getActionsManager().registerAction(logoutActionId, logoutAction);
         var toolbar = e.actionsConfiguration.toolbars[0];
+
         var moreMenu = toolbar.children[toolbar.children.length - 1];
         moreMenu.children.push(
           {id: logoutActionId, type: "action"}
@@ -98,7 +94,7 @@
   });
 
   /**
-   * The Log out action for Github
+   * The Log out action for WebDAV
    *
    * @constructor
    */
@@ -350,7 +346,6 @@
    */
   WebdavFileBrowser.prototype.requestUrlInfo_ = function (url, opt_callback) {
     var callback = opt_callback || goog.bind(this.openUrlInfo, this);
-
     goog.net.XhrIo.send(
       '../plugins-dispatcher/webdav-url-info?url=' + encodeURIComponent(url),
       goog.bind(this.handleUrlInfoReceived, this, url, callback));

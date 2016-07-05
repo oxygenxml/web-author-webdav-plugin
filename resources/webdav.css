@@ -78,3 +78,13 @@
     border-color: grey;
     cursor: pointer;
 }
+
+.autosave-status-icon {
+    width: 12px;
+    height: 12px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}

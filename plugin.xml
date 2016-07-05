@@ -12,7 +12,6 @@
  <runtime>
   <librariesFolder name="lib"/>
  </runtime>
- 
  <extension type="URLHandler" 
   class="com.oxygenxml.examples.webdav.WebdavURLHandlerExtension"/>
  <extension type="WebappServlet" 
