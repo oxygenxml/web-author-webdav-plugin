@@ -43,6 +43,6 @@ The autosave **visual feedback** depends on the autosave interval and has two fe
 
 Imposed URLs
 -------------------
-The **Imposed URLs** feature represents a list of **enforced URLs** that a user can browse. Once the connector has a list of imposed URLs, the user can only browse repositories from that list and the repo editing mode shows a non-editable drop-down list of the enforced urls for the user to choose from. If the imposed URLs list contains only one URL, the repository edit button is no longer displayed and that URL is automatically as the current repository.
+The **Imposed URLs** feature represents a list of **enforced URLs** that a user can browse. Once the connector has a list of imposed URLs, the user can only browse repositories from that list and the repo editing mode shows a non-editable drop-down list of the enforced urls for the user to choose from. If the imposed URLs list contains only one URL, the repository edit button is no longer displayed and that URL is automatically as the current repository.  
 The administrator can configure an **imposed URL** on the plugin's settings page and other plugins can contribute URLs to this list by calling the **addEnforcedWebdavUrl(enforcedURL)** global method that the *WebDAV Connector* exposes.
 
