@@ -69,8 +69,8 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
       .append("</label>");
     // enforced URL
     optionsForm.append("<label style='margin-top:6px;display:block;overflow:hidden'>")
-      .append("Imposed server: ")
-      .append("<input placeholder='Enforced URL' name='").append(ENFORCED_URL)
+      .append("Enforced server: ")
+      .append("<input placeholder='Server URL' name='").append(ENFORCED_URL)
       .append("' type='text' style='color:#606060;background-color:#FAFAFA;")
       .append(
         "-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;display: inline-block;")
@@ -79,8 +79,8 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
       .append("</label>");
     // Enforced server note
     optionsForm.append("<div style='background-color: lightyellow;border: 1px solid #dadab4; padding: 8px;margin-top: 5px;'>")
-      .append("Note: Once a server is imposed, the user will only be able to browse the enforced servers that are ")
-      .append("either set in the above input or added by other plugins.")
+      .append("Note: Once a server is enforced, the user will only be able to browse this enforced server. ")
+      .append("However, it is possible for other plugins to add more enforced servers for the user to choose from.")
       .append("</div>");
     
     optionsForm.append("</form>")
