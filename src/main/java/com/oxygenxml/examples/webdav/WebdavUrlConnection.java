@@ -113,12 +113,36 @@ public class WebdavUrlConnection extends FilterURLConnection
         } catch (Exception ex) {
           Closeables.closeQuietly(errorStream);
         }
-        if (serverMessage != null && !serverMessage.contains("<body") && !serverMessage.contains("</body")) {
+        if (shouldDisplayServerMessage(serverMessage)) {
           throw new IOException(serverMessage, e);
         }
       }
       throw e;
     }
+  }
+
+  /**
+   * Decide whether to display the message returned by the WebDAV server.
+   * 
+   * @param serverMessage The server message.
+   * 
+   * @return <code>true</code> if we should display the server message.
+   */
+  private boolean shouldDisplayServerMessage(String serverMessage) {
+    if (serverMessage == null) {
+      return false;
+    }
+
+    if (serverMessage.contains("<body") || serverMessage.contains("</body")) {
+      return false;
+    }
+
+    // box.com returns an XML description of the error - do not show that description.
+    if (serverMessage.contains("<?xml")) {
+      return false;
+    }
+    
+    return true;
   }
 
 }
