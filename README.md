@@ -31,3 +31,18 @@ The entire authentication failure handling should be implemented on the client-s
 The implementation can be found in the `plugin.js` file from the `app/` folder in the webapp `.war`.
 
 The URL that needs to be passed to the webapp is the WebDAV URL, prefixed with `webdav-` (e.g. `webdav-https://webdav-server.com/file.xml`).
+
+Automatic save
+----------------------
+
+The **automatic save** capability can be configured from the administrator interface by setting an autosave interval greater than 0 (the initial value is 5 seconds). The interval represents the time between a change being made to the document and when the changes are automatically saved.
+The autosave **visual feedback** depends on the autosave interval and has two feedback modes:
+* **5 seconds or less** - The *Save* action is hidden and the autosave status is displayed in header to the right of the document name.
+* **More than 5 seconds** - The *Save* action is available on the toolbar and when the autosave is triggered, a spinner is displayed over the toolbar button during the save process and the *Save* action button is disabled until more changes are made in the document.
+
+
+Imposed URLs
+-------------------
+The **Imposed URLs** feature represents a list of **enforced URLs** that a user can browse. Once the connector has a list of imposed URLs, the user can only browse repositories from that list and the repo editing mode shows a non-editable drop-down list of the enforced urls for the user to choose from. If the imposed URLs list contains only one URL, the repository edit button is no longer displayed and that URL is automatically as the current repository.  
+The administrator can configure an **imposed URL** on the plugin's settings page and other plugins can contribute URLs to this list by calling the **addEnforcedWebdavUrl(enforcedURL)** global method that the *WebDAV Connector* exposes.
+
