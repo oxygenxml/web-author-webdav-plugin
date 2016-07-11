@@ -79,12 +79,20 @@
     cursor: pointer;
 }
 
-.autosave-status-icon {
-    width: 12px;
-    height: 12px;
-    border: 1px solid transparent;
-    border-radius: 6px;
-    position: absolute;
-    top: 0px;
-    right: 0px;
+.autosave {
+    height: 16px;
+    margin-left: 5px;
+    color: #c0c3c5;
+    cursor: pointer;
+}
+
+.autosave-status-dirty {
+    font-size: 25px;
+    vertical-align: top;
+}
+
+.autosave-failed-save-as,
+.autosave-failed-download {
+    font-weight: bold;
+    text-decoration: none;
 }
