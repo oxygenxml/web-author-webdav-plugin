@@ -480,7 +480,9 @@
 
     // if the current root and url are not set we use the current document url.
     if (currDocUrl && currDocUrl.match(/^webdav-https?:/)) {
-      if (!fileBrowser.getLatestUrl() && !fileBrowser.getLatestRootUrl()) {
+      var lastRootUrl = localStorage.getItem('webdav.latestRootUrl')
+      // If the latest root url is not a parent of the current document url, we need to compute the root url.
+      if (!lastRootUrl || currDocUrl.indexOf(lastRootUrl) === -1) {
         fileBrowser.requestUrlInfo_(currDocUrl,
           goog.bind(fileBrowser.setUrlInfo, fileBrowser));
       }
