@@ -11,6 +11,7 @@
  class="com.oxygenxml.examples.webdav.WebdavPlugin">
  <runtime>
   <librariesFolder name="lib"/>
+  <library name="target/classes"/>
  </runtime>
  <extension type="URLHandler" 
   class="com.oxygenxml.examples.webdav.WebdavURLHandlerExtension"/>
