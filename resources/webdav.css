@@ -86,11 +86,6 @@
     cursor: pointer;
 }
 
-.autosave-status-dirty {
-    font-size: 25px;
-    vertical-align: top;
-}
-
 .autosave-failed-save-as,
 .autosave-failed-download {
     font-weight: bold;
