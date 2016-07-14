@@ -100,7 +100,7 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
   @Override
   public String getOptionsJson() {
     return "{"
-        + "\"webdav_autosave_interval\":\"" + getOption(AUTOSAVE_INTERVAL, "0") + "\","
+        + "\"webdav_autosave_interval\":\"" + getOption(AUTOSAVE_INTERVAL, defaultAutoSaveInterval) + "\","
         + "\"enforced_webdav_server\":\"" + getOption(ENFORCED_URL, "") + "\"," 
         + "\"lock_on_open\":\"" + getOption(LOCKING_ENABLED, "on")
         + "\"}";
