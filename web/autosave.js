@@ -11,7 +11,6 @@
   var SaveWrapperAction = function(editor, saveAction, saveInterval) {
     sync.actions.AbstractAction.call('');
     this.statusMarker = document.querySelector('.modified-indicator');
-    goog.dom.classlist.add(this.statusMarker, 'autosave');
     this.saveAction = saveAction;
     this.editor = editor;
     this.interval = saveInterval;
@@ -104,9 +103,6 @@
         case 'dirty':
           goog.dom.classlist.remove(this.statusMarker, this.lastClassAdded);
           this.lastClassAdded = 'autosave-status-dirty';
-          goog.dom.classlist.add(this.statusMarker, this.lastClassAdded);
-          this.statusMarker.innerHTML = '*';
-          this.statusMarker.title = 'The document contains unsaved changes.';
 
           break;
         case 'saving':

@@ -79,16 +79,14 @@
     cursor: pointer;
 }
 
-.autosave {
+.autosave-status-clean,
+.autosave-status-saving,
+.autosave-status-error {
     height: 16px;
     margin-left: 5px;
     color: #c0c3c5;
     cursor: pointer;
-}
-
-.autosave-status-dirty {
-    font-size: 25px;
-    vertical-align: top;
+    vertical-align: initial;
 }
 
 .autosave-failed-save-as,
