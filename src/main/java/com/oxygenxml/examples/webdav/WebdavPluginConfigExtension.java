@@ -56,14 +56,14 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
     optionsForm.append("<div style='font-family:robotolight, Arial, Helvetica, sans-serif;font-size:0.85em;font-weight: lighter'>")
       .append("<form style='text-align:left;line-height: 1.7em;'>");
     // locking option
-    optionsForm.append("<label style='margin-bottom:6px;display:block;overflow:hidden'>")
+    optionsForm.append("<label style='margin-bottom:6px;overflow:hidden'>")
       .append("<input name='").append(LOCKING_ENABLED).append("' type=\"checkbox\" value=\"on\"")
       .append((isLockEnabled ? "checked" : "")).append("> Lock resources on open")
       .append("</label>");
     // autosave interval
     optionsForm.append("<label style='margin-top:6px;display:block;overflow:hidden'>")
       .append("Autosave interval :")
-      .append("<input value='").append(autosaveInterval).append("'name='").append(AUTOSAVE_INTERVAL).append("' type='number'")
+      .append("<input min='0' value='").append(autosaveInterval).append("'name='").append(AUTOSAVE_INTERVAL).append("' type='number'")
       .append("style='width: 50px;'/>")
       .append(" seconds")
       .append("</label>");
