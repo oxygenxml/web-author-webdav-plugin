@@ -82,11 +82,9 @@
 .autosave-status-clean,
 .autosave-status-saving,
 .autosave-status-error {
-    height: 16px;
     margin-left: 5px;
     color: #c0c3c5;
     cursor: pointer;
-    vertical-align: initial;
 }
 
 .autosave-failed-save-as,
