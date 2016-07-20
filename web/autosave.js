@@ -109,7 +109,7 @@
           goog.dom.classlist.remove(this.statusMarker, this.lastClassAdded);
           this.lastClassAdded = 'autosave-status-saving';
           goog.dom.classlist.add(this.statusMarker, this.lastClassAdded);
-          this.statusMarker.innerHTML = 'saving...';
+          this.statusMarker.innerHTML = ' - saving...';
           this.statusMarker.title = 'Saving your changes.';
 
           break;

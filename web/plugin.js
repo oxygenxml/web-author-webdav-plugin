@@ -403,8 +403,8 @@
     var urlObj = new sync.util.Url(url);
     localStorage.setItem('webdav.latestUrl', urlObj.getFolderUrl());
     localStorage.setItem('webdav.latestRootUrl', rootUrl);
-
     this.setRootUrl(rootUrl);
+    this.setInitialUrl_(url);
   };
 
   /**
@@ -480,7 +480,7 @@
 
     // if the current root and url are not set we use the current document url.
     if (currDocUrl && currDocUrl.match(/^webdav-https?:/)) {
-      var lastRootUrl = localStorage.getItem('webdav.latestRootUrl')
+      var lastRootUrl = localStorage.getItem('webdav.latestRootUrl');
       // If the latest root url is not a parent of the current document url, we need to compute the root url.
       if (!lastRootUrl || currDocUrl.indexOf(lastRootUrl) === -1) {
         fileBrowser.requestUrlInfo_(currDocUrl,
