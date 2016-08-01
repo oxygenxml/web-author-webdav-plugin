@@ -24,7 +24,7 @@
     loginDialog_.onSelect(function (key) {
       if (key == 'ok') {
         // Send the user and password to the login servlet which runs in the webapp.
-        var user = document.getElementById('webdav-name').value;
+        var user = document.getElementById('webdav-name').value.trim();
         var passwd = document.getElementById('webdav-passwd').value;
         goog.net.XhrIo.send(
           '../plugins-dispatcher/login?user=' + encodeURIComponent(user) + "&passwd=" + encodeURIComponent(passwd),
@@ -320,7 +320,7 @@
 
   /** @override */
   WebdavFileBrowser.prototype.handleOpenRepo = function(element, e) {
-    var url = document.getElementById('webdav-browse-url').value;
+    var url = document.getElementById('webdav-browse-url').value.trim();
 
     // if an url was provided we instantiate the file browsing dialog.
     if(url) {
