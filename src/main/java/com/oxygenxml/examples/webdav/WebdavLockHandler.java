@@ -68,10 +68,9 @@ public class WebdavLockHandler extends LockHandlerWithContext {
     WebdavLockHelper lockHelper = new WebdavLockHelper();
 
     PasswordAuthentication passwordAuthentication = WebdavUrlStreamHandler.credentials.getIfPresent(sessionId);
-    if (passwordAuthentication != null) {
-      lockHelper.setLockOwner(sessionId, passwordAuthentication.getUserName());
-    }
-
+    String userName = passwordAuthentication != null ? passwordAuthentication.getUserName() : "Anonymous";
+    lockHelper.setLockOwner(sessionId, userName);
+    
     lockHelper.updateLock(sessionId, url, timeoutSeconds);
   }
 
