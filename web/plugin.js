@@ -21,7 +21,7 @@
     }
 
     loginDialog_.show();
-    loginDialog_.onSelect(function (key) {
+    loginDialog_.onSelect(function(key) {
       if (key == 'ok') {
         // Send the user and password to the login servlet which runs in the webapp.
         var user = document.getElementById('webdav-name').value.trim();
@@ -30,6 +30,8 @@
           '../plugins-dispatcher/login?user=' + encodeURIComponent(user) + "&passwd=" + encodeURIComponent(passwd),
           function () {
             localStorage.setItem('webdav.user', user);
+
+            fileBrowser.username = user;
             authenticated();
           },
           'POST');
@@ -116,7 +118,7 @@
 
       var dialogHtml = '<div><div>';
       dialogHtml += 'Are you sure you want to log-out? ';
-      if (this.editor.isDirty()) {
+      if (this.editor && this.editor.isDirty()) {
         dialogHtml += '<b>All your unsaved changes will be lost</b>'
       }
       dialogHtml += '</div></div>';
@@ -142,7 +144,9 @@
             localStorage.removeItem('webdav.latestUrl');
             localStorage.removeItem('webdav.latestRootUrl');
             localStorage.removeItem('webdav.user');
-            this.editor.setDirty(false);
+            this.editor && this.editor.setDirty(false);
+            // if we are editing we go to dashboard.
+            sync.util.setUrlParameter('url');
             window.location.reload();
           }, this),
           'POST');
@@ -227,6 +231,8 @@
 
   /** @override */
   WebdavFileBrowser.prototype.renderRepoPreview = function(element) {
+    this.renderLogoutButton(element);
+
     var url = this.getCurrentFolderUrl();
     if (url) {
       element.style.paddingLeft = '5px';
@@ -255,6 +261,8 @@
 
   /** @override */
   WebdavFileBrowser.prototype.renderRepoEditing = function(element) {
+    //this.renderLogoutButton(element);
+
     if(this.enforcedServers.length > 0) {
       var dialogContent = '<div class="enforced-servers-config">' +
         'Server URL: <select id="webdav-browse-url">';
@@ -334,6 +342,35 @@
       }
     }
     e.preventDefault();
+  };
+
+  /**
+   * Renders the logout button on the dialog title bar.
+   *
+   * @param dialogChild a child of the dialog element from which
+   * we can start the search for the title bar.
+   */
+  WebdavFileBrowser.prototype.renderLogoutButton = function(dialogChild) {
+    if(!this.renderedLogoutButton) {
+      var dialogTitleBar = (new goog.dom.DomHelper())
+        .getAncestorByClass(dialogChild, 'modal-dialog')
+        .querySelector('.modal-dialog-title-text');
+      var logoutContainer = document.createElement('div');
+      goog.dom.classlist.add(logoutContainer, 'webdav-logout-container');
+      logoutContainer.innerHTML = 'Logout <span class="webdav-username">' +
+        (this.username || localStorage.getItem('webdav.user') || '') + '</span>';
+      dialogTitleBar.appendChild(logoutContainer);
+
+      goog.events.listen(logoutContainer,
+        goog.events.EventType.CLICK,
+        function() {
+          (new LogOutAction()).actionPerformed();
+        },
+        false,
+        this)
+      // mark that the button has been rendered
+      this.renderedLogoutButton = true;
+    }
   };
 
   /**

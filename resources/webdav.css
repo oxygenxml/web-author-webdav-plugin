@@ -92,3 +92,21 @@
     font-weight: bold;
     text-decoration: none;
 }
+
+.webdav-logout-container {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    padding: 2px 5px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.webdav-logout-container:hover {
+    border-color: lightgrey;
+}
+
+.webdav-logout-container .webdav-username {
+    color: #cccccc;
+}
