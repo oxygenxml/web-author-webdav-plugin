@@ -231,7 +231,7 @@
 
   /** @override */
   WebdavFileBrowser.prototype.renderRepoPreview = function(element) {
-    this.renderLogoutButton(element);
+    this.renderTitleBarLogoutButton(element);
 
     var url = this.getCurrentFolderUrl();
     if (url) {
@@ -261,8 +261,6 @@
 
   /** @override */
   WebdavFileBrowser.prototype.renderRepoEditing = function(element) {
-    //this.renderLogoutButton(element);
-
     if(this.enforcedServers.length > 0) {
       var dialogContent = '<div class="enforced-servers-config">' +
         'Server URL: <select id="webdav-browse-url">';
@@ -350,15 +348,20 @@
    * @param dialogChild a child of the dialog element from which
    * we can start the search for the title bar.
    */
-  WebdavFileBrowser.prototype.renderLogoutButton = function(dialogChild) {
+  WebdavFileBrowser.prototype.renderTitleBarLogoutButton = function(dialogChild) {
     if(!this.renderedLogoutButton) {
       var dialogTitleBar = (new goog.dom.DomHelper())
         .getAncestorByClass(dialogChild, 'modal-dialog')
         .querySelector('.modal-dialog-title-text');
       var logoutContainer = document.createElement('div');
       goog.dom.classlist.add(logoutContainer, 'webdav-logout-container');
-      logoutContainer.innerHTML = 'Logout <span class="webdav-username">' +
-        (this.username || localStorage.getItem('webdav.user') || '') + '</span>';
+      logoutContainer.innerHTML = 'Logout ';
+
+      var usernameSpan = document.createElement('span');
+      goog.dom.classlist.add(usernameSpan, 'webdav-username');
+      usernameSpan.textContent = this.username || localStorage.getItem('webdav.user') || '';
+      logoutContainer.appendChild(usernameSpan);
+
       dialogTitleBar.appendChild(logoutContainer);
 
       goog.events.listen(logoutContainer,
