@@ -351,8 +351,8 @@
   WebdavFileBrowser.prototype.renderTitleBarLogoutButton = function(dialogChild) {
     if(!this.renderedLogoutButton) {
       var dialogTitleBar = (new goog.dom.DomHelper())
-        .getAncestorByClass(dialogChild, 'modal-dialog')
-        .querySelector('.modal-dialog-title-text');
+        .getAncestorByClass(dialogChild, 'modal-dialog');
+
       var logoutContainer = document.createElement('div');
       goog.dom.classlist.add(logoutContainer, 'webdav-logout-container');
       logoutContainer.innerHTML = 'Logout ';
