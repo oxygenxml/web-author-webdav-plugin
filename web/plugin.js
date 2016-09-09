@@ -349,7 +349,7 @@
    * we can start the search for the title bar.
    */
   WebdavFileBrowser.prototype.renderTitleBarLogoutButton = function(dialogChild) {
-    if(!this.renderedLogoutButton) {
+    if(!this.renderedLogoutButton  && !sync.util.getURLParameter('url')) {
       var dialogTitleBar = (new goog.dom.DomHelper())
         .getAncestorByClass(dialogChild, 'modal-dialog');
 
