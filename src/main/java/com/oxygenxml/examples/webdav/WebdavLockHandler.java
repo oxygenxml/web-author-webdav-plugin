@@ -72,7 +72,7 @@ public class WebdavLockHandler extends LockHandlerWithContext {
     
     PasswordAuthentication passwordAuthentication = null;
     if(credentialsMap != null) {
-      credentialsMap.get(serverId);
+      passwordAuthentication = credentialsMap.get(serverId);
     }
     String userName = passwordAuthentication != null ? passwordAuthentication.getUserName() : "Anonymous";
     lockHelper.setLockOwner(sessionId, userName);
