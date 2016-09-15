@@ -2,6 +2,8 @@ package com.oxygenxml.examples.webdav;
 
 import java.io.IOException;
 import java.net.PasswordAuthentication;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -30,8 +32,18 @@ public class LoginServlet extends WebappServletPluginExtension{
   public void doPost(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
     String userId = httpRequest.getSession().getId();
     String action = httpRequest.getParameter("action");
+    String serverId = WebdavUrlStreamHandler
+        .computeServerId(httpRequest.getParameter("server"));
+    
     if ("logout".equals(action)) {
-      WebdavUrlStreamHandler.credentials.invalidate(userId);
+      Map<String, PasswordAuthentication> credentialsMap = WebdavUrlStreamHandler.credentials.getIfPresent(userId);
+      if(credentialsMap != null) {
+        credentialsMap.remove(serverId);
+        if(credentialsMap.size() == 0) {
+          // if the map is empty we delete it.
+          WebdavUrlStreamHandler.credentials.invalidate(userId);
+        }
+      }
     } else {
       String user = httpRequest.getParameter("user");
       String passwd = httpRequest.getParameter("passwd");
@@ -39,8 +51,13 @@ public class LoginServlet extends WebappServletPluginExtension{
       logger.debug("Credentials submitted for session: " + userId +  ". user - " + user + ", passwd - " + passwd);
       
       // Store the user and password.
-      WebdavUrlStreamHandler.credentials.put(userId, 
-          new PasswordAuthentication(user, passwd.toCharArray()));
+      Map<String, PasswordAuthentication> userCredentialsMap = WebdavUrlStreamHandler.credentials.getIfPresent(userId);
+      if(userCredentialsMap == null) {
+        // if no credentials previously stored we create a new credentials map.
+        userCredentialsMap = new HashMap<String, PasswordAuthentication>();
+        WebdavUrlStreamHandler.credentials.put(userId, userCredentialsMap);
+      } 
+      userCredentialsMap.put(serverId, new PasswordAuthentication(user, passwd.toCharArray()));
     }
   }
       

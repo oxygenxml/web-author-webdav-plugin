@@ -2,6 +2,7 @@ package com.oxygenxml.examples.webdav;
 
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -66,8 +67,13 @@ public class WebdavLockHandler extends LockHandlerWithContext {
       logger.debug(e, e);
     }
     WebdavLockHelper lockHelper = new WebdavLockHelper();
-
-    PasswordAuthentication passwordAuthentication = WebdavUrlStreamHandler.credentials.getIfPresent(sessionId);
+    Map<String, PasswordAuthentication> credentialsMap = WebdavUrlStreamHandler.credentials.getIfPresent(sessionId);
+    String serverId = WebdavUrlStreamHandler.computeServerId(url.toExternalForm());
+    
+    PasswordAuthentication passwordAuthentication = null;
+    if(credentialsMap != null) {
+      credentialsMap.get(serverId);
+    }
     String userName = passwordAuthentication != null ? passwordAuthentication.getUserName() : "Anonymous";
     lockHelper.setLockOwner(sessionId, userName);
 

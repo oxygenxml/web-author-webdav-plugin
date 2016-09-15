@@ -6,6 +6,7 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -30,11 +31,28 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
   /**
    * Credentials store.
    */
-  public static final Cache<String, PasswordAuthentication> credentials = 
+  public static final Cache<String, Map<String, PasswordAuthentication>> credentials = 
       CacheBuilder.newBuilder()
         .concurrencyLevel(10)
         .maximumSize(10000)
         .build();
+  
+  /**
+   * Computes a server identifier out of the requested URL.
+   * 
+   * @param serverUrl the URL string.
+   * 
+   * @return the server identifier.
+   */
+  public static String computeServerId(String serverUrl) {
+    String serverId = null;
+    try {
+      URL url = new URL(serverUrl);
+      serverId = url.getProtocol() + url.getHost() + url.getPort();
+    } catch(MalformedURLException e) {
+    }
+    return serverId;
+  }
 
   @Override
   protected URLConnection openConnectionInContext(String contextId, URL url, Proxy proxy) throws IOException {
@@ -43,8 +61,7 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
     URLConnection urlConnection = completeUrl.openConnection();
     return new WebdavUrlConnection(contextId, urlConnection);
   }
-
-
+  
   /**
    * Adds credentials associated with a given user context to the URL.
    * 
@@ -53,9 +70,13 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
    * @return The URL with credentials. 
    */
   public static URL addCredentials(String contextId, URL url) throws UserActionRequiredException {
-    // Obtain the credentials for the current user.
-    PasswordAuthentication userCredentials = credentials.getIfPresent(contextId);
+    PasswordAuthentication userCredentials = null;
 
+    // Obtain the credentials for the current user.
+    Map<String, PasswordAuthentication> credentialsMap = credentials.getIfPresent(contextId);
+    if(credentialsMap != null) {
+      userCredentials = credentialsMap.get(computeServerId(url.toExternalForm()));
+    }
     String protocol = url.getProtocol().substring(WebdavURLHandlerExtension.WEBDAV.length());
 
     // Build the complete URL that contains the user and password in it.

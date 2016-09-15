@@ -2,10 +2,11 @@
   /**
    * Login the user and call this callback at the end.
    *
+   * @param {String} serverUrl the server that we are logging in url.
    * @param {function} authenticated The callback when the user was authenticated - successfully or not.
    */
   var loginDialog_ = null;
-  function login(authenticated) {
+  function login(serverUrl, authenticated) {
     localStorage.removeItem('webdav.user');
 
     // pop-up an authentication window,
@@ -26,8 +27,11 @@
         // Send the user and password to the login servlet which runs in the webapp.
         var user = document.getElementById('webdav-name').value.trim();
         var passwd = document.getElementById('webdav-passwd').value;
+
         goog.net.XhrIo.send(
-          '../plugins-dispatcher/login?user=' + encodeURIComponent(user) + "&passwd=" + encodeURIComponent(passwd),
+          '../plugins-dispatcher/login?user=' + encodeURIComponent(user) +
+          "&passwd=" + encodeURIComponent(passwd)
+          + "&server=" + encodeURIComponent(serverUrl),
           function () {
             localStorage.setItem('webdav.user', user);
 
@@ -70,9 +74,9 @@
       // Listen for messages sent from the server-side code.
       goog.events.listen(editor, sync.api.Editor.EventTypes.CUSTOM_MESSAGE_RECEIVED, function(e) {
         var context = e.context;
-
+        var url = e.target.getUrl();
         // pop-up an authentication window,
-        login(function() {
+        login(url, function() {
           // After the user was logged in, retry the operation that failed.
           if (context == sync.api.Editor.WebappMessageReceived.Context.LOAD) {
             // If the document was loading, we try to reload the whole webapp.
@@ -406,7 +410,7 @@
       var info = request.getResponseJson();
       callback(url, info);
     } else if (status == 401) {
-      login(goog.bind(this.requestUrlInfo_, this, url, callback));
+      login(url, goog.bind(this.requestUrlInfo_, this, url, callback));
     } else {
       this.showErrorMessage('Cannot open this URL');
     }
@@ -504,7 +508,8 @@
     goog.events.listen(eventTarget,
       sync.api.FileBrowsingDialog.EventTypes.USER_ACTION_REQUIRED,
       function () {
-        login(function() {
+        var url = fileBrowser.currentFolderUrl.getUrl();
+        login(url, function() {
           fileBrowser.refresh();
         });
       });
