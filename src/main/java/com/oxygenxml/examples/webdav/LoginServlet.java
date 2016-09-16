@@ -36,19 +36,12 @@ public class LoginServlet extends WebappServletPluginExtension{
         .computeServerId(httpRequest.getParameter("server"));
     
     if ("logout".equals(action)) {
-      Map<String, PasswordAuthentication> credentialsMap = WebdavUrlStreamHandler.credentials.getIfPresent(userId);
-      if(credentialsMap != null) {
-        credentialsMap.remove(serverId);
-        if(credentialsMap.size() == 0) {
-          // if the map is empty we delete it.
-          WebdavUrlStreamHandler.credentials.invalidate(userId);
-        }
-      }
+      WebdavUrlStreamHandler.credentials.invalidate(userId);
     } else {
       String user = httpRequest.getParameter("user");
       String passwd = httpRequest.getParameter("passwd");
       
-      logger.debug("Credentials submitted for session: " + userId +  ". user - " + user + ", passwd - " + passwd);
+      logger.debug("Credentials submitted for session: " + userId +  ".\n user - " + user + ", passwd - " + passwd + ", serverId -" + serverId);
       
       // Store the user and password.
       Map<String, PasswordAuthentication> userCredentialsMap = WebdavUrlStreamHandler.credentials.getIfPresent(userId);

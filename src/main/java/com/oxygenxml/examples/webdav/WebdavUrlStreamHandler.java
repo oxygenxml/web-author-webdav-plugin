@@ -45,12 +45,14 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
    * @return the server identifier.
    */
   public static String computeServerId(String serverUrl) {
+    logger.debug("Server for which to compute the serverID :" + serverUrl);
     String serverId = null;
     try {
       URL url = new URL(serverUrl);
       serverId = url.getProtocol() + url.getHost() + url.getPort();
     } catch(MalformedURLException e) {
     }
+    logger.debug("serverID :" + serverId);
     return serverId;
   }
 
