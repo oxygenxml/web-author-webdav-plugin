@@ -29,16 +29,21 @@
         var passwd = document.getElementById('webdav-passwd').value;
 
         goog.net.XhrIo.send(
-          '../plugins-dispatcher/login?user=' + encodeURIComponent(user) +
-          "&passwd=" + encodeURIComponent(passwd)
-          + "&server=" + encodeURIComponent(serverUrl),
+          '../plugins-dispatcher/login',
           function () {
             localStorage.setItem('webdav.user', user);
 
             fileBrowser.username = user;
             authenticated();
           },
-          'POST');
+          'POST',
+          // form params
+          goog.Uri.QueryData.createFromMap(new goog.structs.Map({
+            user: user,
+            passwd: passwd,
+            server: serverUrl
+          })).toString()
+        );
       }
     });
   }
@@ -359,13 +364,7 @@
 
       var logoutContainer = document.createElement('div');
       goog.dom.classlist.add(logoutContainer, 'webdav-logout-container');
-      logoutContainer.innerHTML = 'Logout ';
-
-      var usernameSpan = document.createElement('span');
-      goog.dom.classlist.add(usernameSpan, 'webdav-username');
-      usernameSpan.textContent = this.username || localStorage.getItem('webdav.user') || '';
-      logoutContainer.appendChild(usernameSpan);
-
+      logoutContainer.innerHTML = 'Logout';
       dialogTitleBar.appendChild(logoutContainer);
 
       goog.events.listen(logoutContainer,
