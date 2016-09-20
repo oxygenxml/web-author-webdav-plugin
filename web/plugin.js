@@ -150,13 +150,21 @@
         goog.net.XhrIo.send(
           '../plugins-dispatcher/login?action=logout',
           goog.bind(function () {
+            // hide the dialog once we logged out.
+            this.dialog.hide();
+            fileBrowser.candidateUrl = null;
+            fileBrowser.switchToRepoConfig();
+            fileBrowser.dialog.hide();
+
             localStorage.removeItem('webdav.latestUrl');
             localStorage.removeItem('webdav.latestRootUrl');
             localStorage.removeItem('webdav.user');
-            this.editor && this.editor.setDirty(false);
             // if we are editing we go to dashboard.
-            sync.util.setUrlParameter('url');
-            window.location.reload();
+            if(sync.util.getURLParameter('url')) {
+              this.editor && this.editor.setDirty(false);
+              sync.util.setUrlParameter('url');
+              window.location.reload();
+            }
           }, this),
           'POST');
       }
