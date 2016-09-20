@@ -507,7 +507,7 @@
     goog.events.listen(eventTarget,
       sync.api.FileBrowsingDialog.EventTypes.USER_ACTION_REQUIRED,
       function () {
-        var url = fileBrowser.currentFolderUrl.getUrl();
+        var url = ( fileBrowser.currentFolderUrl && fileBrowser.currentFolderUrl.getUrl()) || fileBrowser.root;
         login(url, function() {
           fileBrowser.refresh();
         });
