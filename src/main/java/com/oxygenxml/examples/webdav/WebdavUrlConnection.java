@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLConnection;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 
 import com.google.common.io.Closeables;
 
@@ -26,6 +28,12 @@ import ro.sync.net.protocol.http.WebdavLockHelper;
 public class WebdavUrlConnection extends FilterURLConnection 
     implements CacheableUrlConnection {
 
+  /**
+   * Logger for logging.
+   */
+  private static final Logger logger = Logger.getLogger(
+      WebdavUrlConnection.class.getName());
+  
   /**
    * The session ID.
    */
@@ -98,6 +106,15 @@ public class WebdavUrlConnection extends FilterURLConnection
    */
   private void handleException(IOException e) throws UserActionRequiredException, IOException {
     if (e.getMessage().indexOf("401") != -1) {
+      // log failed login attempts.
+      URL url = this.delegateConnection.getURL();
+      String userInfo = url.getUserInfo();
+      if(userInfo != null && !userInfo.isEmpty()) {
+        logger.warn("Failed login attempt " + 
+      (userInfo.indexOf(":") != -1 ? "of user " + userInfo.substring(0, userInfo.indexOf(":")) : "") +
+      " for " + url.toExternalForm());
+      }
+      
       throw new UserActionRequiredException(new WebappMessage(
           WebappMessage.MESSAGE_TYPE_CUSTOM, 
           "Authentication required", 
