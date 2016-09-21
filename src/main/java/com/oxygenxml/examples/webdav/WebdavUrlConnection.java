@@ -118,7 +118,8 @@ public class WebdavUrlConnection extends FilterURLConnection
       throw new UserActionRequiredException(new WebappMessage(
           WebappMessage.MESSAGE_TYPE_CUSTOM, 
           "Authentication required", 
-          "Authentication required", 
+          // send back the URL for which to authenticate.
+          this.delegateConnection.getURL().toExternalForm(), 
           true));  
     } else {
       if (delegateConnection instanceof HttpURLConnection) {

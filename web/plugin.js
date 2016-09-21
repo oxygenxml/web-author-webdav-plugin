@@ -7,6 +7,7 @@
    */
   var loginDialog_ = null;
   function login(serverUrl, authenticated) {
+    serverUrl = fileBrowser.processURL(serverUrl);
     localStorage.removeItem('webdav.user');
 
     // pop-up an authentication window,
@@ -79,7 +80,8 @@
       // Listen for messages sent from the server-side code.
       goog.events.listen(editor, sync.api.Editor.EventTypes.CUSTOM_MESSAGE_RECEIVED, function(e) {
         var context = e.context;
-        var url = e.target.getUrl();
+        var url = e.message.message;
+
         // pop-up an authentication window,
         login(url, function() {
           // After the user was logged in, retry the operation that failed.
@@ -514,8 +516,8 @@
     var eventTarget = fileBrowser.getEventTarget();
     goog.events.listen(eventTarget,
       sync.api.FileBrowsingDialog.EventTypes.USER_ACTION_REQUIRED,
-      function () {
-        var url = ( fileBrowser.currentFolderUrl && fileBrowser.currentFolderUrl.getUrl()) || fileBrowser.root;
+      function (e) {
+        var url = e.message.message;
         login(url, function() {
           fileBrowser.refresh();
         });
