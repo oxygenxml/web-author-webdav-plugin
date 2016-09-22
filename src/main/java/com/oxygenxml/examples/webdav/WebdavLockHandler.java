@@ -68,9 +68,10 @@ public class WebdavLockHandler extends LockHandlerWithContext {
     }
     WebdavLockHelper lockHelper = new WebdavLockHelper();
     Map<String, PasswordAuthentication> credentialsMap = WebdavUrlStreamHandler.credentials.getIfPresent(sessionId);
-    String serverId = WebdavUrlStreamHandler.computeServerId(url.toExternalForm());
+    String serverId = WebdavUrlStreamHandler.computeServerId("webdav-" + url.toExternalForm());
     
     PasswordAuthentication passwordAuthentication = null;
+    
     if(credentialsMap != null) {
       passwordAuthentication = credentialsMap.get(serverId);
     }
