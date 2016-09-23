@@ -2,16 +2,15 @@
   /**
    *  Wrapper over the old save action that displays autosave status.
    *
-   * @param {sync.actions.AbstractAction} saveAction the old save action.
    * @param {sync.api.Editor} editor the current editor.
-   * @param {number} inteval the autosave interval.
+   * @param {number} interval the autosave interval.
    *
    * @constructor
    */
-  var SaveWrapperAction = function(editor, saveAction, saveInterval) {
+  var SaveWrapperAction = function(editor, saveInterval) {
     sync.actions.AbstractAction.call('');
     this.statusMarker = document.querySelector('.modified-indicator');
-    this.saveAction = saveAction;
+    this.saveAction = editor.getActionsManager().getActionById('Author/Save');
     this.editor = editor;
     this.interval = saveInterval;
     // the last state class added.
@@ -27,21 +26,33 @@
         setTimeout(goog.bind(function() {
           if (this.editor.isDirty()) {
             this.setStatus('saving');
-
-            sync.rest.callAsync(RESTDocumentManager.autosave, {id: this.editor.docId})
-              .then(goog.bind(function(e) {
-                this.editor.setDirty(false);
-                this.setStatus('clean');
-              }, this))
-              .thenCatch(goog.bind(function(e) {
-                this.setStatus('error');
-              }, this))
+            if(this.editor.isTextMode) {
+              // autosave after we synchronize the author to the text.
+              this.editor.syncToAuthorMode()
+                .then(goog.bind(this.autosave, this));
+            } else {
+              this.autosave();
+            }
           }
         }, this), this.interval * 1000); // transform in miliseconds.
       }
     }, this));
   };
   goog.inherits(SaveWrapperAction, sync.actions.AbstractAction);
+
+  /**
+   * Calls the rest autosave service.
+   */
+  SaveWrapperAction.prototype.autosave = function() {
+    sync.rest.callAsync(RESTDocumentManager.autosave, {id: this.editor.docId})
+      .then(goog.bind(function(e) {
+        this.editor.setDirty(false);
+        this.setStatus('clean');
+      }, this))
+      .thenCatch(goog.bind(function(e) {
+        this.setStatus('error');
+      }, this))
+  };
 
   /** @override */
   SaveWrapperAction.prototype.actionPerformed = function(opt_callback) {
@@ -199,10 +210,9 @@
         }
         // override the save action from the toolbar
         var editor = e.target;
-        var actionsManager = editor.getActionsManager();
-        var saveAction = actionsManager.getActionById('Author/Save');
-        var autoSaveAction = new SaveWrapperAction(editor, saveAction, autoSaveInterval);
-        actionsManager.registerAction('Author/Save', autoSaveAction);
+        var autoSaveAction = new SaveWrapperAction(editor, autoSaveInterval);
+        editor.getActionsManager()
+          .registerAction('Author/Save', autoSaveAction);
       });
     }
   });
