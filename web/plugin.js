@@ -26,8 +26,13 @@
     loginDialog_.onSelect(function(key) {
       if (key == 'ok') {
         // Send the user and password to the login servlet which runs in the webapp.
-        var user = document.getElementById('webdav-name').value.trim();
-        var passwd = document.getElementById('webdav-passwd').value;
+        var userField = document.getElementById('webdav-name');
+        var user = userField.value.trim();
+        var passwdField = document.getElementById('webdav-passwd')
+        var passwd = passwdField.value;
+
+        userField.value = '';
+        passwdField.value = '';
 
         goog.net.XhrIo.send(
           '../plugins-dispatcher/login',
@@ -155,12 +160,14 @@
             // hide the dialog once we logged out.
             this.dialog.hide();
             fileBrowser.candidateUrl = null;
-            fileBrowser.switchToRepoConfig();
-            fileBrowser.dialog.hide();
 
             localStorage.removeItem('webdav.latestUrl');
             localStorage.removeItem('webdav.latestRootUrl');
             localStorage.removeItem('webdav.user');
+            // hide the dialogs.
+            fileBrowser.switchToRepoConfig();
+            fileBrowser.dialog.hide();
+
             // if we are editing we go to dashboard.
             if(sync.util.getURLParameter('url')) {
               this.editor && this.editor.setDirty(false);
