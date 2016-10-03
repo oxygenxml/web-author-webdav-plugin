@@ -26,13 +26,9 @@
         setTimeout(goog.bind(function() {
           if (this.editor.isDirty()) {
             this.setStatus('saving');
-            if(this.editor.isTextMode) {
-              // autosave after we synchronize the author to the text.
-              this.editor.syncToAuthorMode()
-                .then(goog.bind(this.autosave, this));
-            } else {
-              this.autosave();
-            }
+            // Make sure the server-side author-mode document model is up to date.
+            this.editor.syncToAuthorMode(true)
+              .then(goog.bind(this.autosave, this));
           }
         }, this), this.interval * 1000); // transform in miliseconds.
       }
@@ -42,8 +38,15 @@
 
   /**
    * Calls the rest autosave service.
+   *
+   * @param {boolean} success true if the author-mode synchronization worked.
    */
-  SaveWrapperAction.prototype.autosave = function() {
+  SaveWrapperAction.prototype.autosave = function(success) {
+    if (!success) {
+      this.setStatus('dirty');
+      // The server-side author-mode model was not updated - don't try to autosave now.
+      return;
+    }
     sync.rest.callAsync(RESTDocumentManager.autosave, {id: this.editor.docId})
       .then(goog.bind(function(e) {
         this.editor.setDirty(false);
@@ -114,8 +117,11 @@
         case 'dirty':
           goog.dom.classlist.remove(this.statusMarker, this.lastClassAdded);
           this.lastClassAdded = 'autosave-status-dirty';
-
+          this.statusMarker.innerHTML = '*';
+          this.statusMarker.title = '';
+          goog.dom.classlist.add(this.statusMarker, this.lastClassAdded);
           break;
+
         case 'saving':
           goog.dom.classlist.remove(this.statusMarker, this.lastClassAdded);
           this.lastClassAdded = 'autosave-status-saving';
