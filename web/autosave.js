@@ -3,7 +3,7 @@
    *  Wrapper over the old save action that displays autosave status.
    *
    * @param {sync.api.Editor} editor the current editor.
-   * @param {number} interval the autosave interval.
+   * @param {number} saveInterval the autosave interval.
    *
    * @constructor
    */
@@ -15,26 +15,53 @@
     this.interval = saveInterval;
     // the last state class added.
     this.lastClassAdded = null;
+    // The timer used to schedule the next auto-save operation.
+    this.scheduledAutosave = null;
 
     goog.events.listen(this.statusMarker, goog.events.EventType.CLICK,
       goog.bind(this.statusMarkerClicked, this));
 
-    // autosave at given interval every time the editor becomes dirty.
-    goog.events.listen(this.editor, sync.api.Editor.EventTypes.DIRTY_STATUS_CHANGED, goog.bind(function(e) {
-      if (e.isDirty) {
-        this.setStatus('dirty');
-        setTimeout(goog.bind(function() {
-          if (this.editor.isDirty()) {
-            this.setStatus('saving');
-            // Make sure the server-side author-mode document model is up to date.
-            this.editor.syncToAuthorMode(true)
-              .then(goog.bind(this.autosave, this));
-          }
-        }, this), this.interval * 1000); // transform in miliseconds.
-      }
-    }, this));
+    // schedule an autosave at given interval every time the editor is changed.
+    goog.events.listen(this.editor, sync.Editor.CONTENT_CHANGED, goog.bind(this.handleContentChange_, this));
   };
   goog.inherits(SaveWrapperAction, sync.actions.AbstractAction);
+
+
+  /**
+   * Callback when the content was changed.
+   *
+   * @param {sync.ctrl.ModelChangedEvent} e The model changed event.
+   * @private
+   */
+  SaveWrapperAction.prototype.handleContentChange_ = function(e) {
+    if (e.docUpdate && e.docUpdate.textModeSynchronization) {
+      // The event was caused by a synchronization with the author-mode document model.
+      // We track text-mode changes anyway, so if there was a change in the document we have already detected it.
+      return;
+    }
+
+    this.setStatus('dirty');
+    if (this.scheduledAutosave) {
+      return;
+    }
+    this.scheduledAutosave = setTimeout(goog.bind(this.syncAndAutosave_, this), this.interval * 1000); // transform in miliseconds.
+  };
+
+  /**
+   * Syncrhonize the author-mode document model and autosave.
+   *
+   * @private
+   */
+  SaveWrapperAction.prototype.syncAndAutosave_ = function() {
+    this.scheduledAutosave = null;
+    this.setStatus('saving');
+    // Make sure the server-side author-mode document model is up to date.
+    this.editor.syncToAuthorMode(true)
+      .then(goog.bind(this.autosave, this))
+      .thenCatch(goog.bind(function() {
+        this.setStatus('error');
+      }, this));
+  };
 
   /**
    * Calls the rest autosave service.
@@ -43,18 +70,22 @@
    */
   SaveWrapperAction.prototype.autosave = function(success) {
     if (!success) {
-      this.setStatus('dirty');
       // The server-side author-mode model was not updated - don't try to autosave now.
-      return;
+      this.setStatus('dirty');
+      return goog.Promise.resolve();
     }
-    sync.rest.callAsync(RESTDocumentManager.autosave, {id: this.editor.docId})
-      .then(goog.bind(function(e) {
-        this.editor.setDirty(false);
-        this.setStatus('clean');
-      }, this))
-      .thenCatch(goog.bind(function(e) {
-        this.setStatus('error');
-      }, this))
+
+    return sync.rest.callAsync(RESTDocumentManager.autosave, {id: this.editor.docId})
+      .then(goog.bind(function() {
+        if (this.scheduledAutosave) {
+          // The scheduled autosave is a consequence of a document edit which happened after our current auto-save started.
+          // This means that we have more edits to be saved - switch back to dirty state.
+          this.setStatus('dirty');
+        } else {
+          this.editor.setDirty(false);
+          this.setStatus('clean');
+        }
+      }, this));
   };
 
   /** @override */
