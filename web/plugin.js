@@ -159,20 +159,21 @@
           goog.bind(function () {
             // hide the dialog once we logged out.
             this.dialog.hide();
-            fileBrowser.candidateUrl = null;
 
             localStorage.removeItem('webdav.latestUrl');
             localStorage.removeItem('webdav.latestRootUrl');
             localStorage.removeItem('webdav.user');
-            // hide the dialogs.
-            fileBrowser.switchToRepoConfig();
-            fileBrowser.dialog.hide();
 
             // if we are editing we go to dashboard.
             if(sync.util.getURLParameter('url')) {
               this.editor && this.editor.setDirty(false);
               sync.util.setUrlParameter('url');
               window.location.reload();
+            } else {
+              // on dashboard, hide the dialogs.
+              fileBrowser.switchToRepoConfig();
+              fileBrowser.dialog.hide();
+              fileBrowser.candidateUrl = null;
             }
           }, this),
           'POST');
