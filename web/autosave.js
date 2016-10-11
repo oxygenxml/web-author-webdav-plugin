@@ -222,8 +222,12 @@
 
     this.failedDialog.onSelect(goog.bind(function(key) {
       if (key == 'retry') {
-        this.saveAction.actionPerformed(function() {
-        });
+        this.saveAction.actionPerformed(goog.bind(function() {
+          // if the editor is not dirty save action was successfull.
+          if(!this.editor.isDirty()) {
+            this.setStatus('clean');
+          }
+        }, this));
       }
     }, this));
     this.failedDialog.show();
