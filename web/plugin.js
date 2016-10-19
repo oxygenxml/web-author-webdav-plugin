@@ -356,7 +356,7 @@
     var url = document.getElementById('webdav-browse-url').value.trim();
 
     // if an url was provided we instantiate the file browsing dialog.
-    if(url) {
+    if(url && url.match(':\/\/')) {
       if(this.enforcedServers.length > 0) {
         this.enforcedUrl = url;
         this.openUrlInfo(url, {rootUrl: url});
