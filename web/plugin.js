@@ -356,14 +356,18 @@
     var url = document.getElementById('webdav-browse-url').value.trim();
 
     // if an url was provided we instantiate the file browsing dialog.
-    if(url && url.match(':\/\/')) {
-      if(this.enforcedServers.length > 0) {
-        this.enforcedUrl = url;
-        this.openUrlInfo(url, {rootUrl: url});
-        localStorage.setItem('webdav.latestEnforcedURL', this.enforcedUrl);
+    if(url) {
+      if(url.match(':\/\/')) {
+        if (this.enforcedServers.length > 0) {
+          this.enforcedUrl = url;
+          this.openUrlInfo(url, {rootUrl: url});
+          localStorage.setItem('webdav.latestEnforcedURL', this.enforcedUrl);
+        } else {
+          var processedUrl = this.processURL(url);
+          this.requestUrlInfo_(processedUrl);
+        }
       } else {
-        var processedUrl = this.processURL(url);
-        this.requestUrlInfo_(processedUrl);
+        this.showErrorMessage('Invalid URL inserted.');
       }
     }
     e.preventDefault();
