@@ -353,11 +353,13 @@
 
   /** @override */
   WebdavFileBrowser.prototype.handleOpenRepo = function(element, e) {
-    var url = document.getElementById('webdav-browse-url').value.trim();
+    var input = document.getElementById('webdav-browse-url');
+    var url = input.value.trim();
 
     // if an url was provided we instantiate the file browsing dialog.
     if(url) {
       if(url.match('(webdav-)?https?:\/\/')) {
+        console.log('HEREEEEE');
         if (this.enforcedServers.length > 0) {
           this.enforcedUrl = url;
           this.openUrlInfo(url, {rootUrl: url});
@@ -368,6 +370,9 @@
         }
       } else {
         this.showErrorMessage('Invalid URL inserted.');
+        // hide the error element on input refocus.
+        goog.events.listenOnce(input, goog.events.EventType.FOCUS,
+          goog.bind(function(e) {this.hideErrorElement();}, this));
       }
     }
     e.preventDefault();
