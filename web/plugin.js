@@ -357,7 +357,7 @@
 
     // if an url was provided we instantiate the file browsing dialog.
     if(url) {
-      if(url.match(':\/\/')) {
+      if(url.match('(webdav-)?https?:\/\/')) {
         if (this.enforcedServers.length > 0) {
           this.enforcedUrl = url;
           this.openUrlInfo(url, {rootUrl: url});
