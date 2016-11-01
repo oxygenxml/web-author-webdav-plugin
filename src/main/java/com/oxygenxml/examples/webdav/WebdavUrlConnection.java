@@ -18,6 +18,7 @@ import ro.sync.ecss.extensions.api.webapp.plugin.FilterURLConnection;
 import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 import ro.sync.exml.plugin.urlstreamhandler.CacheableUrlConnection;
 import ro.sync.net.protocol.http.WebdavLockHelper;
+import ro.sync.util.URLUtil;
 
 /**
  * Wrapper over an URLConnection that reports 401 exceptions as 
@@ -110,9 +111,12 @@ public class WebdavUrlConnection extends FilterURLConnection
       URL url = this.delegateConnection.getURL();
       String userInfo = url.getUserInfo();
       if(userInfo != null && !userInfo.isEmpty()) {
-        logger.warn("Failed login attempt " + 
-      (userInfo.indexOf(":") != -1 ? "of user " + userInfo.substring(0, userInfo.indexOf(":")) : "") +
-      " for " + url.toExternalForm());
+        String user = URLUtil.extractUser(url.toExternalForm());
+        if (user != null && !user.trim().isEmpty()) {
+          logger.warn("Failed login attempt of user " + user + " for " + URLUtil.getDescription(url));
+        } else {
+          logger.warn("Failed login attempt for " + URLUtil.getDescription(url));
+        }
       }
       
       throw new UserActionRequiredException(new WebappMessage(
