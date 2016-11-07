@@ -238,22 +238,26 @@
     var autoSaveInterval = parseInt(sync.options.PluginsOptions.getClientOption('webdav_autosave_interval'));
     if (e.options.url.match(/^webdav-https?:/) && autoSaveInterval > 0) {
       /** ACTIONS_LOADED */
-      goog.events.listenOnce(e.editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function(e) {
-        var toolbarActions = e.actionsConfiguration.toolbars[0].children;
-        if (autoSaveInterval <= 5) {
-          // hide the save action for small intervals.
-          var i;
-          for (i = 0; i < toolbarActions.length; i ++) {
-            if (toolbarActions[i].id == 'Author/Save') {
-              toolbarActions.splice(i, 1);
+      var editor = e.editor;
+      goog.events.listenOnce(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function(e) {
+        var editable = ! e.target.readOnlyStatus.isReadOnly();
+        if(editable) {
+          var toolbarActions = e.actionsConfiguration.toolbars[0].children;
+          if (autoSaveInterval <= 5) {
+            // hide the save action for small intervals.
+            var i;
+            for (i = 0; i < toolbarActions.length; i ++) {
+              if (toolbarActions[i].id == 'Author/Save') {
+                toolbarActions.splice(i, 1);
+              }
             }
           }
+          // override the save action from the toolbar
+          var editor = e.target;
+          var autoSaveAction = new SaveWrapperAction(editor, autoSaveInterval);
+          editor.getActionsManager()
+            .registerAction('Author/Save', autoSaveAction);
         }
-        // override the save action from the toolbar
-        var editor = e.target;
-        var autoSaveAction = new SaveWrapperAction(editor, autoSaveInterval);
-        editor.getActionsManager()
-          .registerAction('Author/Save', autoSaveAction);
       });
     }
   });
