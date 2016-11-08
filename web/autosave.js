@@ -8,7 +8,7 @@
    * @constructor
    */
   var SaveWrapperAction = function(editor, saveInterval) {
-    sync.actions.AbstractAction.call('');
+    sync.actions.AbstractAction.call('M1 S');
     this.statusMarker = document.querySelector('.modified-indicator');
     this.saveAction = editor.getActionsManager().getActionById('Author/Save');
     this.editor = editor;
@@ -256,7 +256,7 @@
           var editor = e.target;
           var autoSaveAction = new SaveWrapperAction(editor, autoSaveInterval);
           editor.getActionsManager()
-            .registerAction('Author/Save', autoSaveAction, "M1 S");
+            .registerAction('Author/Save', autoSaveAction);
         }
       });
     }
