@@ -256,7 +256,7 @@
           var editor = e.target;
           var autoSaveAction = new SaveWrapperAction(editor, autoSaveInterval);
           editor.getActionsManager()
-            .registerAction('Author/Save', autoSaveAction);
+            .registerAction('Author/Save', autoSaveAction, "M1 S");
         }
       });
     }
