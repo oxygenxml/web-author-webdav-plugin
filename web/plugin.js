@@ -8,7 +8,6 @@
   var loginDialog_ = null;
   function login(serverUrl, authenticated) {
     serverUrl = fileBrowser.processURL(serverUrl);
-    localStorage.removeItem('webdav.user');
 
     // pop-up an authentication window,
     if (!loginDialog_) {
@@ -21,8 +20,6 @@
       loginDialog_.setTitle('Authentication Required');
       loginDialog_.setPreferredSize(300, null);
     }
-
-    loginDialog_.show();
     loginDialog_.onSelect(function(key) {
       if (key == 'ok') {
         // Send the user and password to the login servlet which runs in the webapp.
@@ -52,6 +49,15 @@
         );
       }
     });
+
+    loginDialog_.show();
+    var lastUser = localStorage.getItem('webdav.user');
+    if(lastUser) {
+      var dialogElement = loginDialog_.getElement();
+      var userInput = dialogElement.querySelector('#webdav-name');
+      userInput.value = lastUser;
+      userInput.select();
+    }
   }
 
   goog.events.listen(workspace, sync.api.Workspace.EventType.BEFORE_EDITOR_LOADED, function(e) {
