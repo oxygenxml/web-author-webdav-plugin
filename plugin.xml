@@ -8,21 +8,30 @@
  description="Plugin that enables oXygen XML Web Author to connect to a server with WebDAV support."
  version="${project.nosnapshot.version}"
  vendor="SyncRO"
- class="com.oxygenxml.examples.webdav.WebdavPlugin">
+ class="ro.sync.exml.plugin.Plugin">
+ 
  <runtime>
   <librariesFolder name="lib"/>
   <library name="target/classes"/>
  </runtime>
+ 
  <extension type="URLHandler" 
   class="com.oxygenxml.examples.webdav.WebdavURLHandlerExtension"/>
+  
  <extension type="WebappServlet" 
   class="com.oxygenxml.examples.webdav.LoginServlet"/>
+  
  <extension type="WebappServlet" 
   class="com.oxygenxml.examples.webdav.WebdavUrlInfo"/>
+  
  <extension type="WebappServlet" role="config"
   class="com.oxygenxml.examples.webdav.WebdavPluginConfigExtension"/>
+  
  <extension type="WebappStaticResourcesFolder" 
-  path="resources/" href="webdav"/> 
+  path="resources/" href="webdav"/>
+   
  <extension type="LockHandlerFactory"
   class="com.oxygenxml.examples.webdav.WebdavLockHandlerFactory"/>
+  
+  
 </plugin>
