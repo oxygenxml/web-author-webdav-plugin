@@ -34,12 +34,17 @@
    * @private
    */
   SaveWrapperAction.prototype.handleContentChange_ = function(e) {
-    if (e.docUpdate && e.docUpdate.textModeSynchronization) {
-      // The event was caused by a synchronization with the author-mode document model.
-      // We track text-mode changes anyway, so if there was a change in the document we have already detected it.
-      return;
-    }
+    if (e.docUpdate) {
+      var hasPatches = e.docUpdate.patches && e.docUpdate.patches.length > 0;
+      var hasFragments = e.docUpdate.fragments && e.docUpdate.fragments.length > 0;
+      var hasNodeIds = e.docUpdate.nodeIds && e.docUpdate.nodeIds.length > 0;
 
+      if (e.docUpdate.textModeSynchronization || (!hasPatches && !hasFragments && !hasNodeIds)) {
+        // The event was caused by a synchronization with the author-mode document model.
+        // We track text-mode changes anyway, so if there was a change in the document we have already detected it.
+        return;
+      }
+    }
     this.setStatus('dirty');
     if (this.scheduledAutosave) {
       return;
@@ -72,6 +77,7 @@
     if (!success) {
       // The server-side author-mode model was not updated - don't try to autosave now.
       this.setStatus('dirty');
+
       return goog.Promise.resolve();
     }
 
