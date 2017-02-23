@@ -118,7 +118,7 @@ public class WebdavUrlConnection extends FilterURLConnection
           logger.warn("Failed login attempt for " + URLUtil.getDescription(url));
         }
       }
-      
+      logger.debug("WebDAV not authorized exception " + e.getMessage());
       throw new UserActionRequiredException(new WebappMessage(
           WebappMessage.MESSAGE_TYPE_CUSTOM, 
           "Authentication required", 

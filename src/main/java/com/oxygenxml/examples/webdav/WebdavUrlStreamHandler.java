@@ -14,7 +14,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContext;
-import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 import ro.sync.util.URLUtil;
 
 /**
@@ -59,8 +58,8 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
   @Override
   protected URLConnection openConnectionInContext(String contextId, URL url, Proxy proxy) throws IOException {
     URL completeUrl = addCredentials(contextId, url);
-    
     URLConnection urlConnection = completeUrl.openConnection();
+    
     return new WebdavUrlConnection(contextId, urlConnection);
   }
   
@@ -68,10 +67,11 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
    * Adds credentials associated with a given user context to the URL.
    * 
    * @param contextId The context Id.
-   * @param url The URL.
+   * @param url The URL, it should no longer contain the "webdav-" prefix.
+   * 
    * @return The URL with credentials. 
    */
-  public static URL addCredentials(String contextId, URL url) throws UserActionRequiredException {
+  public static URL addCredentials(String contextId, URL url) {
     PasswordAuthentication userCredentials = null;
 
     // Obtain the credentials for the current user.

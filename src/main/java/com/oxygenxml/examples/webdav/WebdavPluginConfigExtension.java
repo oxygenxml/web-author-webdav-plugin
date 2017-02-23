@@ -89,11 +89,6 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
     return optionsForm.toString();
   }
 
-  @Override
-  protected void setOption(String key, String value) {
-    super.setOption(key, value);
-  }
-  
   /**
    * @see ro.sync.ecss.extensions.api.webapp.plugin.PluginConfigExtension#getOptionsJson().
    */

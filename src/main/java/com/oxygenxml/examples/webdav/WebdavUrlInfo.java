@@ -72,7 +72,6 @@ public class WebdavUrlInfo extends WebappServletPluginExtension {
     String sessionId = req.getSession().getId();
     
     URL urlWithCredentials = WebdavUrlStreamHandler.addCredentials(sessionId, url);
-    
     ResourceType resourceType = null;
     try {
       resourceType = getResourceType(urlWithCredentials);
