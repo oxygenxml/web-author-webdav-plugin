@@ -6,11 +6,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.LockHandlerWithContext;
 import ro.sync.exml.plugin.lock.LockException;
+import ro.sync.exml.workspace.api.PluginResourceBundle;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.exml.workspace.api.options.WSOptionsStorage;
 import ro.sync.net.protocol.http.WebdavLockHelper;
+import ro.sync.servlet.WebappTags;
 
 /**
  * Lock handler for the WebDAV protocol.
@@ -62,7 +65,8 @@ public class WebdavLockHandler extends LockHandlerWithContext {
     if(credentialsMap != null) {
       passwordAuthentication = credentialsMap.get(serverId);
     }
-    String userName = passwordAuthentication != null ? passwordAuthentication.getUserName() : "Anonymous";
+    PluginResourceBundle rb = ((WebappPluginWorkspace)PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
+    String userName = passwordAuthentication != null ? passwordAuthentication.getUserName() : rb.getMessage(WebappTags.ANONYMOUS);
     
     // headers passed to the server. 
     List<String> headerKeys = Collections.emptyList();

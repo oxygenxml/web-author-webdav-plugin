@@ -14,10 +14,10 @@
       loginDialog_ = workspace.createDialog();
       loginDialog_.getElement().innerHTML =
         '<div class="webdav-login-dialog">' +
-        '<label>Name: <input id="webdav-name" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
-        '<label>Password: <input id="webdav-passwd" type="password"/></label>' +
+        '<label>' + tr(msgs.NAME_) + ': <input id="webdav-name" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
+        '<label>' + tr(msgs.PASSWORD_)+ ': <input id="webdav-passwd" type="password"/></label>' +
         '</div>';
-      loginDialog_.setTitle('Authentication Required');
+      loginDialog_.setTitle(tr(msgs.AUTHENTICATION_REQUIRED_));
       loginDialog_.setPreferredSize(300, null);
     }
     loginDialog_.onSelect(function(key) {
@@ -135,13 +135,13 @@
   LogOutAction.prototype.getDialog = function() {
     if (!this.dialog) {
       this.dialog = workspace.createDialog();
-      this.dialog.setTitle('Log out');
-      this.dialog.setButtonConfiguration([{key: 'yes', caption: 'Logout'}, {key: 'no', caption: 'Cancel'}]);
+      this.dialog.setTitle(tr(msgs.LOGOUT_));
+      this.dialog.setButtonConfiguration([{key: 'yes', caption: tr(msgs.LOGOUT_)}, {key: 'no', caption: tr(msgs.CANCEL_)}]);
 
       var dialogHtml = '<div><div>';
-      dialogHtml += 'Are you sure you want to log-out? ';
+      dialogHtml += tr(msgs.LOGOUT_CONFIRMATION_) + ' ';
       if (this.editor && this.editor.isDirty()) {
-        dialogHtml += '<b>All your unsaved changes will be lost</b>'
+        dialogHtml += '<b>' + tr(msgs.UNSAVED_CHANGES_WILL_BE_LOST_) + '</b>'
       }
       dialogHtml += '</div></div>';
 
@@ -191,7 +191,7 @@
 
   /** @override */
   LogOutAction.prototype.getDisplayName = function() {
-    return "Logout";
+    return tr(msgs.LOGOUT_);
   };
 
   /**
@@ -269,7 +269,7 @@
     var url = this.getCurrentFolderUrl();
     if (url) {
       element.style.paddingLeft = '5px';
-      element.title = "Server URL";
+      element.title = tr(msgs.SERVER_URL_);
       var content = '<div class="webdav-repo-preview">' +
         '<div class="domain-icon" style="' +
         'background-image: url(' + sync.util.getImageUrl('/images/SharePointWeb16.png', sync.util.getHdpiFactor()) +
@@ -280,11 +280,11 @@
       if(this.enforcedServers.length != 1) {
         content += '<div class="webdav-domain-edit"></div>';
       }
-      content += '</div>'
+      content += '</div>';
       element.innerHTML = content;
       var button = element.querySelector('.webdav-domain-edit');
       if(button) {
-        button.title = "Edit server URL";
+        button.title = tr(msgs.EDIT_SERVER_URL_);
         goog.events.listen(button, goog.events.EventType.CLICK,
           goog.bind(this.switchToRepoConfig, this, element))
       }
@@ -296,12 +296,12 @@
   WebdavFileBrowser.prototype.renderRepoEditing = function(element) {
     if(this.enforcedServers.length > 0) {
       var dialogContent = '<div class="enforced-servers-config">' +
-        'Server URL: <select id="webdav-browse-url">';
+        tr(msgs.SERVER_URL_) + ': <select id="webdav-browse-url">';
       var i;
       for(i = 0; i < this.enforcedServers.length; i++) {
         var serverUrl = this.enforcedServers[i];
         if(serverUrl) {
-          dialogContent += '<option value="' + serverUrl + '" '
+          dialogContent += '<option value="' + serverUrl + '" ';
           dialogContent += (serverUrl == localStorage.getItem('webdav.latestEnforcedURL') ? 'selected' : '') + '>';
           dialogContent += serverUrl;
           dialogContent += '</option>';
@@ -328,13 +328,13 @@
       if (this.isServerPluginInstalled) {
         wevdavServerPluginContent =
           '<div class="webdav-builtin-server">' +
-          '<div class="webdav-use-builtin-btn">Use built-in server</div>' +
-          '<input readonly class="webdav-builtin-url" value="' + webdavServerPluginUrl + '">' +
+            '<div class="webdav-use-builtin-btn">' + tr(msgs.USE_BUILTIN_SERVER_) + '</div>' +
+            '<input readonly class="webdav-builtin-url" value="' + webdavServerPluginUrl + '">' +
           '</div>';
       }
       element.innerHTML =
         '<div class="webdav-config-dialog">' +
-        '<label>Server URL: <input id="webdav-browse-url" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
+        '<label>' + tr(msgs.SERVER_URL_) + ': <input id="webdav-browse-url" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
         wevdavServerPluginContent +
         '</div>';
       element.querySelector('#webdav-browse-url').value = editUrl;
@@ -374,7 +374,7 @@
           this.requestUrlInfo_(processedUrl);
         }
       } else {
-        this.showErrorMessage('Invalid URL inserted.');
+        this.showErrorMessage(tr(msgs.INVALID_URL_));
         // hide the error element on input refocus.
         goog.events.listenOnce(input, goog.events.EventType.FOCUS,
           goog.bind(function(e) {this.hideErrorElement();}, this));
@@ -394,10 +394,7 @@
       var dialogTitleBar = (new goog.dom.DomHelper())
         .getAncestorByClass(dialogChild, 'modal-dialog');
 
-      var logoutContainer = document.createElement('div');
-      goog.dom.classlist.add(logoutContainer, 'webdav-logout-container');
-      logoutContainer.innerHTML = 'Logout';
-      dialogTitleBar.appendChild(logoutContainer);
+      dialogTitleBar.appendChild(document.createElement('div', 'webdav-logout-container', tr(msgs.LOGOUT_)));
 
       goog.events.listen(logoutContainer,
         goog.events.EventType.CLICK,
@@ -405,7 +402,7 @@
           (new LogOutAction()).actionPerformed();
         },
         false,
-        this)
+        this);
       // mark that the button has been rendered
       this.renderedLogoutButton = true;
     }
@@ -443,7 +440,7 @@
     } else if (status == 401) {
       login(url, goog.bind(this.requestUrlInfo_, this, url, callback));
     } else {
-      this.showErrorMessage('Cannot open this URL');
+      this.showErrorMessage(tr(msgs.CANNOT_OPEN_URL_));
     }
   };
 
@@ -464,7 +461,7 @@
 
     this.setUrlInfo(url, info);
     this.openUrl(url, isFile, null);
-  }
+  };
 
   /**
    * Sets the information received about the url.
@@ -570,13 +567,13 @@
 
   var webdavOpenAction = new sync.actions.OpenAction(fileBrowser);
   webdavOpenAction.setLargeIcon(iconUrl);
-  webdavOpenAction.setDescription('Open document from WebDAV server');
+  webdavOpenAction.setDescription(tr(msgs.OPEN_DOC_WEBDAV_DESCRIPTION_));
   webdavOpenAction.setActionId('webdav-open-action');
   webdavOpenAction.setActionName('WebDAV');
 
   var webdavCreateAction = new sync.api.CreateDocumentAction(fileBrowser);
   webdavCreateAction.setLargeIcon(iconUrl);
-  webdavCreateAction.setDescription('Create a new document on a WebDAV server');
+  webdavCreateAction.setDescription(tr(msgs.NEW_DOC_WEBDAV_DESCRIPTION_));
   webdavCreateAction.setActionId('webdav-create-action');
   webdavCreateAction.setActionName('WebDAV');
 

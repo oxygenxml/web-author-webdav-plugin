@@ -14,10 +14,14 @@ import org.apache.log4j.Logger;
 import com.google.common.io.Closeables;
 
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
+import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.FilterURLConnection;
 import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 import ro.sync.exml.plugin.urlstreamhandler.CacheableUrlConnection;
+import ro.sync.exml.workspace.api.PluginResourceBundle;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.net.protocol.http.WebdavLockHelper;
+import ro.sync.servlet.WebappTags;
 import ro.sync.util.URLUtil;
 
 /**
@@ -119,9 +123,10 @@ public class WebdavUrlConnection extends FilterURLConnection
         }
       }
       logger.debug("WebDAV not authorized exception " + e.getMessage());
+      PluginResourceBundle rb = ((WebappPluginWorkspace)PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
       throw new UserActionRequiredException(new WebappMessage(
           WebappMessage.MESSAGE_TYPE_CUSTOM, 
-          "Authentication required", 
+          rb.getMessage(WebappTags.AUTHENTICATION_REQUIRED), 
           // send back the URL for which to authenticate.
           this.delegateConnection.getURL().toExternalForm(), 
           true));  

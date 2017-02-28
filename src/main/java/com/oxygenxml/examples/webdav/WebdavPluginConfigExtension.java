@@ -4,7 +4,11 @@ import java.util.HashMap;
 
 import javax.servlet.ServletException;
 
+import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.PluginConfigExtension;
+import ro.sync.exml.workspace.api.PluginResourceBundle;
+import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
+import ro.sync.servlet.WebappTags;
 
 /**
  * Plugin extension used to handle the configuration of this plugin.
@@ -52,25 +56,26 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
     String autosaveInterval = getOption(AUTOSAVE_INTERVAL, defaultAutoSaveInterval);
     
     StringBuilder optionsForm = new StringBuilder();
+    PluginResourceBundle rb = ((WebappPluginWorkspace)PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
     
     optionsForm.append("<div style='font-family:robotolight, Arial, Helvetica, sans-serif;font-size:0.85em;font-weight: lighter'>")
       .append("<form style='text-align:left;line-height: 1.7em;'>");
     // locking option
     optionsForm.append("<label style='margin-bottom:6px;overflow:hidden'>")
       .append("<input name='").append(LOCKING_ENABLED).append("' type=\"checkbox\" value=\"on\"")
-      .append((isLockEnabled ? "checked" : "")).append("> Lock resources on open")
+      .append((isLockEnabled ? "checked" : "")).append("> ").append(rb.getMessage(WebappTags.LOCK_RESOURCES_ON_OPEN))
       .append("</label>");
     // autosave interval
     optionsForm.append("<label style='margin-top:6px;display:block;overflow:hidden'>")
-      .append("Autosave interval :")
+      .append(rb.getMessage(WebappTags.AUTOSAVE_INTERVAL)).append(": ")
       .append("<input min='0' value='").append(autosaveInterval).append("'name='").append(AUTOSAVE_INTERVAL).append("' type='number'")
-      .append("style='width: 50px;'/>")
-      .append(" seconds")
+      .append("style='width: 50px;text-align:center;'/>")
+      .append(" ").append(rb.getMessage(WebappTags.SECONDS))
       .append("</label>");
     // enforced URL
-    optionsForm.append("<label style='margin-top:6px;display:block;overflow:hidden'>")
-      .append("Enforced server: ")
-      .append("<input placeholder='Server URL' name='").append(ENFORCED_URL)
+    optionsForm.append("<label style='margin-top:6px;display:block;'>")
+      .append(rb.getMessage(WebappTags.ENFORCED_SERVER)).append(": ")
+      .append("<input placeholder='").append(rb.getMessage(WebappTags.SERVER_URL)).append("' name='").append(ENFORCED_URL)
       .append("' type='text' style='color:#606060;background-color:#FAFAFA;")
       .append(
         "-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;display: inline-block;")
@@ -79,8 +84,7 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
       .append("</label>");
     // Enforced server note
     optionsForm.append("<div style='background-color: lightyellow;border: 1px solid #dadab4; padding: 8px;margin-top: 5px;'>")
-      .append("Note: Once a server is enforced, the user will only be able to browse this enforced server. ")
-      .append("However, it is possible for other plugins to add more enforced servers for the user to choose from.")
+      .append(rb.getMessage(WebappTags.ENFORCED_SERVER_NOTE))
       .append("</div>");
     
     optionsForm.append("</form>")
