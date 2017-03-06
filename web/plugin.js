@@ -394,7 +394,8 @@
       var dialogTitleBar = (new goog.dom.DomHelper())
         .getAncestorByClass(dialogChild, 'modal-dialog');
 
-      dialogTitleBar.appendChild(document.createElement('div', 'webdav-logout-container', tr(msgs.LOGOUT_)));
+      var logoutContainer = goog.dom.createDom('div', 'webdav-logout-container', tr(msgs.LOGOUT_));
+      dialogTitleBar.appendChild(logoutContainer);
 
       goog.events.listen(logoutContainer,
         goog.events.EventType.CLICK,
