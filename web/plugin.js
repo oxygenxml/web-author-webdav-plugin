@@ -1,4 +1,6 @@
 (function() {
+  var WEBDAV_LOGOUT_ACTION_ID = 'Webdav/Logout';
+
   /**
    * Login the user and call this callback at the end.
    *
@@ -77,13 +79,12 @@
       // Register the toolbar actions.
       goog.events.listenOnce(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function(e) {
         var logoutAction = new LogOutAction(editor);
-        var logoutActionId = 'WebDAV/Logout';
-        editor.getActionsManager().registerAction(logoutActionId, logoutAction);
+        editor.getActionsManager().registerAction(WEBDAV_LOGOUT_ACTION_ID, logoutAction);
         var toolbar = e.actionsConfiguration.toolbars[0];
 
         var moreMenu = toolbar.children[toolbar.children.length - 1];
         moreMenu.children.push(
-          {id: logoutActionId, type: "action"}
+          {id: WEBDAV_LOGOUT_ACTION_ID, type: "action"}
         );
       });
 
@@ -200,7 +201,11 @@
    * @constructor
    */
   var WebdavFileBrowser = function() {
-    var latestUrl = this.getLatestUrl();
+    goog.events.listenOnce(workspace, sync.api.Editor.EventTypes.BEFORE_EDITOR_LOADED, function(e) {
+      this.editor = e.editor;
+    }.bind(this));
+
+      var latestUrl = this.getLatestUrl();
     var latestRootUrl = this.getLatestRootUrl();
     sync.api.FileBrowsingDialog.call(this, {
       initialUrl: latestUrl,
@@ -264,7 +269,7 @@
 
   /** @override */
   WebdavFileBrowser.prototype.renderRepoPreview = function(element) {
-    this.renderTitleBarLogoutButton(element);
+    this.showTitleBarLogoutButton(element);
 
     var url = this.getCurrentFolderUrl();
     if (url) {
@@ -294,6 +299,9 @@
 
   /** @override */
   WebdavFileBrowser.prototype.renderRepoEditing = function(element) {
+    // hide the logout button.
+    this.hideTitleBarLogoutButton(element);
+
     if(this.enforcedServers.length > 0) {
       var dialogContent = '<div class="enforced-servers-config">' +
         tr(msgs.SERVER_URL_) + ': <select id="webdav-browse-url">';
@@ -384,30 +392,45 @@
   };
 
   /**
-   * Renders the logout button on the dialog title bar.
+   * Shows the logout button on the dialog title bar.
    *
    * @param dialogChild a child of the dialog element from which
    * we can start the search for the title bar.
    */
-  WebdavFileBrowser.prototype.renderTitleBarLogoutButton = function(dialogChild) {
-    if(!this.renderedLogoutButton  && !sync.util.getURLParameter('url')) {
-      var dialogTitleBar = (new goog.dom.DomHelper())
-        .getAncestorByClass(dialogChild, 'modal-dialog');
+  WebdavFileBrowser.prototype.showTitleBarLogoutButton = function(dialogChild) {
+    var dialogTitleBar = (new goog.dom.DomHelper())
+      .getAncestorByClass(dialogChild, 'modal-dialog');
 
+    if(!this.renderedLogoutButton  && !sync.util.getURLParameter('url')) {
       var logoutContainer = goog.dom.createDom('div', 'webdav-logout-container', tr(msgs.LOGOUT_));
       dialogTitleBar.appendChild(logoutContainer);
 
       goog.events.listen(logoutContainer,
-        goog.events.EventType.CLICK,
-        function() {
-          (new LogOutAction()).actionPerformed();
-        },
+        goog.events.EventType.CLICK, function() {
+          this.editor.getActionsManager().getActionById(WEBDAV_LOGOUT_ACTION_ID).actionPerformed();
+        }.bind(this),
         false,
         this);
       // mark that the button has been rendered
       this.renderedLogoutButton = true;
     }
+
+    goog.dom.classlist.remove(dialogTitleBar, 'webdav-hide-logout');
   };
+
+  /**
+   * Hides the logout button on the dialog title bar.
+   *
+   * @param dialogChild a child of the dialog element from which
+   * we can start the search for the title bar.
+   */
+  WebdavFileBrowser.prototype.hideTitleBarLogoutButton = function(dialogChild) {
+    var dialogTitleBar = (new goog.dom.DomHelper())
+      .getAncestorByClass(dialogChild, 'modal-dialog');
+
+    goog.dom.classlist.add(dialogTitleBar, 'webdav-hide-logout');
+  };
+
 
   /**
    * Request the URL info from the server.

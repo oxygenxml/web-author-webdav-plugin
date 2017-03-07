@@ -93,6 +93,10 @@
     text-decoration: none;
 }
 
+.webdav-hide-logout .webdav-logout-container {
+    display: none;
+}
+
 .webdav-logout-container {
     position: absolute;
     top: 5px;
