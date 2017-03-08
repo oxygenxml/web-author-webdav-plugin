@@ -379,7 +379,7 @@
           localStorage.setItem('webdav.latestEnforcedURL', this.enforcedUrl);
         } else {
           var processedUrl = this.processURL(url);
-          this.requestUrlInfo_(processedUrl);
+          this.requestUrlInfo_(processedUrl, goog.bind(this.openUrlInfo, this));
         }
       } else {
         this.showErrorMessage(tr(msgs.INVALID_URL_));
@@ -436,12 +436,11 @@
    * Request the URL info from the server.
    *
    * @param {string} url The URL about which we ask for information.
-   * @param {function} opt_callback callback method to replace the openUrlInfo method.
    *
    * @private
    */
-  WebdavFileBrowser.prototype.requestUrlInfo_ = function (url, opt_callback) {
-    var callback = opt_callback || goog.bind(this.openUrlInfo, this);
+  WebdavFileBrowser.prototype.requestUrlInfo_ = function (url, callback) {
+    console.log('Old method called ', url);
     goog.net.XhrIo.send(
       '../plugins-dispatcher/webdav-url-info?url=' + encodeURIComponent(url),
       goog.bind(this.handleUrlInfoReceived, this, url, callback));
