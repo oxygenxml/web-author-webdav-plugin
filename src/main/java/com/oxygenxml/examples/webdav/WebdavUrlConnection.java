@@ -21,7 +21,6 @@ import ro.sync.exml.plugin.urlstreamhandler.CacheableUrlConnection;
 import ro.sync.exml.workspace.api.PluginResourceBundle;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.net.protocol.http.WebdavLockHelper;
-import ro.sync.servlet.WebappTags;
 import ro.sync.util.URLUtil;
 
 /**
@@ -126,7 +125,7 @@ public class WebdavUrlConnection extends FilterURLConnection
       PluginResourceBundle rb = ((WebappPluginWorkspace)PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
       throw new UserActionRequiredException(new WebappMessage(
           WebappMessage.MESSAGE_TYPE_CUSTOM, 
-          rb.getMessage(WebappTags.AUTHENTICATION_REQUIRED), 
+          rb.getMessage(TranslationTags.AUTHENTICATION_REQUIRED), 
           // send back the URL for which to authenticate.
           this.delegateConnection.getURL().toExternalForm(), 
           true));  
