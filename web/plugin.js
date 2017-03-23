@@ -1,4 +1,108 @@
 (function() {
+
+  var translations = {
+    "NAME_": {
+      "en_US":"Name",
+      "de_DE":"Name",
+      "fr_FR":"Nom",
+      "ja_JP":"名前",
+      "nl_NL":"Naam"
+    },
+    "PASSWORD_": {
+      "en_US":"Password",
+      "de_DE":"Passwort:",
+      "fr_FR":"Mot de passe",
+      "ja_JP":"パスワード",
+      "nl_NL":"Wachtwoord"
+    },
+    "AUTHENTICATION_REQUIRED_": {
+      "en_US":"Authentication required",
+      "de_DE":"Authentifikation erforderlich",
+      "fr_FR":"Authentification requise",
+      "ja_JP":"認証が必要です",
+      "nl_NL":"Verificatie vereist"
+    },
+    "LOGOUT_": {
+      "en_US":"Logout",
+      "de_DE":"Abmeldung",
+      "fr_FR":"Déconnexion",
+      "ja_JP":"ログアウト",
+      "nl_NL":"Uitloggen"
+    },
+    "CANCEL_": {
+      "en_US":"Cancel",
+      "de_DE":"Abbrechen",
+      "fr_FR":"Annuler",
+      "ja_JP":"キャンセル",
+      "nl_NL":"Annuleer"
+    },
+    "LOGOUT_CONFIRMATION_": {
+      "en_US":"Are you sure you want to logout?",
+      "de_DE":"Sind Sie sicher, dass Sie sich abmelden möchten?",
+      "fr_FR":"Êtes-vous sûr de vouloir vous déconnecter?",
+      "ja_JP":"ログアウトしますか？",
+      "nl_NL":"Weet u zeker dat u wilt uitloggen?"
+    },
+    "UNSAVED_CHANGES_WILL_BE_LOST_":{
+      "en_US":"All your unsaved changes will be lost",
+      "de_DE":"Alle ungespeicherten Änderungen werden verloren gehen",
+      "fr_FR":"Toutes vos modifications non enregistrées seront perdues",
+      "ja_JP":"未保存のすべての変更が失われます",
+      "nl_NL":"Alle niet-opgeslagen wijzigingen gaan verloren"
+    },
+    "SERVER_URL_": {
+      "en_US":"Server URL",
+      "de_DE":"Server-URL",
+      "fr_FR":"URL du serveur",
+      "ja_JP":"サーバー URL",
+      "nl_NL":"Server URL"
+    },
+    "EDIT_SERVER_URL_": {
+      "en_US":"Edit server URL",
+      "de_DE":"Server-URL bearbeiten",
+      "fr_FR":"Éditer l'URL du serveur",
+      "ja_JP":"サーバーURLを編集する",
+      "nl_NL":"Server-URL bewerken"
+    },
+    "USE_BUILTIN_SERVER_": {
+      "en_US":"Use built-in server",
+      "de_DE":"Eingebauten Server verwenden",
+      "fr_FR":"Utiliser le serveur intégré",
+      "ja_JP":"ビルトインサーバーを使用する",
+      "nl_NL":"Ingebouwde server gebruiken"
+    },
+    "INVALID_URL_": {
+      "en_US":"Invalid URL",
+      "de_DE":"Ungültige URL",
+      "fr_FR":"URL invalide",
+      "ja_JP":"不正なURL",
+      "nl_NL":"Ongeldige URL"
+    },
+    "CANNOT_OPEN_URL_": {
+      "en_US":"Cannot open this URL",
+      "de_DE":"Konnte diese URL nicht öffnen",
+      "fr_FR":"Impossible d'ouvrir cette URL",
+      "ja_JP":"このURLを開くことができません",
+      "nl_NL":"Kan deze URL niet openen"
+    },
+    "OPEN_DOC_WEBDAV_DESCRIPTION_": {
+      "en_US":"Open document from WebDAV server",
+      "de_DE":"Dokument von WebDAV-Server öffnen",
+      "fr_FR":"Ouvrir un document depuis le serveur WebDAV",
+      "ja_JP":"WebDAVサーバーからドキュメントを開く",
+      "nl_NL":"Document openen vanaf WebDAV-server"
+    },
+    "NEW_DOC_WEBDAV_DESCRIPTION_": {
+      "en_US":"Create a new document on a WebDAV server",
+      "de_DE":"Neues Dokument auf WebDAV-Server erstellen",
+      "fr_FR":"Créer un nouveau document sur un serveur WebDAV",
+      "ja_JP":"WebDAVサーバー上で新しいドキュメントを作成する",
+      "nl_NL":"Een nieuw document op een WebDAV-server maken"
+    }
+  };
+
+  sync.Translation.addTranslations(translations);
+
   var WEBDAV_LOGOUT_ACTION_ID = 'Webdav/Logout';
 
   /**

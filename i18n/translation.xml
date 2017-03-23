@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<translation>
+    <languageList>
+        <language description="English" lang="en_US"/>
+        <language description="German" lang="de_DE"/>
+        <language description="French" lang="fr_FR"/>
+        <language description="Japanese" lang="ja_JP"/>
+        <language description="Dutch" lang="nl_NL"/>
+    </languageList>
+    <key value="Lock_resources_on_open" distribution="webauthor">
+        <comment>Label for checkbox option, whether to lock resources when a user opens them.</comment>
+        <val lang="en_US">Lock resources on open</val>
+        <val lang="de_DE">Ressourcen beim Öffnen sperren</val>
+        <val lang="fr_FR">Verrouiller les ressources à l'ouverture</val>
+        <val lang="ja_JP">オープン時にリソースをロックする</val>
+        <val lang="nl_NL">Bronnen vergrendelen bij openen</val>
+    </key>
+    <key value="Autosave_interval" distribution="webauthor">
+        <comment>Label for input for adjusting autosave interval.</comment>
+        <val lang="en_US">Autosave interval</val>
+        <val lang="de_DE">Intervall für automatisches Speichern</val>
+        <val lang="fr_FR">Intervalle de sauvegarde automatique</val>
+        <val lang="ja_JP">自動保存間隔</val>
+        <val lang="nl_NL">Interval voor automatisch opslaan</val>
+    </key>
+    <key value="Seconds">
+        <comment>Message used in document checking option page.</comment>
+        <val lang="en_US">seconds</val>
+        <val lang="de_DE">Sekunden</val>
+        <val lang="fr_FR">secondes</val>
+        <val lang="ja_JP">秒</val>
+        <val lang="nl_NL">seconden</val>
+    </key>
+    <key value="Server_URL">
+        <comment>Open URL dialog. Input for the server URL.</comment>
+        <val lang="en_US">Server URL</val>
+        <val lang="de_DE">Server-URL</val>
+        <val lang="fr_FR">URL du serveur</val>
+        <val lang="ja_JP">サーバー URL</val>
+        <val lang="nl_NL">Server URL</val>
+    </key>
+    <key value="Enforced_server" distribution="webauthor">
+        <comment>Label for input setting the enforced server URL.</comment>
+        <val lang="en_US">Enforced server</val>
+        <val lang="de_DE">Erzwungener Server</val>
+        <val lang="fr_FR">Serveur forcé</val>
+        <val lang="ja_JP">強制サーバー</val>
+        <val lang="nl_NL">Afgedwongen server</val>
+    </key>
+    <key value="Enforced_server_note" distribution="webauthor">
+        <comment>Warning for the 'Enforce server' setting.</comment>
+        <val lang="en_US">Note: Once a server is enforced, the user will only be able to browse this enforced server. However, it is possible for other plugins to add more enforced servers for the user to choose from.</val>
+        <val lang="de_DE">Hinweis: Sobald ein Server erzwungen wurde, kann der Benutzer nur den erzwungenen Server durchsuchen. Allerdings ist es anderen Plugins möglich, weitere erzwungene Server für den Benutzer zur Auswahl zu stellen.</val>
+        <val lang="fr_FR">Note: Une fois qu'un serveur est forcé, l'utilisateur sera uniquement capable de naviguer
+            ce serveur forcé. Cependant, il est possible que d'autres plugins ajoutent un ou plusieurs serveurs forcé
+            pour l'utilisateur.</val>
+        <val lang="ja_JP">メモ：サーバーが強制されると、ユーザーは、この強制されたサーバーのみを参照することができます。しかし、ユーザーが選択できるよう、その他の強制サーバーを他のプラグインに追加することができます。</val>
+        <val lang="nl_NL">Opmerking: Zodra een server wordt afgedwongen, kan de gebruiker alleen zoeken op deze afgedwongen server. Andere plug-ins kunnen echter meer afgedwongen servers toevoegen waaruit de gebruiker kan kiezen.</val>
+    </key>
+    <key value="Authentication_required" distribution="webauthor">
+        <comment>Title of login dialog.</comment>
+        <val lang="en_US">Authentication required</val>
+        <val lang="de_DE">Authentifikation erforderlich</val>
+        <val lang="fr_FR">Authentification requise</val>
+        <val lang="ja_JP">認証が必要です</val>
+        <val lang="nl_NL">Verificatie vereist</val>
+    </key>
+    <key value="Anonymous" distribution="webauthor">
+        <comment>Default author name for comments</comment>
+        <val lang="en_US">Anonymous</val>
+        <val lang="de_DE">Anonym</val>
+        <val lang="fr_FR">Anonyme</val>
+        <val lang="ja_JP">匿名</val>
+        <val lang="nl_NL">Anoniem</val>
+    </key>
+</translation>
