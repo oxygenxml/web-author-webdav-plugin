@@ -123,4 +123,60 @@
         <val lang="ja_JP">不正なURL</val>
         <val lang="nl_NL">Ongeldige URL</val>
     </key>
+    <key value="NAME_">
+        <comment>Like in "name and value"</comment>
+        <val lang="en_US">Name</val>
+        <val lang="de_DE">Name</val>
+        <val lang="fr_FR">Nom</val>
+        <val lang="ja_JP">名前</val>
+        <val lang="nl_NL">Naam</val>
+    </key>
+    <key value="PASSWORD_">
+        <comment>Open URL dialog. The password for the connection.</comment>
+        <val lang="en_US">Password</val>
+        <val lang="de_DE">Passwort:</val>
+        <val lang="fr_FR">Mot de passe</val>
+        <val lang="ja_JP">パスワード</val>
+        <val lang="nl_NL">Wachtwoord</val>
+    </key>
+    <key distribution="webauthor" value="LOGOUT_">
+        <comment>caption for Logout button</comment>
+        <val lang="en_US">Logout</val>
+        <val lang="de_DE">Abmeldung</val>
+        <val lang="fr_FR">Déconnexion</val>
+        <val lang="ja_JP">ログアウト</val>
+        <val lang="nl_NL">Logout</val>
+    </key>
+    <key value="CANCEL_">
+        <comment>The cancel button text.</comment>
+        <val lang="en_US">Cancel</val>
+        <val lang="de_DE">Abbrechen</val>
+        <val lang="fr_FR">Annuler</val>
+        <val lang="ja_JP">キャンセル</val>
+        <val lang="nl_NL">Annuleer</val>
+    </key>
+    <key distribution="webauthor" value="USE_BUILTIN_SERVER_">
+        <comment>Caption for button for using the built-in server</comment>
+        <val lang="en_US">Use built-in server</val>
+        <val lang="de_DE">Eingebauten Server verwenden</val>
+        <val lang="fr_FR">Utiliser le serveur intégré</val>
+        <val lang="ja_JP">ビルトインサーバーを使用する</val>
+        <val lang="nl_NL">Use built-in server</val>
+    </key>
+    <key distribution="webauthor" value="OPEN_DOC_WEBDAV_DESCRIPTION_">
+        <comment>Description for the WebDAV 'Open document' action</comment>
+        <val lang="en_US">Open document from WebDAV server</val>
+        <val lang="de_DE">Dokument von WebDAV-Server öffnen</val>
+        <val lang="fr_FR">Ouvrir un document depuis le serveur WebDAV</val>
+        <val lang="ja_JP">WebDAVサーバーからドキュメントを開く</val>
+        <val lang="nl_NL">Open document from WebDAV server</val>
+    </key>
+    <key distribution="webauthor" value="NEW_DOC_WEBDAV_DESCRIPTION_">
+        <comment>Description for the WebDAV 'New document' action</comment>
+        <val lang="en_US">Create a new document on a WebDAV server</val>
+        <val lang="de_DE">Neues Dokument auf WebDAV-Server erstellen</val>
+        <val lang="fr_FR">Créer un nouveau document sur un serveur WebDAV</val>
+        <val lang="ja_JP">WebDAVサーバー上で新しいドキュメントを作成する</val>
+        <val lang="nl_NL">Create a new document on a WebDAV server</val>
+    </key>
 </translation>
