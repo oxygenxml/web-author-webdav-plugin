@@ -1,14 +1,4 @@
 <component>
-	<fileSets>
-		<fileSet>
-			<directory>web</directory>
-			<outputDirectory>/web</outputDirectory>
-			<includes>
-				<include>**/*</include>
-			</includes>
-		</fileSet>
-	</fileSets>
-
 	<files>
 		<file>
 			<source>target/build/${project.build.finalName}.jar</source>
@@ -18,6 +8,14 @@
 			<source>plugin.xml</source>
 			<outputDirectory>/</outputDirectory>
 			<filtered>true</filtered>
+		</file>
+    	<file>
+			<source>target/plugin.js</source>
+			<outputDirectory>web</outputDirectory>
+		</file>
+		<file>
+			<source>target/i18n/translation.xml</source>
+			<outputDirectory>i18n</outputDirectory>
 		</file>
 		<file>
 			<source>README.md</source>

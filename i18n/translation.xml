@@ -73,4 +73,54 @@
         <val lang="ja_JP">匿名</val>
         <val lang="nl_NL">Anoniem</val>
     </key>
+
+
+    <key distribution="webauthor" value="EDIT_SERVER_URL_">
+        <comment>Tooltip on button for editing server URL</comment>
+        <val lang="en_US">Edit server URL</val>
+        <val lang="de_DE">Server-URL bearbeiten</val>
+        <val lang="fr_FR">Éditer l'URL du serveur</val>
+        <val lang="ja_JP">サーバーURLを編集する</val>
+        <val lang="nl_NL">Server-URL bewerken</val>
+    </key>
+    <key distribution="webauthor" value="CANNOT_OPEN_URL_">
+        <comment>Error shown if URL could not be opened.</comment>
+        <val lang="en_US">Cannot open this URL</val>
+        <val lang="de_DE">Konnte diese URL nicht öffnen</val>
+        <val lang="fr_FR">Impossible d'ouvrir cette URL</val>
+        <val lang="ja_JP">このURLを開くことができません</val>
+        <val lang="nl_NL">Cannot open this URL</val>
+    </key>
+    <key distribution="webauthor" value="UNSAVED_CHANGES_WILL_BE_LOST_">
+        <comment>Warning shown when the user tries to logout while having unsaved changes</comment>
+        <val lang="en_US">All your unsaved changes will be lost</val>
+        <val lang="de_DE">Alle ungespeicherten Änderungen werden verloren gehen</val>
+        <val lang="fr_FR">Toutes vos modifications non enregistrées seront perdues</val>
+        <val lang="ja_JP">未保存のすべての変更が失われます</val>
+        <val lang="nl_NL">All your unsaved changes will be lost</val>
+    </key>
+    <key distribution="webauthor" value="LOGOUT_CONFIRMATION_">
+        <comment>Warning shown when the user tries to logout</comment>
+        <val lang="en_US">Are you sure you want to logout?</val>
+        <val lang="de_DE">Sind Sie sicher, dass Sie sich abmelden möchten?</val>
+        <val lang="fr_FR">Êtes-vous sûr de vouloir vous déconnecter?</val>
+        <val lang="ja_JP">ログアウトしますか？</val>
+        <val lang="nl_NL">Are you sure you want to logout?</val>
+    </key>
+    <key value="AUTHENTICATION_REQUIRED_" distribution="webauthor">
+        <comment>Title of login dialog.</comment>
+        <val lang="en_US">Authentication required</val>
+        <val lang="de_DE">Authentifikation erforderlich</val>
+        <val lang="fr_FR">Authentification requise</val>
+        <val lang="ja_JP">認証が必要です</val>
+        <val lang="nl_NL">Verificatie vereist</val>
+    </key>
+    <key value="INVALID_URL_">
+        <comment>The input URL was not valid.</comment>
+        <val lang="en_US">Invalid URL</val>
+        <val lang="de_DE">Ungültige URL</val>
+        <val lang="fr_FR">URL invalide</val>
+        <val lang="ja_JP">不正なURL</val>
+        <val lang="nl_NL">Ongeldige URL</val>
+    </key>
 </translation>

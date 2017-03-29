@@ -1,0 +1,22 @@
+{
+  "name": "webdav-integration-plugin",
+  "version": "0.0.1",
+  "description": "This plugin enables oXygen XML Web Author to open and edit files on WebDAV",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oxygenxml/webapp-webdav-integration.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/oxygenxml/webapp-webdav-integration/issues"
+  },
+  "homepage": "https://github.com/oxygenxml/webapp-webdav-integration#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-convert": "^0.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.3"
+  }
+}
