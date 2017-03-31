@@ -182,8 +182,8 @@
 
       // Register the toolbar actions.
       goog.events.listenOnce(editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function(e) {
-        var logoutAction = new LogOutAction(editor);
-        editor.getActionsManager().registerAction(WEBDAV_LOGOUT_ACTION_ID, logoutAction);
+        this.logoutAction = new LogOutAction(editor);
+        editor.getActionsManager().registerAction(WEBDAV_LOGOUT_ACTION_ID, this.logoutAction);
         var toolbar = e.actionsConfiguration.toolbars[0];
 
         var moreMenu = toolbar.children[toolbar.children.length - 1];
@@ -309,7 +309,11 @@
       this.editor = e.editor;
     }.bind(this));
 
-      var latestUrl = this.getLatestUrl();
+    goog.events.listenOnce(workspace, sync.api.Workspace.EventType.BEFORE_DASHBOARD_LOADED, goog.bind(function (e) {
+      this.logoutAction = new LogOutAction(null);
+    }, this));
+
+    var latestUrl = this.getLatestUrl();
     var latestRootUrl = this.getLatestRootUrl();
     sync.api.FileBrowsingDialog.call(this, {
       initialUrl: latestUrl,
@@ -511,7 +515,7 @@
 
       goog.events.listen(logoutContainer,
         goog.events.EventType.CLICK, function() {
-          this.editor.getActionsManager().getActionById(WEBDAV_LOGOUT_ACTION_ID).actionPerformed();
+          this.logoutAction.actionPerformed();
         }.bind(this),
         false,
         this);
