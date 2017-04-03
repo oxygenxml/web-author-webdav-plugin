@@ -14,6 +14,10 @@
 			<source>target/build/${project.build.finalName}.jar</source>
 			<outputDirectory>/lib</outputDirectory>
 		</file>
+    <file>
+			<source>i18n/translation.xml</source>
+			<outputDirectory>i18n</outputDirectory>
+		</file>
 		<file>
 			<source>plugin.xml</source>
 			<outputDirectory>/</outputDirectory>
