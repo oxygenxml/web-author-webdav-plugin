@@ -1,1 +1,9 @@
 language: java
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: J54JH9iUKMA8TdA0GHcO/qGFroKcQ2IQlyJ6xxG8n1OWGwsVLGQl3CCwAHeEg3FchqEpf1IBH83kYPl5y8hUKOZgUH+UiclMzoqq+w/Ikz0GJMgxW1v3rX5LP0HJdFeFKgsV3OJ7N3dO5NThGLca/tHQo4K/6rwYYBXzhVEKjJ/BNBV44i1ew5w2K96014di9HLQ6MMPjRenB0c/uNe2Cga4QJjCcfdIYjqKtArFzzMp64j0aQPethVSmC8yK5R+om3bX4z6A9xf0Tn0yypEBrEmDjYvhmi60wwIRhHoAqBV6V4nRcIVSj3Arts/P09CoHw+vqHSrKAmqiAa0yze1w8txzLtF2l0dNP+9q92MiEv9HQreXX1y325GwINgyy2nBTj2YGMK//pt2b7110DmNIKCVmldO8edMD07W91ADVin6uwg6T7WGaZkfmFbuTFKPrGWyl6UigCGq9edDALuln5I+twCrC/WBT2JBzvoUmkQzB0aYUvK8vIeLEroIL4mYAYiSjpqdKAcvfbqh1m20wKO5beF8Mq7e9m936uVSQpBRhYUREFe2cUm8DmnyF66CSuCbkL4WPQIqV8pOW8b8YgxDZniDxt/yz/AUZS/sVH1YH2M6HjYEkqV3u0rFm2eSb96zMKUPHUmgaqi34Jl8MW5dfEajkhrUlU1ADEb/k=
+  file: target/webapp-webdav-plugin-19.0-plugin.jar
+  on:
+    tags: true
