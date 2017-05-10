@@ -32,6 +32,8 @@
    
  <extension type="LockHandlerFactory"
   class="com.oxygenxml.examples.webdav.WebdavLockHandlerFactory"/>
-  
-  
+
+ <extension type="WorkspaceAccess"
+  class="com.oxygenxml.examples.webdav.UserNameSetterExtension"/>
+
 </plugin>

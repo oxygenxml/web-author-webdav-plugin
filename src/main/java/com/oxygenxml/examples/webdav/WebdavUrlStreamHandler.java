@@ -7,6 +7,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
@@ -30,7 +31,7 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
   /**
    * Credentials store.
    */
-  public static final Cache<String, Map<String, PasswordAuthentication>> credentials = 
+  public static final Cache<String, ConcurrentHashMap<String, PasswordAuthentication>> credentials = 
       CacheBuilder.newBuilder()
         .concurrencyLevel(10)
         .maximumSize(10000)
