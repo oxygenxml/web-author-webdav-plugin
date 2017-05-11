@@ -46,7 +46,7 @@ public class LoginServlet extends WebappServletPluginExtension{
       ConcurrentHashMap<String, PasswordAuthentication> userCredentialsMap = WebdavUrlStreamHandler.credentials.getIfPresent(userId);
       if(userCredentialsMap == null) {
         // if no credentials previously stored we create a new credentials map.
-        userCredentialsMap = new ConcurrentHashMap<String, PasswordAuthentication>();
+        userCredentialsMap = new ConcurrentHashMap<String, PasswordAuthentication>(1, 0.5f, 1);
         WebdavUrlStreamHandler.credentials.put(userId, userCredentialsMap);
       } 
       userCredentialsMap.put(serverId, new PasswordAuthentication(user, passwd.toCharArray()));

@@ -54,7 +54,7 @@ public class UserNameSetterExtension implements WorkspaceAccessPluginExtension {
         
         ConcurrentHashMap<String, PasswordAuthentication> userCredentialsMap = WebdavUrlStreamHandler.credentials.getIfPresent(sessionId);
         if(userCredentialsMap == null) {
-          userCredentialsMap = new ConcurrentHashMap<String, PasswordAuthentication>(0, 0, 0);
+          userCredentialsMap = new ConcurrentHashMap<String, PasswordAuthentication>(1, 0.5f, 1);
           WebdavUrlStreamHandler.credentials.put(sessionId, userCredentialsMap);
         } 
         String serverId = WebdavUrlStreamHandler.computeServerId(systemId.toExternalForm());
