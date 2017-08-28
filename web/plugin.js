@@ -1,5 +1,4 @@
 (function() {
-
   var WEBDAV_LOGOUT_ACTION_ID = 'Webdav/Logout';
 
   /**
@@ -83,10 +82,12 @@
         editor.getActionsManager().registerAction(WEBDAV_LOGOUT_ACTION_ID, this.logoutAction);
         var toolbar = e.actionsConfiguration.toolbars[0];
 
-        var moreMenu = toolbar.children[toolbar.children.length - 1];
-        moreMenu.children.push(
-          {id: WEBDAV_LOGOUT_ACTION_ID, type: "action"}
-        );
+        if(toolbar) {
+          var moreMenu = toolbar.children[toolbar.children.length - 1];
+          moreMenu.children.push(
+            {id: WEBDAV_LOGOUT_ACTION_ID, type: "action"}
+          );
+        }
       });
 
 
