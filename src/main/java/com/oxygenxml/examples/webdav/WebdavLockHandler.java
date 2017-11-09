@@ -4,7 +4,6 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.LockHandlerWithContext;
@@ -56,14 +55,9 @@ public class WebdavLockHandler extends LockHandlerWithContext {
   public void updateLock(String sessionId, URL url, int timeoutSeconds) throws LockException {
     url = WebdavUrlStreamHandler.addCredentials(sessionId, url);
     
-    Map<String, PasswordAuthentication> credentialsMap = WebdavUrlStreamHandler.credentials.getIfPresent(sessionId);
     String serverId = WebdavUrlStreamHandler.computeServerId("webdav-" + url.toExternalForm());
+    PasswordAuthentication passwordAuthentication = CredentialsStore.get(sessionId, serverId);
     
-    PasswordAuthentication passwordAuthentication = null;
-    
-    if(credentialsMap != null) {
-      passwordAuthentication = credentialsMap.get(serverId);
-    }
     PluginResourceBundle rb = ((WebappPluginWorkspace)PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
     String userName = passwordAuthentication != null ? passwordAuthentication.getUserName() : rb.getMessage(TranslationTags.ANONYMOUS);
     

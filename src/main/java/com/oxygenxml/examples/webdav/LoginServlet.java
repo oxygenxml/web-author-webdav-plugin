@@ -1,8 +1,6 @@
 package com.oxygenxml.examples.webdav;
 
 import java.io.IOException;
-import java.net.PasswordAuthentication;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +33,7 @@ public class LoginServlet extends WebappServletPluginExtension{
         .computeServerId(httpRequest.getParameter("server"));
     
     if ("logout".equals(action)) {
-      WebdavUrlStreamHandler.credentials.invalidate(userId);
+      CredentialsStore.invalidate(userId);
     } else {
       String user = httpRequest.getParameter("user");
       String passwd = httpRequest.getParameter("passwd");
@@ -43,13 +41,7 @@ public class LoginServlet extends WebappServletPluginExtension{
       logger.debug("Credentials submitted for session: " + userId +  ".\n user - " + user + ", passwd - " + passwd + ", serverId -" + serverId);
       
       // Store the user and password.
-      ConcurrentHashMap<String, PasswordAuthentication> userCredentialsMap = WebdavUrlStreamHandler.credentials.getIfPresent(userId);
-      if(userCredentialsMap == null) {
-        // if no credentials previously stored we create a new credentials map.
-        userCredentialsMap = new ConcurrentHashMap<String, PasswordAuthentication>(1, 0.5f, 1);
-        WebdavUrlStreamHandler.credentials.put(userId, userCredentialsMap);
-      } 
-      userCredentialsMap.put(serverId, new PasswordAuthentication(user, passwd.toCharArray()));
+      CredentialsStore.put(userId, serverId, user, passwd);
     }
   }
       

@@ -6,13 +6,8 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContext;
 import ro.sync.util.URLUtil;
@@ -27,16 +22,6 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
    */
   private static final Logger logger = Logger.getLogger(WebdavUrlStreamHandler.class.getName());
 
-  
-  /**
-   * Credentials store.
-   */
-  public static final Cache<String, ConcurrentHashMap<String, PasswordAuthentication>> credentials = 
-      CacheBuilder.newBuilder()
-        .concurrencyLevel(10)
-        .maximumSize(10000)
-        .build();
-  
   /**
    * Computes a server identifier out of the requested URL.
    * 
@@ -51,6 +36,7 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
       URL url = new URL(serverUrl);
       serverId = url.getProtocol() + url.getHost() + url.getPort();
     } catch(MalformedURLException e) {
+      logger.error("Malformed url in computeServerId", e);
     }
     logger.debug("serverID :" + serverId);
     return serverId;
@@ -73,13 +59,9 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
    * @return The URL with credentials. 
    */
   public static URL addCredentials(String contextId, URL url) {
-    PasswordAuthentication userCredentials = null;
-
     // Obtain the credentials for the current user.
-    Map<String, PasswordAuthentication> credentialsMap = credentials.getIfPresent(contextId);
-    if(credentialsMap != null) {
-      userCredentials = credentialsMap.get(computeServerId(url.toExternalForm()));
-    }
+    PasswordAuthentication userCredentials = CredentialsStore.get(contextId, computeServerId(url.toExternalForm()));
+    
     String protocol = url.getProtocol().substring(WebdavURLHandlerExtension.WEBDAV.length());
 
     // Build the complete URL that contains the user and password in it.

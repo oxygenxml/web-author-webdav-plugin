@@ -1,9 +1,7 @@
 package com.oxygenxml.examples.webdav;
 
-import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import ro.sync.ecss.extensions.api.webapp.access.EditingSessionOpenVetoException;
 import ro.sync.ecss.extensions.api.webapp.access.WebappEditingSessionLifecycleListener;
@@ -52,15 +50,8 @@ public class UserNameSetterExtension implements WorkspaceAccessPluginExtension {
           return;
         }
         
-        ConcurrentHashMap<String, PasswordAuthentication> userCredentialsMap = WebdavUrlStreamHandler.credentials.getIfPresent(sessionId);
-        if(userCredentialsMap == null) {
-          userCredentialsMap = new ConcurrentHashMap<String, PasswordAuthentication>(1, 0.5f, 1);
-          WebdavUrlStreamHandler.credentials.put(sessionId, userCredentialsMap);
-        } 
         String serverId = WebdavUrlStreamHandler.computeServerId(systemId.toExternalForm());
-        // If the user is not already logged-in, login them with an empty password so that the 
-        // server knows the name of the user that requests the lock.
-        userCredentialsMap.putIfAbsent(serverId, new PasswordAuthentication(userName, new char[0]));
+        CredentialsStore.putIfAbsent(sessionId, serverId, userName, "");
       }
     });
     
