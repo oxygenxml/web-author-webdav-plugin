@@ -11,23 +11,43 @@
   function login(serverUrl, authenticated) {
     serverUrl = fileBrowser.processURL(serverUrl);
 
+    var webdavNameInput,
+      webdavPasswordInput;
     // pop-up an authentication window,
     if (!loginDialog_) {
       loginDialog_ = workspace.createDialog();
-      loginDialog_.getElement().innerHTML =
-        '<div class="webdav-login-dialog">' +
-        '<label>' + tr(msgs.NAME_) + ': <input id="webdav-name" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
-        '<label>' + tr(msgs.PASSWORD_)+ ': <input id="webdav-passwd" type="password"/></label>' +
-        '</div>';
+
+      var cD = goog.dom.createDom;
+
+      webdavNameInput = cD('input', {id: 'webdav-name', type: 'text'});
+      webdavNameInput.setAttribute('autocorrect', 'off');
+      webdavNameInput.setAttribute('autocapitalize', 'none');
+      webdavNameInput.setAttribute('autofocus', '');
+
+      webdavPasswordInput = cD('input', {id: 'webdav-passwd', type: 'password'});
+
+      goog.dom.appendChild(loginDialog_,
+        cD('div', 'webdav-login-dialog',
+          cD('label', '',
+            tr(msgs.NAME_) + ': ',
+            webdavNameInput
+          ),
+          cD('label', '',
+            tr(msgs.PASSWORD_)+ ': ',
+            webdavPasswordInput
+          )
+        )
+      );
+
       loginDialog_.setTitle(tr(msgs.AUTHENTICATION_REQUIRED_));
       loginDialog_.setPreferredSize(300, null);
     }
     loginDialog_.onSelect(function(key) {
-      if (key == 'ok') {
+      if (key === 'ok') {
         // Send the user and password to the login servlet which runs in the webapp.
-        var userField = document.getElementById('webdav-name');
+        var userField = webdavNameInput || document.getElementById('webdav-name');
         var user = userField.value.trim();
-        var passwdField = document.getElementById('webdav-passwd')
+        var passwdField = webdavPasswordInput || document.getElementById('webdav-passwd');
         var passwd = passwdField.value;
 
         userField.value = '';
@@ -55,8 +75,7 @@
     loginDialog_.show();
     var lastUser = localStorage.getItem('webdav.user');
     if(lastUser) {
-      var dialogElement = loginDialog_.getElement();
-      var userInput = dialogElement.querySelector('#webdav-name');
+      var userInput = webdavNameInput || loginDialog_.getElement().querySelector('#webdav-name');
       userInput.value = lastUser;
       userInput.select();
     }
@@ -136,21 +155,32 @@
    * @return {sync.api.Dialog} The dialog used to confirm teh log-out action.
    */
   LogOutAction.prototype.getDialog = function() {
-    if (!this.dialog) {
-      this.dialog = workspace.createDialog();
-      this.dialog.setTitle(tr(msgs.LOGOUT_));
-      this.dialog.setButtonConfiguration([{key: 'yes', caption: tr(msgs.LOGOUT_)}, {key: 'no', caption: tr(msgs.CANCEL_)}]);
+    var dialog = this.dialog;
+    if (!dialog) {
+      dialog = workspace.createDialog();
+      dialog.setTitle(tr(msgs.LOGOUT_));
+      dialog.setButtonConfiguration([
+        {key: 'yes', caption: tr(msgs.LOGOUT_)},
+        {key: 'no', caption: tr(msgs.CANCEL_)}
+      ]);
 
-      var dialogHtml = '<div><div>';
-      dialogHtml += tr(msgs.LOGOUT_CONFIRMATION_) + ' ';
-      if (this.editor && this.editor.isDirty()) {
-        dialogHtml += '<b>' + tr(msgs.UNSAVED_CHANGES_WILL_BE_LOST_) + '</b>'
-      }
-      dialogHtml += '</div></div>';
+      var cD = goog.dom.createDom;
 
-      this.dialog.getElement().innerHTML = dialogHtml;
+      var mightLoseChanges = (this.editor && this.editor.isDirty()) ?
+        cD('b', '', tr(msgs.UNSAVED_CHANGES_WILL_BE_LOST_)) : null;
+
+      goog.dom.appendChild(dialog.getElement(),
+        cD('div', '',
+          cD('div', '',
+            tr(msgs.LOGOUT_CONFIRMATION_) + ' ',
+            mightLoseChanges
+          )
+        )
+      );
+
+      this.dialog = dialog;
     }
-    return this.dialog;
+    return dialog;
   };
 
   /**
@@ -161,7 +191,7 @@
   LogOutAction.prototype.actionPerformed = function() {
     this.dialog = this.getDialog();
     this.dialog.onSelect(goog.bind(function (actionName, e) {
-      if (actionName == 'yes') {
+      if (actionName === 'yes') {
         e.preventDefault();
         goog.net.XhrIo.send(
           '../plugins-dispatcher/login?action=logout',
@@ -281,21 +311,32 @@
     if (url) {
       element.style.paddingLeft = '5px';
       element.title = tr(msgs.SERVER_URL_);
-      var content = '<div class="webdav-repo-preview">' +
-        '<div class="domain-icon" style="' +
-        'background-image: url(' + sync.util.getImageUrl('/images/SharePointWeb16.png', sync.util.getHdpiFactor()) +
-        ');vertical-align: middle"></div>' +
-        new sync.util.Url(url).getDomain();
+
+      var cD = goog.dom.createDom;
+      var bgImageUrl = sync.util.getImageUrl('/images/SharePointWeb16.png', sync.util.getHdpiFactor());
+
       // add an edit button only of there are no enforced servers
       // or there are more than one enforced server.
-      if(this.enforcedServers.length != 1) {
-        content += '<div class="webdav-domain-edit"></div>';
+      var button = null;
+      if (this.enforcedServers.length !== 1) {
+        button = cD('div', {
+          className: 'webdav-domain-edit',
+          title: tr(msgs.EDIT_SERVER_URL_)
+        });
       }
-      content += '</div>';
-      element.innerHTML = content;
-      var button = element.querySelector('.webdav-domain-edit');
+
+      elem.innerHTML = '';
+      goog.dom.appendChild(elem,
+        cD('div', 'webdav-repo-preview',
+          cD('div', {
+            className: 'domain-icon',
+            style: 'background-image: url(' + bgImageUrl + ');vertical-align: middle;'
+          }),
+          new sync.util.Url(url).getDomain(),
+          button
+        ));
+
       if(button) {
-        button.title = tr(msgs.EDIT_SERVER_URL_);
         goog.events.listen(button, goog.events.EventType.CLICK,
           goog.bind(this.switchToRepoConfig, this, element))
       }
@@ -308,27 +349,34 @@
     // hide the logout button.
     this.hideTitleBarLogoutButton(element);
 
-    if(this.enforcedServers.length > 0) {
-      var dialogContent = '<div class="enforced-servers-config">' +
-        tr(msgs.SERVER_URL_) + ': <select id="webdav-browse-url">';
-      var i;
-      for(i = 0; i < this.enforcedServers.length; i++) {
+    var cD = goog.dom.createDom;
+    var enforcedServersLength = this.enforcedServers.length;
+    if(enforcedServersLength > 0) {
+      var options = [];
+      for(i = 0; i < enforcedServersLength; i++) {
         var serverUrl = this.enforcedServers[i];
         if(serverUrl) {
-          dialogContent += '<option value="' + serverUrl + '" ';
-          dialogContent += (serverUrl == localStorage.getItem('webdav.latestEnforcedURL') ? 'selected' : '') + '>';
-          dialogContent += serverUrl;
-          dialogContent += '</option>';
+          var option = cD('option', {value: serverUrl}, serverUrl);
+          if (serverUrl === localStorage.getItem('webdav.latestEnforcedURL')) {
+            option.setAttribute('selected', '');
+          }
+          options.push(option);
         }
       }
-      dialogContent += '</select></div>';
-      element.innerHTML = dialogContent;
+
+      elem.innerHTML = '';
+      goog.dom.appendChild(elem,
+        cD('div', 'enforced-servers-config',
+          tr(msgs.SERVER_URL_) + ': ',
+          cD('select', {id: 'webdav-browse-url'}, options)
+        )
+      );
     } else {
       var url = this.getCurrentFolderUrl();
       var latestUrl = this.getLatestUrl();
       // if none was set we let it empty.
       var editUrl = latestUrl || url || '';
-      if (editUrl && (editUrl.indexOf('webdav-') == 0)) {
+      if (editUrl && (editUrl.indexOf('webdav-') === 0)) {
         editUrl = editUrl.substring(7);
       }
       var button = element.querySelector('.webdav-domain-edit');
@@ -337,25 +385,41 @@
 
       element.style.paddingLeft = '5px';
       // the webdavServerPlugin additional content.
-      var wevdavServerPluginContent = '';
+      var webdavServerPluginContent;
+      var useBuiltinServerBtn;
+
       // if the webdav-server-plugin is installed display a button to use it.
       if (this.isServerPluginInstalled) {
-        wevdavServerPluginContent =
-          '<div class="webdav-builtin-server">' +
-            '<div class="webdav-use-builtin-btn">' + tr(msgs.USE_BUILTIN_SERVER_) + '</div>' +
-            '<input readonly class="webdav-builtin-url" value="' + webdavServerPluginUrl + '">' +
-          '</div>';
+        var readOnlyInput = cD('input', {className: 'webdav-builtin-url', value: webdavServerPluginUrl});
+        readOnlyInput.setAttribute('readonly', '');
+
+        useBuiltinServerBtn = cD('div', 'webdav-use-builtin-btn', tr(msgs.USE_BUILTIN_SERVER_));
+
+        webdavServerPluginContent = cD('div', 'webdav-builtin-server',
+          useBuiltinServerBtn,
+          readOnlyInput
+        );
       }
-      element.innerHTML =
-        '<div class="webdav-config-dialog">' +
-        '<label>' + tr(msgs.SERVER_URL_) + ': <input id="webdav-browse-url" type="text" autocorrect="off" autocapitalize="none" autofocus/></label>' +
-        wevdavServerPluginContent +
-        '</div>';
+
+      var webdavBrowseUrlInput = cD('input', {id: 'webdav-browse-url', type: 'text'});
+      webdavBrowseUrlInput.setAttribute('autocorrect', 'off');
+      webdavBrowseUrlInput.setAttribute('autocapitalize', 'none');
+      webdavBrowseUrlInput.setAttribute('autofocus', '');
+
+      element.innerHTML = '';
+      goog.dom.appendChild(element,
+        cD('div', 'webdav-config-dialog',
+          cD('label', '',
+            tr(msgs.SERVER_URL_) + ': ',
+            webdavBrowseUrlInput
+          ),
+          webdavServerPluginContent
+        )
+      );
       element.querySelector('#webdav-browse-url').value = editUrl;
 
       // handle click on the Use builtin server button.
       if (this.isServerPluginInstalled) {
-        var useBuiltinServerBtn = element.querySelector('.webdav-builtin-server .webdav-use-builtin-btn');
         goog.events.listen(useBuiltinServerBtn, goog.events.EventType.CLICK,
           goog.bind(function() {
             var processedUrl = this.processURL(webdavServerPluginUrl);
@@ -367,7 +431,7 @@
           }, this));
       }
     }
-    var prefferedHeight = this.isServerPluginInstalled && this.enforcedServers.length == 0 ? 230 : 190;
+    var prefferedHeight = this.isServerPluginInstalled && enforcedServersLength === 0 ? 230 : 190;
     this.dialog.setPreferredSize(null, prefferedHeight);
   };
 
