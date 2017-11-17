@@ -26,7 +26,7 @@
 
       webdavPasswordInput = cD('input', {id: 'webdav-passwd', type: 'password'});
 
-      goog.dom.appendChild(loginDialog_,
+      goog.dom.appendChild(loginDialog_.getElement(),
         cD('div', 'webdav-login-dialog',
           cD('label', '',
             tr(msgs.NAME_) + ': ',
@@ -260,7 +260,8 @@
     setTimeout(goog.bind(function(){
       // whether the webdav server plugin is installed.
       this.isServerPluginInstalled = false;
-      if(typeof webdavServerPluginUrl !== 'undefined' && webdavServerPluginUrl) {
+      // webdavServerPluginUrl - may be set by another plugin.
+      if (window.webdavServerPluginUrl) {
         this.isServerPluginInstalled = true;
       }
       if(this.enforcedServers.length > 0) {
@@ -390,7 +391,7 @@
 
       // if the webdav-server-plugin is installed display a button to use it.
       if (this.isServerPluginInstalled) {
-        var readOnlyInput = cD('input', {className: 'webdav-builtin-url', value: webdavServerPluginUrl});
+        var readOnlyInput = cD('input', {className: 'webdav-builtin-url', value: window.webdavServerPluginUrl});
         readOnlyInput.setAttribute('readonly', '');
 
         useBuiltinServerBtn = cD('div', 'webdav-use-builtin-btn', tr(msgs.USE_BUILTIN_SERVER_));
@@ -422,7 +423,7 @@
       if (this.isServerPluginInstalled) {
         goog.events.listen(useBuiltinServerBtn, goog.events.EventType.CLICK,
           goog.bind(function() {
-            var processedUrl = this.processURL(webdavServerPluginUrl);
+            var processedUrl = this.processURL(window.webdavServerPluginUrl);
             var urlInfo = {
               type: 'FOLDER',
               rootUrl: processedUrl
@@ -596,7 +597,7 @@
   WebdavFileBrowser.prototype.getLatestRootUrl = function() {
     var lastRootUrl = this.enforcedUrl || localStorage.getItem('webdav.latestRootUrl');
     if (!lastRootUrl && this.isServerPluginInstalled) {
-      lastRootUrl = webdavServerPluginUrl;
+      lastRootUrl = window.webdavServerPluginUrl;
     }
     return lastRootUrl;
   };
@@ -611,7 +612,7 @@
     // if the latest url is not in local storage we check if the
     // webdav-server-plugin is installed and we use it.
     if(!latestUrl && this.isServerPluginInstalled) {
-      latestUrl = webdavServerPluginUrl;
+      latestUrl = window.webdavServerPluginUrl;
     }
 
     return latestUrl;
