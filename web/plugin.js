@@ -325,8 +325,8 @@
         });
       }
 
-      elem.innerHTML = '';
-      goog.dom.appendChild(elem,
+      element.innerHTML = '';
+      goog.dom.appendChild(element,
         cD('div', 'webdav-repo-preview',
           cD('div', {
             className: 'domain-icon',
