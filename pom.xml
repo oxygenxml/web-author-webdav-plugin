@@ -4,11 +4,11 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
   <groupId>com.oxygenxml</groupId>
-  <version>19.1-SNAPSHOT</version>
+  <version>20.0-SNAPSHOT</version>
 	<artifactId>webapp-webdav-plugin</artifactId>
 
 	<properties>	
-		<oxygen.sdk.version>${project.version}</oxygen.sdk.version>
+		<oxygen.sdk.version>20.0-SNAPSHOT</oxygen.sdk.version>
 	</properties>
 
   <repositories>
@@ -36,7 +36,7 @@
 		<dependency>
 		     <groupId>com.oxygenxml</groupId>
 		     <artifactId>oxygen-webapp</artifactId>
-		     <version>19.0.0.0</version>
+		     <version>${oxygen.sdk.version}</version>
 		     <classifier>classes</classifier>
 		     <scope>provided</scope>
 		</dependency>
