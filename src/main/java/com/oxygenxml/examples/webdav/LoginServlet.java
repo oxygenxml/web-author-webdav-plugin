@@ -29,12 +29,13 @@ public class LoginServlet extends WebappServletPluginExtension{
   public void doPost(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
     String userId = httpRequest.getSession().getId();
     String action = httpRequest.getParameter("action");
-    String serverId = WebdavUrlStreamHandler
-        .computeServerId(httpRequest.getParameter("server"));
     
     if ("logout".equals(action)) {
       CredentialsStore.invalidate(userId);
     } else {
+      String serverId = WebdavUrlStreamHandler
+          .computeServerId(httpRequest.getParameter("server"));
+      
       String user = httpRequest.getParameter("user");
       String passwd = httpRequest.getParameter("passwd");
       

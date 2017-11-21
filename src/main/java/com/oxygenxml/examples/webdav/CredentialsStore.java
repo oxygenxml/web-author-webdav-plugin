@@ -1,15 +1,10 @@
 package com.oxygenxml.examples.webdav;
 
+import java.io.Serializable;
 import java.net.PasswordAuthentication;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 
-import org.apache.log4j.Logger;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-
+import ro.sync.ecss.extensions.api.webapp.SessionStore;
+import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 /**
@@ -23,7 +18,12 @@ public class CredentialsStore {
    * @author gabriel_titerlea
    *
    */
-  private static final class UsrPass {
+  private static final class UsrPass implements Serializable {
+    /**
+     * Version for serialization.
+     */
+    private static final long serialVersionUID = 1L;
+
     /**
      * The user name to store.
      */
@@ -46,31 +46,6 @@ public class CredentialsStore {
   }
   
   /**
-   * Logger for logging.
-   */
-  private static final Logger logger = Logger.getLogger(
-      CredentialsStore.class.getName());
-  
-  /**
-   * Credentials store.
-   * <sessionId, <url, credentials>>
-   */
-  private static final Cache<String, ConcurrentHashMap<String, UsrPass>> credentials = 
-      CacheBuilder.newBuilder()
-        .concurrencyLevel(10)
-        .maximumSize(10000)
-        .build();
-
-  /**
-   * Value loader used to make sure a Map is present in credentials for a given session.
-   */
-  private static final Callable<ConcurrentHashMap<String, UsrPass>> valueLoader = new Callable<ConcurrentHashMap<String, UsrPass>>() {
-    public ConcurrentHashMap<String, UsrPass> call() throws Exception {
-      return new ConcurrentHashMap<String, UsrPass>(1, 0.5f, 1);
-    }
-  };
-  
-  /**
    * Stores the given credentials.
    * @param sessionId The session id.
    * @param serverId The server id.
@@ -78,14 +53,8 @@ public class CredentialsStore {
    * @param password The password.
    */
   public static void put(String sessionId, String serverId, String userName, String password) {
-    try {
-      ConcurrentHashMap<String, UsrPass> sessionCredentials = credentials.get(sessionId, valueLoader);
-      
-      String encryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().encrypt(password);
-      sessionCredentials.put(serverId, new UsrPass(userName, encryptedPass));
-    } catch (ExecutionException e) {
-      logger.error("Error while storing webdav credentials", e);
-    }
+    String encryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().encrypt(password);
+    getSessionStore().put(sessionId, getCredentialsKey(serverId), new UsrPass(userName, encryptedPass));
   }
 
   /**
@@ -96,14 +65,8 @@ public class CredentialsStore {
    * @param password The password.
    */
   public static void putIfAbsent(String sessionId, String serverId, String userName, String password) {
-    try {
-      ConcurrentHashMap<String, UsrPass> sessionCredentials = credentials.get(sessionId, valueLoader);
-      
-      String encryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().encrypt(password);
-      sessionCredentials.putIfAbsent(serverId, new UsrPass(userName, encryptedPass));
-    } catch (ExecutionException e) {
-      logger.error("Error while storing webdav credentials (ifPresent)", e);
-    }
+    String encryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().encrypt(password);
+    getSessionStore().putIfAbsent(sessionId, getCredentialsKey(serverId), new UsrPass(userName, encryptedPass));
   }
   
   /**
@@ -113,17 +76,13 @@ public class CredentialsStore {
    * @return The password authentication if present or <code>null</code>
    */
   public static PasswordAuthentication get(String sessionId, String serverId) {
-    try {
-      ConcurrentHashMap<String, UsrPass> sessionCredentials = credentials.get(sessionId, valueLoader);
-      UsrPass usrPass = sessionCredentials.get(serverId);
-      
-      if (usrPass != null) {
-        String decryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().decrypt(usrPass.encryptedPassword);
-        return new PasswordAuthentication(usrPass.username, decryptedPass.toCharArray());
-      }
-    } catch (ExecutionException e) {
-      logger.error("Error while retrieving webdav credentials", e);
+    UsrPass usrPass = getSessionStore().get(sessionId, getCredentialsKey(serverId));
+    
+    if (usrPass != null) {
+      String decryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().decrypt(usrPass.encryptedPassword);
+      return new PasswordAuthentication(usrPass.username, decryptedPass.toCharArray());
     }
+    
     return null;
   }
   
@@ -132,6 +91,23 @@ public class CredentialsStore {
    * @param sessionId The session id.
    */
   public static void invalidate(String sessionId) {
-    credentials.invalidate(sessionId);
+    getSessionStore().invalidate(sessionId);
+  }
+
+  /**
+   * Returns the key used to store credentials for a server id.
+   * @param serverId The id of the server for which to store credentials.
+   * @return The key used to store credentials.
+   */
+  public static String getCredentialsKey(String serverId) {
+    return "webdav.creds." + serverId;
+  }
+  
+  /**
+   * @return The session store.
+   */
+  private static SessionStore getSessionStore() {
+    WebappPluginWorkspace workspace = (WebappPluginWorkspace) PluginWorkspaceProvider.getPluginWorkspace();
+    return workspace.getSessionStore();
   }
 }
