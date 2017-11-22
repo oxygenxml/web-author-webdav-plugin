@@ -210,9 +210,8 @@
               window.location.reload();
             } else {
               // on dashboard, hide the dialogs.
-              fileBrowser.switchToRepoConfig();
               fileBrowser.dialog.hide();
-              fileBrowser.candidateUrl = null;
+              fileBrowser.clearFileBrowsingData();
             }
           }, this),
           'POST');
@@ -283,8 +282,7 @@
         // enforce detected URL.
         if(this.enforcedUrl) {
           this.setRootUrl(this.enforcedUrl);
-          this.setInitialUrl_(initialUrl);
-          this.candidateUrl = initialUrl;
+          this.setUpTheDialog(initialUrl);
           localStorage.setItem('webdav.latestRootUrl', this.enforcedUrl);
           localStorage.setItem('webdav.latestUrl', initialUrl);
         }
@@ -570,7 +568,7 @@
     localStorage.setItem('webdav.latestUrl', urlObj.getFolderUrl());
     localStorage.setItem('webdav.latestRootUrl', rootUrl);
     this.setRootUrl(rootUrl);
-    this.setInitialUrl_(url);
+    this.setUpTheDialog(url);
   };
 
   /**
