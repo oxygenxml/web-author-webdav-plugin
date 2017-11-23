@@ -363,8 +363,8 @@
         }
       }
 
-      elem.innerHTML = '';
-      goog.dom.appendChild(elem,
+      goog.dom.removeChildren(element);
+      goog.dom.appendChild(element,
         cD('div', 'enforced-servers-config',
           tr(msgs.SERVER_URL_) + ': ',
           cD('select', {id: 'webdav-browse-url'}, options)
