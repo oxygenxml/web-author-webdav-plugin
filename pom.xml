@@ -1,10 +1,13 @@
 <?xml version="1.0"?>
 <project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<modelVersion>4.0.0</modelVersion>
-  <groupId>com.oxygenxml</groupId>
-  <version>20.0-SNAPSHOT</version>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.oxygenxml</groupId>
+    <artifactId>oxygen-superpom-standard</artifactId>
+    <version>20.0-SNAPSHOT</version>
+  </parent>
   <artifactId>web-author-webdav-plugin</artifactId>
   <name>Web Author WebDAV Plugin</name>
   <description>Web Author plugin that allows editing files from a WebDAV server</description>	
@@ -26,13 +29,11 @@
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.14</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-      		<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -49,7 +50,6 @@
       <plugin>
           <groupId>com.github.eirslett</groupId>
           <artifactId>frontend-maven-plugin</artifactId>
-          <version>0.0.22</version>
           <configuration>
               <workingDirectory>.</workingDirectory>
           </configuration>
@@ -89,7 +89,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.10</version>
         <executions>
           <execution>
             <id>set-version-no-snapshot</id>
@@ -109,7 +108,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.2</version>
 				<configuration>
 					<!-- We only want the final JAR package in the target folder so that 
 					it's easier for users to identify it.-->
@@ -118,7 +116,6 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4</version>
 				<executions>
 					<execution>
 						<id>make-assembly</id>
@@ -136,34 +133,5 @@
 				</executions>
 			</plugin>
 		</plugins>
-    <pluginManagement>
-      <plugins>
-        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <versionRange>[1.10,)</versionRange>
-                    <goals>
-                      <goal>regex-property</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore></ignore>
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
 	</build>
 </project>
