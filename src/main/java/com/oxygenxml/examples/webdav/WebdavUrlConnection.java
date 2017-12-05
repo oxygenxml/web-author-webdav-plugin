@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -20,6 +21,7 @@ import ro.sync.ecss.extensions.api.webapp.plugin.UserActionRequiredException;
 import ro.sync.exml.plugin.urlstreamhandler.CacheableUrlConnection;
 import ro.sync.exml.workspace.api.PluginResourceBundle;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
+import ro.sync.net.protocol.FolderEntryDescriptor;
 import ro.sync.net.protocol.http.WebdavLockHelper;
 import ro.sync.util.URLUtil;
 
@@ -114,7 +116,7 @@ public class WebdavUrlConnection extends FilterURLConnection
       URL url = this.delegateConnection.getURL();
       String userInfo = url.getUserInfo();
       if(userInfo != null && !userInfo.isEmpty()) {
-        String user = URLUtil.extractUser(url.toExternalForm());
+        String user = URLUtil.extractUser(userInfo);
         if (user != null && !user.trim().isEmpty()) {
           logger.warn("Failed login attempt of user " + user + " for " + URLUtil.getDescription(url));
         } else {
@@ -143,7 +145,18 @@ public class WebdavUrlConnection extends FilterURLConnection
           throw new IOException(serverMessage, e);
         }
       }
-      throw e;
+    }
+    throw e;
+  }
+  
+  @Override
+  public List<FolderEntryDescriptor> listFolder() throws IOException {
+    try {
+      return super.listFolder();
+    } catch(IOException e) {
+      handleException(e);
+      // Unreachable
+      return null;
     }
   }
 

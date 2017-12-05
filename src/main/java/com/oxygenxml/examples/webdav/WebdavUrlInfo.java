@@ -77,6 +77,15 @@ public class WebdavUrlInfo extends WebappServletPluginExtension {
       resourceType = getResourceType(urlWithCredentials);
     } catch (IOException e) {
       if (e.getMessage().indexOf("401") != -1) {
+        String userInfo = urlWithCredentials.getUserInfo();
+        if(userInfo != null && !userInfo.isEmpty()) {
+          String user = URLUtil.extractUser(userInfo);
+          if (user != null && !user.trim().isEmpty()) {
+            logger.warn("Failed login attempt of user " + user + " for " + URLUtil.getDescription(url));
+          } else {
+            logger.warn("Failed login attempt for " + URLUtil.getDescription(url));
+          }
+        }
         // We need credentials.
         resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         return;
