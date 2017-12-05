@@ -50,6 +50,8 @@
       <plugin>
           <groupId>com.github.eirslett</groupId>
           <artifactId>frontend-maven-plugin</artifactId>
+          <!-- The update was not straightforward so I postponed it. -->
+          <version>0.0.22</version>
           <configuration>
               <workingDirectory>.</workingDirectory>
           </configuration>
