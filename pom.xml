@@ -14,6 +14,7 @@
 
 	<properties>	
 		<oxygen.sdk.version>20.0-SNAPSHOT</oxygen.sdk.version>
+    <sonar.sources>src/main/java,web</sonar.sources>
 	</properties>
 
   <repositories>
