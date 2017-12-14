@@ -23,7 +23,7 @@ import ro.sync.exml.workspace.api.PluginResourceBundle;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.net.protocol.FolderEntryDescriptor;
 import ro.sync.net.protocol.http.WebdavLockHelper;
-import ro.sync.util.URLUtil;
+import ro.sync.basic.util.URLUtil;
 
 /**
  * Wrapper over an URLConnection that reports 401 exceptions as 

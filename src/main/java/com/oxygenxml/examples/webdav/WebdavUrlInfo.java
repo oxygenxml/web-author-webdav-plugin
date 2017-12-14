@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
-import ro.sync.util.URLUtil;
+import ro.sync.basic.util.URLUtil;
 
 /**
  * Servlet that computes some information about an WebDAV URL that was introduced by the user.

@@ -10,7 +10,7 @@ import java.net.URLConnection;
 import org.apache.log4j.Logger;
 
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContext;
-import ro.sync.util.URLUtil;
+import ro.sync.basic.util.URLUtil;
 
 /**
  * URL stream handler for a webdav server.
