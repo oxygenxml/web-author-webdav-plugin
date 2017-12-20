@@ -31,6 +31,7 @@
       <groupId>com.oxygenxml</groupId>
       <artifactId>oxygen-webapp</artifactId>
       <version>${project.version}</version>
+      <classifier>classes</classifier>
       <scope>provided</scope>
     </dependency>
 	</dependencies>
