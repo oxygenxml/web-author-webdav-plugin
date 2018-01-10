@@ -80,10 +80,9 @@ public class WebdavUrlInfo extends WebappServletPluginExtension {
         String userInfo = urlWithCredentials.getUserInfo();
         if(userInfo != null && !userInfo.isEmpty()) {
           String user = URLUtil.extractUser(userInfo);
-          if (user != null && !user.trim().isEmpty()) {
+          String password = URLUtil.extractPassword(userInfo);
+          if (user != null && !user.trim().isEmpty() && password != null && !password.trim().isEmpty()) {
             logger.warn("Failed login attempt of user " + user + " for " + URLUtil.getDescription(url));
-          } else {
-            logger.warn("Failed login attempt for " + URLUtil.getDescription(url));
           }
         }
         // We need credentials.
