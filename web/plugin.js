@@ -242,10 +242,16 @@
 
     var latestUrl = this.getLatestUrl();
     var latestRootUrl = this.getLatestRootUrl();
-    sync.api.FileBrowsingDialog.call(this, {
-      initialUrl: latestUrl,
-      root: latestRootUrl
-    });
+
+    var fileBrowserParams;
+    if (!sync.util.getURLParameter('url')) { // If on dashboard.
+      fileBrowserParams = {
+        initialUrl: latestUrl,
+        root: latestRootUrl
+      };
+    }
+    sync.api.FileBrowsingDialog.call(this, fileBrowserParams);
+
     // enforced servers array.
     this.enforcedServers = [];
     var enforcedServer = sync.options.PluginsOptions.getClientOption('enforced_webdav_server');
