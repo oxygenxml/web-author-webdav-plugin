@@ -1,10 +1,6 @@
 <component>
 	<files>
 		<file>
-			<source>SNAPSHOT</source>
-			<outputDirectory>/</outputDirectory>
-		</file>
-		<file>
 			<source>target/build/${project.build.finalName}.jar</source>
 			<outputDirectory>/lib</outputDirectory>
 		</file>
