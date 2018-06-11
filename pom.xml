@@ -6,14 +6,14 @@
   <parent>
     <groupId>com.oxygenxml</groupId>
     <artifactId>oxygen-plugins-superpom</artifactId>
-    <version>20.1-SNAPSHOT</version>
+    <version>21.0-SNAPSHOT</version>
   </parent>
   <artifactId>web-author-webdav-plugin</artifactId>
   <name>Web Author WebDAV Plugin</name>
   <description>Web Author plugin that allows editing files from a WebDAV server</description>	
 
 	<properties>	
-		<oxygen.sdk.version>20.1-SNAPSHOT</oxygen.sdk.version>
+		<oxygen.sdk.version>21.0-SNAPSHOT</oxygen.sdk.version>
     <sonar.sources>src/main/java,web</sonar.sources>
 	</properties>
 
