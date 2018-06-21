@@ -117,17 +117,18 @@
 
         // pop-up an authentication window,
         login(url, function() {
+          var webappMessageReceivedContext = sync.api.Editor.WebappMessageReceived.Context;
           // After the user was logged in, retry the operation that failed.
-          if (context == sync.api.Editor.WebappMessageReceived.Context.LOAD) {
+          if (context === webappMessageReceivedContext.LOAD) {
             // If the document was loading, we try to reload the whole webapp.
             window.location.reload();
-          } else if (context == sync.api.Editor.WebappMessageReceived.Context.EDITING) {
+          } else if (context === webappMessageReceivedContext.EDITING) {
             // During editing, only references can trigger re-authentication. Refresh them.
             editor.getActionsManager().invokeAction('Author/Refresh_references');
-          } else if (context == sync.api.Editor.WebappMessageReceived.Context.SAVE) {
+          } else if (context === webappMessageReceivedContext.SAVE) {
             // Currently there is no API to re-try saving, but it will be.
             editor.getActionsManager().getActionById('Author/Save').actionPerformed(function() {});
-          } else if (context == sync.api.Editor.WebappMessageReceived.Context.IMAGE) {
+          } else if (context === webappMessageReceivedContext.IMAGE) {
             // The browser failed to retrieve an image - reload it.
             var images = document.querySelectorAll('img[data-src]');
             for (var i = 0; i < images.length; i++) {
@@ -272,16 +273,16 @@
       if(this.enforcedServers.length > 0) {
         this.enforcedUrl = null;
         var initialUrl = localStorage.getItem('webdav.latestUrl');
-        var i = 0;
+        var i;
         // try to determine the initial enforced url.
         for(i = 0; i < this.enforcedServers.length; i++) {
-          if (initialUrl && initialUrl.indexOf(this.enforcedServers[i]) == 0) {
+          if (initialUrl && initialUrl.indexOf(this.enforcedServers[i]) === 0) {
             this.enforcedUrl = this.enforcedServers[i];
             break;
           }
         }
         // no default was determined and we have only one enforcedUrl
-        if(!this.enforcedUrl && this.enforcedServers.length == 1) {
+        if(!this.enforcedUrl && this.enforcedServers.length === 1) {
           this.enforcedUrl = this.enforcedServers[0];
           initialUrl = this.enforcedUrl;
         }
@@ -358,7 +359,7 @@
     var enforcedServersLength = this.enforcedServers.length;
     if(enforcedServersLength > 0) {
       var options = [];
-      for(i = 0; i < enforcedServersLength; i++) {
+      for(var i = 0; i < enforcedServersLength; i++) {
         var serverUrl = this.enforcedServers[i];
         if(serverUrl) {
           var option = cD('option', {value: serverUrl}, serverUrl);
@@ -511,6 +512,7 @@
    * Request the URL info from the server.
    *
    * @param {string} url The URL about which we ask for information.
+   * @param {function} callback The callback function.
    *
    * @private
    */
@@ -588,7 +590,7 @@
     var processedUrl = url;
 
     // if the url does not start with 'webdav' prepend it to the url.
-    if(!(url.indexOf('webdav-') == 0)) {
+    if((url.indexOf('webdav-') !== 0)) {
       processedUrl = 'webdav-' + processedUrl;
     }
     return processedUrl;
