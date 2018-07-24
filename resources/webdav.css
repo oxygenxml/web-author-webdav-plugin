@@ -3,13 +3,18 @@
     display: block;
 }
 
-.webdav-config-dialog input,
+.webdav-config-dialog input {
+    width: 80%;
+    display: block;
+}
+
 .webdav-login-dialog input {
     width: 100%;
     display: block;
 }
 
 .webdav-domain-edit,
+.webdav-domain-set,
 .domain-icon {
     margin-right: 5px;
     display:inline-block;
@@ -19,15 +24,22 @@
     height:16px;
 }
 
-.webdav-domain-edit {
+.webdav-domain-edit,
+.webdav-domain-set {
     padding-right: 5px;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAXUlEQVR42mNgGBKgoKAgAYj/Q3ECJZrBmCLNRBuASzNRXhhemj8AsQExmgWA+ABZmpEMUQDiC+RqBtnugOQVA1JTG8jWCVCvbIAaCKIboDgAZAFWg////08RptgAAMDo/Jm25cdCAAAAAElFTkSuQmCC);
     width: 20px;
-    height: 100%;
     margin: 0 0 0 10px;
     vertical-align: middle;
     border: 1px solid transparent;
     border-radius: 2px;
+}
+
+.webdav-domain-edit {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAXUlEQVR42mNgGBKgoKAgAYj/Q3ECJZrBmCLNRBuASzNRXhhemj8AsQExmgWA+ABZmpEMUQDiC+RqBtnugOQVA1JTG8jWCVCvbIAaCKIboDgAZAFWg////08RptgAAMDo/Jm25cdCAAAAAElFTkSuQmCC);
+}
+
+.webdav-domain-set {
+    background-image: url('SetRootUrl16.png');
 }
 
 .webdav-builtin-server {
@@ -35,16 +47,24 @@
     padding-top:20px;
 }
 
-.webdav-builtin-server .webdav-use-builtin-btn {
+.webdav-edit-root-url-ok,
+.webdav-edit-root-url-cancel {
     border: solid 1px #D9D9D9;
     border-radius:4px;
     display:inline-block;
     background-color: #DEDEDE;
-    height:2em;
-    padding:0px 10px;
+    padding: 0px 10px;
+    margin-left: 10px;
 }
+
+.webdav-edit-root-url-cancel {
+    margin-left:5px;
+}
+
 /*changes button styles on hover.*/
-.webdav-builtin-server .webdav-use-builtin-btn:hover {
+.webdav-builtin-server .webdav-use-builtin-btn:hover,
+.webdav-edit-root-url-ok:hover,
+.webdav-edit-root-url-cancel:hover {
     background-color: #d1d1d1;
     border-color: #337AB7;
     cursor: pointer;
@@ -64,17 +84,27 @@
 .enforced-servers-config #webdav-browse-url {
     width: 70%;
 }
-
-.webdav-repo-preview {
+.webdav-repo,
+.webdav-repo-preview,
+#webdav-browse-url,
+.webdav-repo-edit-input {
     display: inline-block;
     height: inherit;
+    width: 80%;
 }
 
-.webdav-repo-preview:hover .webdav-domain-edit {
+.webdav-repo-editing {
+    display: inline;
+    width: 80%;
+}
+
+.webdav-repo:hover .webdav-domain-edit,
+.webdav-repo:hover .webdav-domain-set {
     background-color: lightgrey;
 }
 
-.webdav-repo-preview:hover .webdav-domain-edit:hover {
+.webdav-repo:hover .webdav-domain-edit:hover,
+.webdav-repo:hover .webdav-domain-set:hover {
     border-color: grey;
     cursor: pointer;
 }

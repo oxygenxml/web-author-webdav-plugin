@@ -7,6 +7,14 @@
         <language description="Japanese" lang="ja_JP"/>
         <language description="Dutch" lang="nl_NL"/>
     </languageList>
+    <key value="SET_SERVER_URL_" distribution="webauthor">
+        <comment>Tooltip on button for setting server URL</comment>
+        <val lang="en_US">Set server URL</val>
+        <val lang="de_DE">Set server URL</val>
+        <val lang="fr_FR">Set server URL</val>
+        <val lang="ja_JP">Set server URL</val>
+        <val lang="nl_NL">Set server URL</val>
+    </key>
     <key value="Lock_resources_on_open" distribution="webauthor">
         <comment>Label for checkbox option, whether to lock resources when a user opens them.</comment>
         <val lang="en_US">Lock resources on open</val>
@@ -73,8 +81,6 @@
         <val lang="ja_JP">匿名</val>
         <val lang="nl_NL">Anoniem</val>
     </key>
-
-
     <key distribution="webauthor" value="EDIT_SERVER_URL_">
         <comment>Tooltip on button for editing server URL</comment>
         <val lang="en_US">Edit server URL</val>
@@ -98,14 +104,6 @@
         <val lang="fr_FR">Toutes vos modifications non enregistrées seront perdues</val>
         <val lang="ja_JP">未保存のすべての変更が失われます</val>
         <val lang="nl_NL">All your unsaved changes will be lost</val>
-    </key>
-    <key distribution="webauthor" value="LOGOUT_CONFIRMATION_">
-        <comment>Warning shown when the user tries to logout</comment>
-        <val lang="en_US">Are you sure you want to logout?</val>
-        <val lang="de_DE">Sind Sie sicher, dass Sie sich abmelden möchten?</val>
-        <val lang="fr_FR">Êtes-vous sûr de vouloir vous déconnecter?</val>
-        <val lang="ja_JP">ログアウトしますか？</val>
-        <val lang="nl_NL">Are you sure you want to logout?</val>
     </key>
     <key value="AUTHENTICATION_REQUIRED_" distribution="webauthor">
         <comment>Title of login dialog.</comment>
@@ -138,45 +136,5 @@
         <val lang="fr_FR">Mot de passe</val>
         <val lang="ja_JP">パスワード</val>
         <val lang="nl_NL">Wachtwoord</val>
-    </key>
-    <key distribution="webauthor" value="LOGOUT_">
-        <comment>caption for Logout button</comment>
-        <val lang="en_US">Logout</val>
-        <val lang="de_DE">Abmeldung</val>
-        <val lang="fr_FR">Déconnexion</val>
-        <val lang="ja_JP">ログアウト</val>
-        <val lang="nl_NL">Logout</val>
-    </key>
-    <key value="CANCEL_">
-        <comment>The cancel button text.</comment>
-        <val lang="en_US">Cancel</val>
-        <val lang="de_DE">Abbrechen</val>
-        <val lang="fr_FR">Annuler</val>
-        <val lang="ja_JP">キャンセル</val>
-        <val lang="nl_NL">Annuleer</val>
-    </key>
-    <key distribution="webauthor" value="USE_BUILTIN_SERVER_">
-        <comment>Caption for button for using the built-in server</comment>
-        <val lang="en_US">Use built-in server</val>
-        <val lang="de_DE">Eingebauten Server verwenden</val>
-        <val lang="fr_FR">Utiliser le serveur intégré</val>
-        <val lang="ja_JP">ビルトインサーバーを使用する</val>
-        <val lang="nl_NL">Use built-in server</val>
-    </key>
-    <key distribution="webauthor" value="OPEN_DOC_WEBDAV_DESCRIPTION_">
-        <comment>Description for the WebDAV 'Open document' action</comment>
-        <val lang="en_US">Open document from WebDAV server</val>
-        <val lang="de_DE">Dokument von WebDAV-Server öffnen</val>
-        <val lang="fr_FR">Ouvrir un document depuis le serveur WebDAV</val>
-        <val lang="ja_JP">WebDAVサーバーからドキュメントを開く</val>
-        <val lang="nl_NL">Open document from WebDAV server</val>
-    </key>
-    <key distribution="webauthor" value="NEW_DOC_WEBDAV_DESCRIPTION_">
-        <comment>Description for the WebDAV 'New document' action</comment>
-        <val lang="en_US">Create a new document on a WebDAV server</val>
-        <val lang="de_DE">Neues Dokument auf WebDAV-Server erstellen</val>
-        <val lang="fr_FR">Créer un nouveau document sur un serveur WebDAV</val>
-        <val lang="ja_JP">WebDAVサーバー上で新しいドキュメントを作成する</val>
-        <val lang="nl_NL">Create a new document on a WebDAV server</val>
     </key>
 </translation>
