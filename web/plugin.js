@@ -167,6 +167,9 @@
   webdavFileRepositoryBrowser.addEnforcedUrl_ = function(url) {
     if(url) {
       this.enforcedServers.push(this.processURL_(url));
+      if (webdavFileRepositoryBrowser.enforcedServersProcessed) {
+        processEnforcedServers_();
+      }
     }
   };
 
@@ -255,8 +258,7 @@
         goog.events.listen(okBtn, goog.events.EventType.CLICK, goog.bind(this.commitEditRepositoryChanges_, this, rootURLChangedCallback, showErrorMessageCallback));
       }
       goog.dom.appendChild(repositoryDiv,
-        goog.dom.createDom('div', 'webdav-repo-editing', this.createRootURLEditElement_(rootUrl, currentBrowseUrl,
-          repositoryDiv, rootURLChangedCallback, showErrorMessageCallback), okBtn));
+        goog.dom.createDom('div', 'webdav-repo-editing', this.createRootURLEditElement_(rootUrl, currentBrowseUrl, repositoryDiv, rootURLChangedCallback, showErrorMessageCallback), okBtn));
     }
   };
 
@@ -476,18 +478,7 @@
   // -------- Register the Webdav files repository ------------
   workspace.getFileRepositoriesManager().registerRepository(webdavFileRepository);
 
-  goog.events.listen(workspace, sync.api.Workspace.EventType.BEFORE_EDITOR_LOADED, function(e) {
-    var currDocUrl = e.options.url;
-    // If the URL starts with http:, use thw webdav protocol handler.
-    if (webdavFileRepository.matches(currDocUrl)) {
-      var loggedInUser = localStorage.getItem('webdav.user');
-      if (loggedInUser) {
-        e.options.userName = loggedInUser;
-      }
-    }
-  });
-
-  setTimeout(function(){
+  function processEnforcedServers_(){
     // Check if there is an enforced server that must be imposed
     var enforcedServers = webdavFileRepositoryBrowser.enforcedServers;
     if(enforcedServers && enforcedServers.length > 0) {
@@ -514,5 +505,8 @@
         localStorage.setItem("webdav.latestUrl", initialUrl);
       }
     }
-  }, 0);
+    webdavFileRepositoryBrowser.enforcedServersProcessed = true;
+  }
+
+  setTimeout(processEnforcedServers_, 0);
 })();

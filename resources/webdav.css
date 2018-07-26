@@ -90,7 +90,7 @@
 .webdav-repo-edit-input {
     display: inline-block;
     height: inherit;
-    width: 80%;
+    white-space: nowrap;
 }
 
 .webdav-repo-editing {
