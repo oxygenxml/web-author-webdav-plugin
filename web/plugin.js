@@ -67,7 +67,11 @@
         goog.net.XhrIo.send(
           '../plugins-dispatcher/login',
           function () {
-            localStorage.setItem('webdav.user', user);
+            try {
+              localStorage.setItem('webdav.user', user);
+            } catch (e) {
+              console.warn(e);
+            }
 
             webdavFileRepositoryBrowser.username = user;
             loginCallback();
@@ -84,7 +88,11 @@
     });
 
     this.loginDialog_.show();
-    var lastUser = localStorage.getItem('webdav.user');
+    try {
+      var lastUser = localStorage.getItem('webdav.user');
+    } catch (e) {
+      console.warn(e);
+    }
     if(lastUser) {
       var userInput = webdavNameInput || this.loginDialog_.getElement().querySelector('#webdav-name');
       userInput.value = lastUser;
@@ -101,7 +109,12 @@
     goog.net.XhrIo.send(
       '../plugins-dispatcher/login?action=logout',
       goog.bind(function () {
-        localStorage.removeItem('webdav.user');
+        try {
+          localStorage.removeItem('webdav.user');
+        } catch (e) {
+          console.warn(e);
+        }
+        
         logoutCallback();
       }, this),
       'POST');
@@ -222,7 +235,11 @@
       if (url.match('(webdav-)?https?:\/\/')) {
         if (this.enforcedServers.length > 0) {
           this.enforcedUrl = url;
-          localStorage.setItem('webdav.latestEnforcedURL', this.enforcedUrl);
+          try {
+            localStorage.setItem('webdav.latestEnforcedURL', this.enforcedUrl);
+          } catch (e) {
+            console.warn(e);
+          }
 
           this.sendRepositoryUrlChangedInfo_(url, {rootUrl: url}, rootURLChangedCallback);
         } else {
@@ -300,8 +317,12 @@
           var serverUrl = this.enforcedServers[i];
           if (serverUrl) {
             var option = goog.dom.createDom('option', {value: serverUrl}, serverUrl);
-            if (serverUrl === localStorage.getItem('webdav.latestEnforcedURL')) {
-              option.setAttribute('selected', '');
+            try {
+              if (serverUrl === localStorage.getItem('webdav.latestEnforcedURL')) {
+                option.setAttribute('selected', '');
+              }
+            } catch (e) {
+              console.warn(e);
             }
             options.push(option);
           }
@@ -483,7 +504,12 @@
     var enforcedServers = webdavFileRepositoryBrowser.enforcedServers;
     if(enforcedServers && enforcedServers.length > 0) {
       var enforcedUrl = null;
-      var initialUrl = localStorage.getItem("webdav.latestUrl");
+      try {
+        var initialUrl = localStorage.getItem("webdav.latestUrl");
+      } catch (e) {
+        console.warn(e);
+      }
+      
       var i;
 
       // try to determine the initial enforced url.
@@ -501,8 +527,12 @@
 
       // enforce detected URL.
       if(enforcedUrl) {
-        localStorage.setItem("webdav.latestRootUrl", enforcedUrl);
-        localStorage.setItem("webdav.latestUrl", initialUrl);
+        try {
+          localStorage.setItem("webdav.latestRootUrl", enforcedUrl);
+          localStorage.setItem("webdav.latestUrl", initialUrl);
+        } catch (e) {
+          console.warn(e);
+        }
       }
     }
     webdavFileRepositoryBrowser.enforcedServersProcessed = true;
