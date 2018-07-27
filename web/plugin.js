@@ -114,7 +114,7 @@
         } catch (e) {
           console.warn(e);
         }
-        
+
         logoutCallback();
       }, this),
       'POST');
@@ -509,7 +509,7 @@
       } catch (e) {
         console.warn(e);
       }
-      
+
       var i;
 
       // try to determine the initial enforced url.
