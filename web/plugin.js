@@ -383,17 +383,14 @@
       });
 
     } else {
-      repoEditElement = cD('div', 'webdav-repo-edit-input',
-        cD('label', '',
-          cD('input', {
-            id: 'webdav-browse-url',
-            type: 'text',
-            autocorrect: 'off',
-            autocapitalize: 'none',
-            autofocus: '',
-            value: getRepositoryURLForEdit(rootUrl, currentBrowseUrl)
-          }))
-      );
+      repoEditElement = cD('input', {
+          id: 'webdav-browse-url',
+          type: 'text',
+          autocorrect: 'off',
+          autocapitalize: 'none',
+          autofocus: '',
+          value: getRepositoryURLForEdit(rootUrl, currentBrowseUrl)
+        });
 
       goog.events.listen(repoEditElement, goog.events.EventType.KEYUP, goog.bind(function(e) {
         if (e.keyCode === goog.events.KeyCodes.ENTER) {

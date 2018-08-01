@@ -86,16 +86,22 @@
 }
 .webdav-repo,
 .webdav-repo-preview,
-#webdav-browse-url,
-.webdav-repo-edit-input {
+#webdav-browse-url {
     display: inline-block;
     height: inherit;
     white-space: nowrap;
 }
 
+.webdav-repo {
+    width: 80%;
+}
+
+#webdav-browse-url {
+    width: 100%;
+}
+
 .webdav-repo-editing {
     display: inline;
-    width: 80%;
 }
 
 .webdav-repo:hover .webdav-domain-edit,
