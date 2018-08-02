@@ -49,7 +49,7 @@
         )
       );
 
-      this.loginDialog_.setTitle(tr(msgs.AUTHENTICATION_REQUIRED_));
+      this.loginDialog_.setTitle(tr(msgs.AUTHENTICATION_REQUIRED_FOR_, {'$PROD': 'WebDAV'}));
       this.loginDialog_.setPreferredSize(300, null);
     }
 
