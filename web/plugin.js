@@ -10,7 +10,7 @@
   sync.util.loadCSSFile("../plugin-resources/webdav/webdav.css");
 
   // -------- Initializing Webdav file repository browser ------------
-  var webdavFileRepositoryBrowser = {};
+  var webdavFileRepo = {};
 
   /**
    * Login to the server.
@@ -18,8 +18,8 @@
    * @param {String} serverUrl The server URL.
    * @param {function} loginCallback The function to call after the user is logged in on the server.
    */
-  webdavFileRepositoryBrowser.login = function(serverUrl, loginCallback) {
-    serverUrl = webdavFileRepositoryBrowser.processURL_(serverUrl);
+  webdavFileRepo.login = function(serverUrl, loginCallback) {
+    serverUrl = webdavFileRepo.processURL_(serverUrl);
 
     var webdavNameInput,
       webdavPasswordInput;
@@ -73,7 +73,7 @@
               console.warn(e);
             }
 
-            webdavFileRepositoryBrowser.username = user;
+            webdavFileRepo.username = user;
             loginCallback();
           },
           'POST',
@@ -105,7 +105,7 @@
    *
    * @param {function} logoutCallback The function to call when the repository logout process is completed.
    */
-  webdavFileRepositoryBrowser.logout = function (logoutCallback) {
+  webdavFileRepo.logout = function (logoutCallback) {
     goog.net.XhrIo.send(
       '../plugins-dispatcher/login?action=logout',
       goog.bind(function () {
@@ -128,7 +128,7 @@
    * @param {string} currentBrowseUrl The current repository browse URL.
    * @param {function} rootURLChangedCallback The function to call when the root URL is changed.
    */
-  webdavFileRepositoryBrowser.createRepositoryAddressComponent = function (rootUrl, currentBrowseUrl, rootURLChangedCallback) {
+  webdavFileRepo.createRepositoryAddressComponent = function (rootUrl, currentBrowseUrl, rootURLChangedCallback) {
     var canEdit = this.enforcedServers.length !== 1;
     var repositoryDiv = goog.dom.createDom('div', 'webdav-repo',
       goog.dom.createDom('div', {
@@ -164,7 +164,7 @@
    * @param {function} urlInfoCallback The function to call when the URL info is available.
    * @param {function} showErrorMessageCallback The function to call when an error message must be presented to the user.
    */
-  webdavFileRepositoryBrowser.getUrlInfo = function (url, urlInfoCallback, showErrorMessageCallback) {
+  webdavFileRepo.getUrlInfo = function (url, urlInfoCallback, showErrorMessageCallback) {
     this.requestUrlInfo_(url, goog.bind(function (url, info) {
       this.sendRepositoryUrlChangedInfo_(url, info, urlInfoCallback);
     }, this), showErrorMessageCallback);
@@ -177,10 +177,10 @@
    *
    * @private
    */
-  webdavFileRepositoryBrowser.addEnforcedUrl_ = function(url) {
+  webdavFileRepo.addEnforcedUrl_ = function(url) {
     if(url) {
       this.enforcedServers.push(this.processURL_(url));
-      if (webdavFileRepositoryBrowser.enforcedServersProcessed) {
+      if (webdavFileRepo.enforcedServersProcessed) {
         processEnforcedServers_();
       }
     }
@@ -198,7 +198,7 @@
    *
    * @private
    */
-  webdavFileRepositoryBrowser.createRepoPreviewElement_ = function (rootUrl, currentBrowseUrl, repositoryDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback) {
+  webdavFileRepo.createRepoPreviewElement_ = function (rootUrl, currentBrowseUrl, repositoryDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback) {
     var editRepoButton = null;
     if (canEdit) {
       // Add an edit button only of there are no enforced servers or there are more than one enforced server.
@@ -225,7 +225,7 @@
    *
    * @private
    */
-  webdavFileRepositoryBrowser.commitEditRepositoryChanges_ = function (rootURLChangedCallback, showErrorMessageCallback) {
+  webdavFileRepo.commitEditRepositoryChanges_ = function (rootURLChangedCallback, showErrorMessageCallback) {
     showErrorMessageCallback(null);
 
     var input = document.getElementById('webdav-browse-url');
@@ -268,7 +268,7 @@
    *
    * @private
    */
-  webdavFileRepositoryBrowser.createRepoEditElement_ = function (rootUrl, currentBrowseUrl, repositoryDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback) {
+  webdavFileRepo.createRepoEditElement_ = function (rootUrl, currentBrowseUrl, repositoryDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback) {
     if (canEdit) {
       var okBtn = this.enforcedServers.length > 1 ? null : goog.dom.createDom('div',  {className: 'webdav-domain-set', title: tr(msgs.SET_SERVER_URL_)});
       if (okBtn) {
@@ -288,7 +288,7 @@
    *
    * @private
    */
-  webdavFileRepositoryBrowser.sendRepositoryUrlChangedInfo_ = function(url, info, repositoryUrlChangedCallback) {
+  webdavFileRepo.sendRepositoryUrlChangedInfo_ = function(url, info, repositoryUrlChangedCallback) {
     var isFile = info.type === 'FILE';
     // Make sure folder urls end with '/'.
     if (!isFile && url.lastIndexOf('/') !== url.length - 1) {
@@ -307,7 +307,7 @@
    *
    * @private
    */
-  webdavFileRepositoryBrowser.getEnforcedServersOptions_ = function () {
+  webdavFileRepo.getEnforcedServersOptions_ = function () {
     var options = null;
     if (this.enforcedServers) {
       var enforcedServersLength = this.enforcedServers.length;
@@ -360,7 +360,7 @@
    *
    * @private
    */
-  webdavFileRepositoryBrowser.createRootURLEditElement_ = function(rootUrl, currentBrowseUrl, repositoryDiv, rootURLChangedCallback, showErrorMessageCallback) {
+  webdavFileRepo.createRootURLEditElement_ = function(rootUrl, currentBrowseUrl, repositoryDiv, rootURLChangedCallback, showErrorMessageCallback) {
     var cD = goog.dom.createDom;
     var repoEditElement = null;
 
@@ -424,7 +424,7 @@
    *
    * @return {string} the processed url.
    */
-  webdavFileRepositoryBrowser.processURL_ = function(url) {
+  webdavFileRepo.processURL_ = function(url) {
     var processedUrl = url;
 
     // if the url does not start with 'webdav' prepend it to the url.
@@ -441,7 +441,7 @@
    * @param {function} callback The callback function.
    * @param {function} showErrorMessageCallback The function to call when an error message must be presented to the user.
    */
-  webdavFileRepositoryBrowser.requestUrlInfo_ = function (url, callback, showErrorMessageCallback) {
+  webdavFileRepo.requestUrlInfo_ = function (url, callback, showErrorMessageCallback) {
     goog.net.XhrIo.send(
       '../plugins-dispatcher/webdav-url-info?url=' + encodeURIComponent(url),
       goog.bind(this.handleUrlInfoReceived_, this, url, callback, showErrorMessageCallback));
@@ -455,7 +455,7 @@
    * @param {function} showErrorMessageCallback The function to call when an error message must be presented to the user.
    * @param {goog.events.Event} e The XHR event.
    */
-  webdavFileRepositoryBrowser.handleUrlInfoReceived_ = function (url, callback, showErrorMessageCallback, e) {
+  webdavFileRepo.handleUrlInfoReceived_ = function (url, callback, showErrorMessageCallback, e) {
     var request = /** {@type goog.net.XhrIo} */ (e.target);
     var status = request.getStatus();
 
@@ -475,30 +475,30 @@
   };
 
   // -------- Initialize the file browser information ------------
-  webdavFileRepositoryBrowser.enforcedServers = [];
+  webdavFileRepo.enforcedServers = [];
   var enforcedServer = sync.options.PluginsOptions.getClientOption('enforced_webdav_server');
   if(enforcedServer) {
-    webdavFileRepositoryBrowser.addEnforcedUrl_(enforcedServer);
+    webdavFileRepo.addEnforcedUrl_(enforcedServer);
   }
   // Declare a global method to register an enforced URL
-  window.addEnforcedWebdavUrl = goog.bind(webdavFileRepositoryBrowser.addEnforcedUrl_, webdavFileRepositoryBrowser);
+  window.addEnforcedWebdavUrl = goog.bind(webdavFileRepo.addEnforcedUrl_, webdavFileRepo);
 
-  var webdavFileRepository = {
+  var webdavFileRepositoryDescriptor = {
     'id' : 'webdav',
     'name' : 'WebDAV',
     'icon' : sync.util.computeHdpiIcon('../plugin-resources/webdav/Webdav70.png'), // the large icon url, hidpi enabled.
     'matches' : function matches(url) {
       return url.match(/^webdav-https?:/); // Check if the provided URL points to a file or folder from WebDAV file repository
     },
-    'browser' : webdavFileRepositoryBrowser
+    'repository' : webdavFileRepo
   };
 
   // -------- Register the Webdav files repository ------------
-  workspace.getFileRepositoriesManager().registerRepository(webdavFileRepository);
+  workspace.getFileRepositoriesManager().registerRepository(webdavFileRepositoryDescriptor);
 
   function processEnforcedServers_(){
     // Check if there is an enforced server that must be imposed
-    var enforcedServers = webdavFileRepositoryBrowser.enforcedServers;
+    var enforcedServers = webdavFileRepo.enforcedServers;
     if(enforcedServers && enforcedServers.length > 0) {
       var enforcedUrl = null;
       try {
@@ -532,7 +532,7 @@
         }
       }
     }
-    webdavFileRepositoryBrowser.enforcedServersProcessed = true;
+    webdavFileRepo.enforcedServersProcessed = true;
   }
 
   setTimeout(processEnforcedServers_, 0);
