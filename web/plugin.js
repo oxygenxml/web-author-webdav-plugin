@@ -67,12 +67,6 @@
         goog.net.XhrIo.send(
           '../plugins-dispatcher/login',
           function () {
-            try {
-              localStorage.setItem('webdav.user', user);
-            } catch (e) {
-              console.warn(e);
-            }
-
             webdavFileServer.username = user;
             loginCallback(user);
           },
@@ -106,18 +100,7 @@
    * @param {function} logoutCallback The function to call when the server logout process is completed.
    */
   webdavFileServer.logout = function (logoutCallback) {
-    goog.net.XhrIo.send(
-      '../plugins-dispatcher/login?action=logout',
-      goog.bind(function () {
-        try {
-          localStorage.removeItem('webdav.user');
-        } catch (e) {
-          console.warn(e);
-        }
-
-        logoutCallback();
-      }, this),
-      'POST');
+    goog.net.XhrIo.send('../plugins-dispatcher/login?action=logout', logoutCallback, 'POST');
   };
 
   /**
