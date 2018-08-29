@@ -74,7 +74,7 @@
             }
 
             webdavFileServer.username = user;
-            loginCallback();
+            loginCallback(user);
           },
           'POST',
           // form params
