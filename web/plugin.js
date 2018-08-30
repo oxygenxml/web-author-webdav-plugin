@@ -104,14 +104,12 @@
   };
 
   /**
-   * This method can be used to render particular server root URL information (can be used for example to display some
-   * branches information or to render some server specific images) on the top part of the server component.
+   * Create the component that renders the root URL.
    *
    * @param {string} rootUrl The server root URL to render details for.
-   * @param {string} currentBrowseUrl The current server browse URL.
    * @param {function} rootURLChangedCallback The function to call when the root URL is changed.
    */
-  webdavFileServer.createFileServerAddressComponent = function (rootUrl, currentBrowseUrl, rootURLChangedCallback) {
+  webdavFileServer.createRootUrlComponent = function (rootUrl, rootURLChangedCallback) {
     var canEdit = this.enforcedServers.length !== 1;
     var serverDiv = goog.dom.createDom('div', 'webdav-repo',
       goog.dom.createDom('div', {
@@ -132,9 +130,9 @@
     };
 
     if (!rootUrl && canEdit) {
-      this.createRepoEditElement_(rootUrl, currentBrowseUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback);
+      this.createRepoEditElement_(rootUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback);
     } else {
-      this.createRepoPreviewElement_(rootUrl, currentBrowseUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback);
+      this.createRepoPreviewElement_(rootUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback);
     }
 
     return serverDiv;
@@ -173,7 +171,6 @@
    * Create and add the preview element for file server.
    *
    * @param {string} rootUrl The server root URL to render details for.
-   * @param {string} currentBrowseUrl The current server browse URL.
    * @param {Element} serverDiv The element that contains the server preview element.
    * @param {boolean} canEdit Flag indicating if the server URL can be changed.
    * @param {function} rootURLChangedCallback Callback to be called when changing the root URL.
@@ -181,7 +178,7 @@
    *
    * @private
    */
-  webdavFileServer.createRepoPreviewElement_ = function (rootUrl, currentBrowseUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback) {
+  webdavFileServer.createRepoPreviewElement_ = function (rootUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback) {
     var editRepoButton = null;
     if (canEdit) {
       // Add an edit button only of there are no enforced servers or there are more than one enforced server.
@@ -194,7 +191,7 @@
           // Remove render element and display edit elemenet
           var serverPreviewDiv = serverDiv.querySelector('.webdav-repo-preview');
           goog.dom.removeNode(serverPreviewDiv);
-          this.createRepoEditElement_(rootUrl, currentBrowseUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback);
+          this.createRepoEditElement_(rootUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback);
         }, this));
     }
     goog.dom.appendChild(serverDiv ,goog.dom.createDom('div', 'webdav-repo-preview', new sync.util.Url(rootUrl).getDomain(), editRepoButton));
@@ -243,7 +240,6 @@
    * Create and add the element that contains the edit server URL components.
    *
    * @param {string} rootUrl The server root URL to render details for.
-   * @param {string} currentBrowseUrl The current browse URL.
    * @param {Element} serverDiv The element that renders the server edit components.
    * @param {boolean} canEdit Flag indicating if the server URL can be changed.
    * @param {function} rootURLChangedCallback Callback to be called when changing the root URL.
@@ -251,14 +247,15 @@
    *
    * @private
    */
-  webdavFileServer.createRepoEditElement_ = function (rootUrl, currentBrowseUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback) {
+  webdavFileServer.createRepoEditElement_ = function (rootUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback) {
     if (canEdit) {
       var okBtn = this.enforcedServers.length > 1 ? null : goog.dom.createDom('div',  {className: 'webdav-domain-set', title: tr(msgs.SET_SERVER_URL_)});
       if (okBtn) {
         goog.events.listen(okBtn, goog.events.EventType.CLICK, goog.bind(this.commitEditFileServerChanges_, this, rootURLChangedCallback, showErrorMessageCallback));
       }
       goog.dom.appendChild(serverDiv,
-        goog.dom.createDom('div', 'webdav-repo-editing', this.createRootURLEditElement_(rootUrl, currentBrowseUrl, serverDiv, rootURLChangedCallback, showErrorMessageCallback), okBtn));
+        goog.dom.createDom('div', 'webdav-repo-editing', this.createRootURLEditElement_(rootUrl, serverDiv,
+          rootURLChangedCallback, showErrorMessageCallback), okBtn));
     }
   };
 
@@ -318,14 +315,12 @@
   /**
    * Get the current browsing URL of the server, without the webdav particular prefix.
    *
-   * @param {string} rootUrl The server root URL to render details for.
-   * @param {string} currentBrowseUrl The current browse URL.
+   * @param {string} editUrl The server URL.
    *
    * @return {*|string}
    */
-  function getFileServerURLForEdit(rootUrl, currentBrowseUrl) {
+  function getFileServerURLForEdit(editUrl) {
     // if none was set we let it empty.
-    var editUrl = currentBrowseUrl || rootUrl || '';
     if (editUrl && (editUrl.indexOf('webdav-') === 0)) {
       editUrl = editUrl.substring(7);
     }
@@ -336,14 +331,13 @@
    * Create and add the element that contains the edit server input component.
    *
    * @param {string} rootUrl The server root URL to render details for.
-   * @param {string} currentBrowseUrl The current browse URL.
    * @param {Element} serverDiv The element that renders the server edit components.
    * @param {function} rootURLChangedCallback Callback to be called when changing the root URL.
    * @param {function} showErrorMessageCallback Callback to be called when an error message must be presented to the user.
    *
    * @private
    */
-  webdavFileServer.createRootURLEditElement_ = function(rootUrl, currentBrowseUrl, serverDiv, rootURLChangedCallback, showErrorMessageCallback) {
+  webdavFileServer.createRootURLEditElement_ = function(rootUrl, serverDiv, rootURLChangedCallback, showErrorMessageCallback) {
     var cD = goog.dom.createDom;
     var serverEditElement = null;
 
@@ -367,13 +361,13 @@
 
     } else {
       serverEditElement = cD('input', {
-          id: 'webdav-browse-url',
-          type: 'text',
-          autocorrect: 'off',
-          autocapitalize: 'none',
-          autofocus: '',
-          value: getFileServerURLForEdit(rootUrl, currentBrowseUrl)
-        });
+        id: 'webdav-browse-url',
+        type: 'text',
+        autocorrect: 'off',
+        autocapitalize: 'none',
+        autofocus: '',
+        value: getFileServerURLForEdit(rootUrl)
+      });
 
       goog.events.listen(serverEditElement, goog.events.EventType.KEYUP, goog.bind(function(e) {
         if (e.keyCode === goog.events.KeyCodes.ENTER) {
@@ -392,7 +386,7 @@
             // Remove render element and display edit elemenet
             var serverEditDiv = serverDiv.querySelector('.webdav-repo-editing');
             goog.dom.removeNode(serverEditDiv);
-            this.createRepoPreviewElement_(rootUrl, currentBrowseUrl, serverDiv, true, rootURLChangedCallback, showErrorMessageCallback);
+            this.createRepoPreviewElement_(rootUrl, serverDiv, true, rootURLChangedCallback, showErrorMessageCallback);
           }
         }
       }, this));
@@ -477,7 +471,7 @@
   };
 
   // -------- Register the Webdav files server ------------
-  workspace.getFileServersManager().registerFileServer(webdavFileServerDescriptor);
+  workspace.getFileServersManager().registerFileServerConnector(webdavFileServerDescriptor);
 
   function processEnforcedServers_(){
     // Check if there is an enforced server that must be imposed
