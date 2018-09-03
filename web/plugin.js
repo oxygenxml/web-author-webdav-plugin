@@ -17,15 +17,14 @@
    *
    * @param {String} serverUrl The server URL.
    * @param {function} loginCallback The function to call after the user is logged in on the server.
-   * @param {HTMLElement} dialogParentElement The element to be used as parent element for login dialog.
    */
-  webdavFileServer.login = function(serverUrl, loginCallback, dialogParentElement) {
+  webdavFileServer.login = function(serverUrl, loginCallback) {
     serverUrl = webdavFileServer.processURL_(serverUrl);
     var webdavNameInput,
       webdavPasswordInput;
     // pop-up an authentication window,
     if (!this.loginDialog_) {
-      this.loginDialog_ = workspace.createDialog({opt_parentElement : dialogParentElement});
+      this.loginDialog_ = workspace.createDialog();
 
       var cD = goog.dom.createDom;
 
