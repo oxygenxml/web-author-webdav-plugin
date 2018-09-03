@@ -107,9 +107,10 @@
    *
    * @param {string} rootUrl The server root URL to render details for.
    * @param {function} rootURLChangedCallback The function to call when the root URL is changed.
+   * @param {boolean} readOnly True if the root URL should not be editable by using this component.
    */
-  webdavFileServer.createRootUrlComponent = function (rootUrl, rootURLChangedCallback) {
-    var canEdit = this.enforcedServers.length !== 1;
+  webdavFileServer.createRootUrlComponent = function (rootUrl, rootURLChangedCallback, readOnly) {
+    var canEdit = this.enforcedServers.length !== 1 && readOnly !== true;
     var serverDiv = goog.dom.createDom('div', 'webdav-repo',
       goog.dom.createDom('div', {
         className: 'domain-icon',
