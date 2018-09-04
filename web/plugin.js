@@ -77,6 +77,8 @@
             server: serverUrl
           })).toString()
         );
+      } else {
+        loginCallback(null);
       }
     });
 
@@ -440,7 +442,14 @@
       var info = request.getResponseJson();
       callback(url, info);
     } else if (status === 401) {
-      this.login(url, goog.bind(this.requestUrlInfo_, this, url, callback, showErrorMessageCallback));
+      this.login(url, goog.bind(function(username) {
+        if (username) {
+          // Successful login
+          this.requestUrlInfo_(url, callback, showErrorMessageCallback);
+        } else {
+          // The login was cancelled
+        }
+      }, this));
     } else {
       var errorMessage = tr(msgs.INVALID_URL_) + ": " + url;
       if (showErrorMessageCallback) {
