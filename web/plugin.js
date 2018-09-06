@@ -9,6 +9,188 @@
   // -------- Load webdav styles --------
   sync.util.loadCSSFile("../plugin-resources/webdav/webdav.css");
 
+  // -----------------------------------------------------------------------------------------------------
+
+  /**
+   * Convert the internal form of the URL (with webdav- prefix) to a user-readable form.
+   *
+   * @param {string} editUrl The server URL.
+   *
+   * @return {*|string}
+   */
+  function getFileServerURLForDisplay(editUrl) {
+    // if none was set we let it empty.
+    if (editUrl && (editUrl.indexOf('webdav-') === 0)) {
+      editUrl = editUrl.substring(7);
+    }
+    return editUrl;
+  }
+
+  /**
+   * Converts an URL entered by an user to an "webdav-" URL.
+   *
+   * @param {string} url The url to process.
+   * @param {string=} opt_type The type of the URL: 'FILE' or 'COLLECTION' or 'NON_WEBDAV'.
+   *
+   * @return {string} the processed url.
+   */
+  function convertToWebDAVUrl(url, opt_type) {
+    var processedUrl = url;
+    if (opt_type) {
+      var isFile = opt_type === 'FILE';
+      // Make sure folder urls end with '/'.
+      if (!isFile && url.lastIndexOf('/') !== url.length - 1) {
+        processedUrl = url + '/';
+      }
+    }
+
+    // if the url does not start with 'webdav' prepend it to the url.
+    if((processedUrl.indexOf('webdav-') !== 0)) {
+      processedUrl = 'webdav-' + processedUrl;
+    }
+    return processedUrl;
+  }
+
+  // -------- Login Manager -----------------------------------------------------
+
+  /**
+   * Login manager.
+   *
+   * @param {string} serverUrl The URL of the server to login to.
+   *
+   * @constructor
+   */
+  var LoginManager = function(serverUrl) {
+    this.serverUrl_ = serverUrl;
+    this.callback = null;
+  };
+
+
+  /**
+   * Trigger the login procedure.
+   *
+   * @param {function(string=)} callback Called with the user that logged in.
+   */
+  LoginManager.prototype.login = function(callback) {
+    this.callback = callback;
+    var loginFormContainer = null; //TODO(WA-2194): retrieve the login form container from Web Author
+    if (loginFormContainer) {
+      // On Dashboard if a folder is opened, show an embedded form.
+      this.renderInlineLoginForm(loginFormContainer);
+    } else {
+      var loginDialog = this.createLoginDialog();
+      loginDialog.show();
+      this.renderLoginForm(loginDialog.getElement());
+    }
+  };
+
+  /**
+   * Create a user & password login form in the given element.
+   *
+   * @param {HTMLElement} element The element where to render the login form.
+   */
+  LoginManager.prototype.renderLoginForm = function (element) {
+    var cD = goog.dom.createDom;
+    var webdavNameInput = cD('input', {
+      id: 'webdav-name',
+      type: 'text',
+      'class': 'oxy-input',
+      'autocorrect': 'off',
+      'autocapitalize': 'none',
+      'autofocus': ''
+    });
+
+    goog.dom.appendChild(element,
+      cD('div', 'webdav-login-dialog',
+        cD('label', '',
+          tr(msgs.NAME_) + ': ',
+          webdavNameInput
+        ),
+        cD('label', '',
+          tr(msgs.PASSWORD_) + ': ',
+          cD('input', {id: 'webdav-passwd', type: 'password', 'class': 'oxy-input'})
+        )
+      )
+    );
+
+    // Pre-populate the form with the last logged in user.
+    try {
+      var lastUser = localStorage.getItem('webdav.user');
+    } catch (e) {
+      console.warn(e);
+    }
+
+    webdavNameInput.value = lastUser || '';
+    webdavNameInput.select();
+  };
+
+  /**
+   * Submit the credentials filled in by the user.
+   *
+   * @param {HTMLElement} formElement The form.
+   */
+  LoginManager.prototype.submitCredentials = function(formElement) {
+    // Send the user and password to the login servlet which runs in the webapp.
+    var userField = formElement.querySelector('#webdav-name');
+    var user = userField.value.trim();
+    var passwdField = formElement.querySelector('#webdav-passwd');
+    var passwd = passwdField.value;
+
+    goog.net.XhrIo.send(
+      '../plugins-dispatcher/login',
+      goog.bind(this.callback, null, user),
+      'POST',
+      // form params
+      goog.Uri.QueryData.createFromMap(new goog.structs.Map({
+        user: user,
+        passwd: passwd,
+        server: convertToWebDAVUrl(this.serverUrl_)
+      })).toString()
+    );
+  };
+
+  /**
+   * Create the login dialog.
+   *
+   * @return {sync.api.Dialog}
+   */
+  LoginManager.prototype.createLoginDialog = function() {
+    var loginDialog = workspace.createDialog();
+    loginDialog.setTitle(tr(msgs.AUTHENTICATION_REQUIRED_));
+    loginDialog.setPreferredSize(300, null);
+    loginDialog.onSelect(goog.bind(function(key) {
+      if (key === 'ok') {
+        this.submitCredentials(loginDialog.getElement());
+      } else {
+        this.callback(null);
+      }
+      loginDialog.dispose();
+    }, this));
+    return loginDialog;
+  };
+
+  /**
+   * Render an inline login form in the given element.
+   *
+   * @param {HTMLElement} container The container of the login form.
+   */
+  LoginManager.prototype.renderInlineLoginForm = function(container) {
+    var formElement = goog.dom.createDom('div', 'webdav-login-form');
+    goog.dom.removeChildren(container);
+    goog.dom.appendChild(container, formElement);
+
+    this.renderLoginForm(formElement);
+
+    var loginButton = goog.dom.createDom('button', ['oxy-button', 'oxy-primary-button'], tr(msgs.LOGIN_));
+    goog.dom.appendChild(formElement,
+      goog.dom.createDom('div', 'webdav-button-container', loginButton));
+
+    goog.events.listen(loginButton, goog.events.EventType.CLICK, goog.bind(function () {
+      this.submitCredentials(formElement);
+      goog.dom.removeNode(formElement);
+    }, this));
+  };
+
   // -------- Initializing Webdav file server browser ------------
   var webdavFileServer = {};
 
@@ -19,80 +201,7 @@
    * @param {function} loginCallback The function to call after the user is logged in on the server.
    */
   webdavFileServer.login = function(serverUrl, loginCallback) {
-    serverUrl = webdavFileServer.processURL_(serverUrl);
-    var webdavNameInput,
-      webdavPasswordInput;
-    // pop-up an authentication window,
-    if (!this.loginDialog_) {
-      this.loginDialog_ = workspace.createDialog();
-
-      var cD = goog.dom.createDom;
-
-      webdavNameInput = cD('input', {id: 'webdav-name', type: 'text'});
-      webdavNameInput.setAttribute('autocorrect', 'off');
-      webdavNameInput.setAttribute('autocapitalize', 'none');
-      webdavNameInput.setAttribute('autofocus', '');
-
-      webdavPasswordInput = cD('input', {id: 'webdav-passwd', type: 'password'});
-
-      goog.dom.appendChild(this.loginDialog_.getElement(),
-        cD('div', 'webdav-login-dialog',
-          cD('label', '',
-            tr(msgs.NAME_) + ': ',
-            webdavNameInput
-          ),
-          cD('label', '',
-            tr(msgs.PASSWORD_)+ ': ',
-            webdavPasswordInput
-          )
-        )
-      );
-
-      this.loginDialog_.setTitle(tr(msgs.AUTHENTICATION_REQUIRED_FOR_, {'$PROD': 'WebDAV'}));
-      this.loginDialog_.setPreferredSize(300, null);
-    }
-
-    this.loginDialog_.onSelect(function(key) {
-      if (key === 'ok') {
-        // Send the user and password to the login servlet which runs in the webapp.
-        var userField = webdavNameInput || document.getElementById('webdav-name');
-        var user = userField.value.trim();
-        var passwdField = webdavPasswordInput || document.getElementById('webdav-passwd');
-        var passwd = passwdField.value;
-
-        userField.value = '';
-        passwdField.value = '';
-
-        goog.net.XhrIo.send(
-          '../plugins-dispatcher/login',
-          function () {
-            webdavFileServer.username = user;
-            loginCallback(user);
-          },
-          'POST',
-          // form params
-          goog.Uri.QueryData.createFromMap(new goog.structs.Map({
-            user: user,
-            passwd: passwd,
-            server: serverUrl
-          })).toString()
-        );
-      } else {
-        loginCallback(null);
-      }
-    });
-
-    this.loginDialog_.show();
-    try {
-      var lastUser = localStorage.getItem('webdav.user');
-    } catch (e) {
-      console.warn(e);
-    }
-    if(lastUser) {
-      var userInput = webdavNameInput || this.loginDialog_.getElement().querySelector('#webdav-name');
-      userInput.value = lastUser;
-      userInput.select();
-    }
+    new LoginManager(serverUrl).login(loginCallback);
   };
 
   /**
@@ -112,32 +221,8 @@
    * @param {boolean} readOnly True if the root URL should not be editable by using this component.
    */
   webdavFileServer.createRootUrlComponent = function (rootUrl, rootURLChangedCallback, readOnly) {
-    var canEdit = this.enforcedServers.length !== 1 && readOnly !== true;
-    var serverDiv = goog.dom.createDom('div', 'webdav-repo',
-      goog.dom.createDom('div', {
-        className: 'domain-icon',
-        style: 'background-image: url(' +  sync.util.getImageUrl('/images/SharePointWeb16.png', sync.util.getHdpiFactor()) + ');vertical-align: middle;'
-      })
-    );
-
-    var showErrorMessageCallback = function(message) {
-      if (!serverDiv.inplaceNotificator_) {
-        serverDiv.inplaceNotificator_ = new sync.view.InplaceNotificationReporter(serverDiv);
-      }
-      if (message) {
-        serverDiv.inplaceNotificator_.show(message, sync.view.InplaceNotificationReporter.types.ERROR);
-      } else {
-        serverDiv.inplaceNotificator_.hide();
-      }
-    };
-
-    if (!rootUrl && canEdit) {
-      this.createRepoEditElement_(rootUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback);
-    } else {
-      this.createRepoPreviewElement_(rootUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback);
-    }
-
-    return serverDiv;
+    var comp = new RootUrlComponent(rootUrl, rootURLChangedCallback, readOnly, this.enforcedServers);
+    return comp.render();
   };
 
   /**
@@ -148,9 +233,8 @@
    * @param {function} showErrorMessageCallback The function to call when an error message must be presented to the user.
    */
   webdavFileServer.getUrlInfo = function (url, urlInfoCallback, showErrorMessageCallback) {
-    this.requestUrlInfo_(url, goog.bind(function (url, info) {
-      this.sendFileServerUrlChangedInfo_(url, info, urlInfoCallback);
-    }, this), showErrorMessageCallback);
+    var urlInfoProvider = new UrlInfoProvider(showErrorMessageCallback);
+    urlInfoProvider.requestUrlInfo_(url, urlInfoCallback);
   };
 
   /**
@@ -162,124 +246,168 @@
    */
   webdavFileServer.addEnforcedUrl_ = function(url) {
     if(url) {
-      this.enforcedServers.push(this.processURL_(url));
+      this.enforcedServers.push(convertToWebDAVUrl(url));
       if (webdavFileServer.enforcedServersProcessed) {
         processEnforcedServers_();
       }
     }
   };
 
+  // -----------------------------------------------------------------------------------------------------
+
   /**
-   * Create and add the preview element for file server.
+   * The root URL editing widget.
    *
-   * @param {string} rootUrl The server root URL to render details for.
-   * @param {Element} serverDiv The element that contains the server preview element.
-   * @param {boolean} canEdit Flag indicating if the server URL can be changed.
-   * @param {function} rootURLChangedCallback Callback to be called when changing the root URL.
-   * @param {function} showErrorMessageCallback Callback to be called when an error message must be presented to the user.
+   * @param {string} rootUrl The initial value of the root URL.
+   * @param {function} rootURLChangedCallback Callback to use when the user chose a different URL.
+   * @param {boolean} readOnly true if we should render the widget in read-only mode.
+   * @param {Array<String>} enforcedServers The list of enforced servers, or null.
+   * @constructor
+   */
+  var RootUrlComponent = function (rootUrl, rootURLChangedCallback, readOnly, enforcedServers) {
+    this.rootUrl_ = rootUrl;
+    this.rootChangedCb_ = rootURLChangedCallback;
+
+    this.enforcedServers_ = enforcedServers || [];
+    this.canEdit_ = this.enforcedServers_.length !== 1 && !readOnly;
+
+    // Not yet rendered.
+    this.serverDiv_ = null;
+    this.inplaceNotificator_ = null;
+  };
+
+
+  /**
+   * Renders the component in a HTML element and returns it.
+   *
+   * @return {HTMLElement} The widget.
+   */
+  RootUrlComponent.prototype.render = function() {
+    this.serverDiv_ = goog.dom.createDom('div', 'webdav-repo');
+    if (!this.rootUrl_ && this.canEdit_) {
+      this.renderRepoEditElement_();
+    } else {
+      this.renderRepoPreviewElement_();
+    }
+    return this.serverDiv_;
+  };
+
+  /**
+   * Hides the in-place error messaage.
+   */
+  RootUrlComponent.prototype.hideErrorMessage = function() {
+    this.inplaceNotificator_.hide();
+  };
+
+  /**
+   * Shows an in-place error message.
+   *
+   * @param {string} message The message to show.
+   */
+  RootUrlComponent.prototype.showErrorMessage = function(message) {
+    this.inplaceNotificator_.show(message, sync.view.InplaceNotificationReporter.types.ERROR);
+  };
+
+  /**
+   * Reset the rendering of the component.
    *
    * @private
    */
-  webdavFileServer.createRepoPreviewElement_ = function (rootUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback) {
+  RootUrlComponent.prototype.resetRendering_ = function () {
+    if (this.inplaceNotificator_) {
+      this.inplaceNotificator_.dispose();
+    }
+    goog.dom.removeChildren(this.serverDiv_);
+    this.inplaceNotificator_ = new sync.view.InplaceNotificationReporter(this.serverDiv_);
+  };
+
+  /**
+   * Create and add the preview element for file server.
+   *
+   * @private
+   */
+  RootUrlComponent.prototype.renderRepoPreviewElement_ = function () {
     var editRepoButton = null;
-    if (canEdit) {
+    if (this.canEdit_) {
       // Add an edit button only of there are no enforced servers or there are more than one enforced server.
       editRepoButton = goog.dom.createDom('div', {className: 'webdav-domain-edit', title: tr(msgs.EDIT_SERVER_URL_)});
-
       goog.events.listen(editRepoButton, goog.events.EventType.CLICK,
-        goog.bind(function() {
-          // Hide errors
-          showErrorMessageCallback(null);
-          // Remove render element and display edit elemenet
-          var serverPreviewDiv = serverDiv.querySelector('.webdav-repo-preview');
-          goog.dom.removeNode(serverPreviewDiv);
-          this.createRepoEditElement_(rootUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback);
-        }, this));
+        goog.bind(this.renderRepoEditElement_, this));
     }
-    goog.dom.appendChild(serverDiv ,goog.dom.createDom('div', 'webdav-repo-preview', new sync.util.Url(rootUrl).getDomain(), editRepoButton));
+
+    this.resetRendering_();
+    goog.dom.append(this.serverDiv_ ,
+      goog.dom.createDom('div', {
+        className: 'domain-icon',
+        style: 'background-image: url(' +  sync.util.getImageUrl('/images/SharePointWeb16.png', sync.util.getHdpiFactor()) + ');vertical-align: middle;'
+      }),
+      goog.dom.createDom('div', 'webdav-repo-preview', new sync.util.Url(this.rootUrl_).getDomain(),
+      editRepoButton));
   };
 
   /**
    * Commit changes made when user tries to set another server.
    *
-   * @param {function} rootURLChangedCallback Callback to be called when changing the root URL.
-   * @param {function} showErrorMessageCallback Callback to be called when an error message must be presented to the user.
-   *
    * @private
    */
-  webdavFileServer.commitEditFileServerChanges_ = function (rootURLChangedCallback, showErrorMessageCallback) {
-    showErrorMessageCallback(null);
+  RootUrlComponent.prototype.commitEditFileServerChanges_ = function () {
+    this.hideErrorMessage();
 
     var input = document.getElementById('webdav-browse-url');
     var url = input.value.trim();
 
     if (url) {
       if (url.match('(webdav-)?https?:\/\/')) {
-        if (this.enforcedServers.length > 0) {
-          this.enforcedUrl = url;
+        if (this.enforcedServers_.length > 0) {
+          // We can arrive here only if the user selected among a few enforced server URLs.
           try {
-            localStorage.setItem('webdav.latestEnforcedURL', this.enforcedUrl);
+            localStorage.setItem('webdav.latestEnforcedURL', url);
           } catch (e) {
             console.warn(e);
           }
-
-          this.sendFileServerUrlChangedInfo_(url, {rootUrl: url}, rootURLChangedCallback);
+          var rootUrl = convertToWebDAVUrl(url);
+          this.rootChangedCb_(rootUrl, rootUrl);
         } else {
-          this.getUrlInfo(this.processURL_(url), rootURLChangedCallback, showErrorMessageCallback);
+          var urlInfoProvider = new UrlInfoProvider(goog.bind(this.showErrorMessage, this));
+          urlInfoProvider.requestUrlInfo_(convertToWebDAVUrl(url), this.rootChangedCb_);
         }
       } else {
-        var errorMessage = tr(msgs.INVALID_URL_) + ": " + url;
-        if (showErrorMessageCallback) {
-          showErrorMessageCallback(errorMessage);
-        } else {
-          console.log(errorMessage);
-        }
+        var errorMessage = tr(msgs.INVALID_URL_) + ": " + getFileServerURLForDisplay(url);
+        this.showErrorMessage(errorMessage);
       }
+    } else {
+      // The URL is empty.
+      this.showErrorMessage(tr(msgs.INVALID_URL_));
     }
   };
 
   /**
    * Create and add the element that contains the edit server URL components.
    *
-   * @param {string} rootUrl The server root URL to render details for.
-   * @param {Element} serverDiv The element that renders the server edit components.
-   * @param {boolean} canEdit Flag indicating if the server URL can be changed.
-   * @param {function} rootURLChangedCallback Callback to be called when changing the root URL.
-   * @param {function} showErrorMessageCallback Callback to be called when an error message must be presented to the user.
-   *
    * @private
    */
-  webdavFileServer.createRepoEditElement_ = function (rootUrl, serverDiv, canEdit, rootURLChangedCallback, showErrorMessageCallback) {
-    if (canEdit) {
-      var okBtn = this.enforcedServers.length > 1 ? null : goog.dom.createDom('div',  {className: 'webdav-domain-set', title: tr(msgs.SET_SERVER_URL_)});
-      if (okBtn) {
-        goog.events.listen(okBtn, goog.events.EventType.CLICK, goog.bind(this.commitEditFileServerChanges_, this, rootURLChangedCallback, showErrorMessageCallback));
-      }
-      goog.dom.appendChild(serverDiv,
-        goog.dom.createDom('div', 'webdav-repo-editing', this.createRootURLEditElement_(rootUrl, serverDiv,
-          rootURLChangedCallback, showErrorMessageCallback), okBtn));
-    }
-  };
+  RootUrlComponent.prototype.renderRepoEditElement_ = function () {
+    var cD = goog.dom.createDom;
+    var okBtn = cD('button', {'class': 'oxy-button oxy-small-button oxy-primary-button'}, tr(msgs.CONNECT_));
+    goog.events.listen(okBtn, goog.events.EventType.CLICK,
+      goog.bind(this.commitEditFileServerChanges_, this));
 
-  /**
-   * Determine the root url and browse url and send them as parameters in the provided callback.
-   *
-   * @param {string} url The server browse URL.
-   * @param {Object} info The server URL info (contains the root URL).
-   * @param {function} serverUrlChangedCallback Callback to be called when changing the root URL.
-   *
-   * @private
-   */
-  webdavFileServer.sendFileServerUrlChangedInfo_ = function(url, info, serverUrlChangedCallback) {
-    var isFile = info.type === 'FILE';
-    // Make sure folder urls end with '/'.
-    if (!isFile && url.lastIndexOf('/') !== url.length - 1) {
-      url = url + '/';
+    var cancelBtn = null;
+    if (this.rootUrl_) {
+      // If we have an existing root URL, display a cancel button to fallback to it.
+      cancelBtn = cD('button', {className: 'oxy-button oxy-small-button'}, tr(msgs.CANCEL_));
+      goog.events.listen(cancelBtn, goog.events.EventType.CLICK,
+        goog.bind(this.renderRepoPreviewElement_, this));
     }
 
-    var rootUrl = this.processURL_(info.rootUrl);
-    // Root URL is changed
-    serverUrlChangedCallback(rootUrl, url);
+    this.resetRendering_();
+    goog.dom.appendChild(this.serverDiv_,
+      cD('div', 'webdav-repo-editing',
+        cD('div', 'webdav-repo-edit-label', tr(msgs.SERVER_URL_)),
+        this.createRootURLEditElement_(),
+        cD('div', 'webdav-button-container',
+          okBtn,
+          cancelBtn)));
   };
 
   /**
@@ -289,128 +417,66 @@
    *
    * @private
    */
-  webdavFileServer.getEnforcedServersOptions_ = function () {
-    var options = null;
-    if (this.enforcedServers) {
-      var enforcedServersLength = this.enforcedServers.length;
-      if (enforcedServersLength > 0) {
-        options = [];
-        for (var i = 0; i < enforcedServersLength; i++) {
-          var serverUrl = this.enforcedServers[i];
-          if (serverUrl) {
-            var option = goog.dom.createDom('option', {value: serverUrl}, serverUrl);
-            try {
-              if (serverUrl === localStorage.getItem('webdav.latestEnforcedURL')) {
-                option.setAttribute('selected', '');
-              }
-            } catch (e) {
-              console.warn(e);
-            }
-            options.push(option);
+  RootUrlComponent.prototype.getEnforcedServersOptions_ = function () {
+    var options = [];
+    for (var i = 0; i < this.enforcedServers_.length; i++) {
+      var serverUrl = this.enforcedServers_[i];
+      if (serverUrl) {
+        var option = goog.dom.createDom('option', {value: serverUrl}, serverUrl);
+        try {
+          if (serverUrl === localStorage.getItem('webdav.latestEnforcedURL')) {
+            option.setAttribute('selected', '');
           }
+        } catch (e) {
+          console.warn(e);
         }
+        options.push(option);
       }
     }
     return options;
   };
 
   /**
-   * Get the current browsing URL of the server, without the webdav particular prefix.
-   *
-   * @param {string} editUrl The server URL.
-   *
-   * @return {*|string}
-   */
-  function getFileServerURLForEdit(editUrl) {
-    // if none was set we let it empty.
-    if (editUrl && (editUrl.indexOf('webdav-') === 0)) {
-      editUrl = editUrl.substring(7);
-    }
-    return editUrl;
-  }
-
-  /**
    * Create and add the element that contains the edit server input component.
-   *
-   * @param {string} rootUrl The server root URL to render details for.
-   * @param {Element} serverDiv The element that renders the server edit components.
-   * @param {function} rootURLChangedCallback Callback to be called when changing the root URL.
-   * @param {function} showErrorMessageCallback Callback to be called when an error message must be presented to the user.
    *
    * @private
    */
-  webdavFileServer.createRootURLEditElement_ = function(rootUrl, serverDiv, rootURLChangedCallback, showErrorMessageCallback) {
+  RootUrlComponent.prototype.createRootURLEditElement_ = function() {
     var cD = goog.dom.createDom;
     var serverEditElement = null;
 
     var enforcedServersOptions = this.getEnforcedServersOptions_();
-    if(enforcedServersOptions) {
+    if(enforcedServersOptions.length !== 0) {
       // Multiple enforced servers, we will present them in a select component
       serverEditElement = cD('select', {id: 'webdav-browse-url'}, enforcedServersOptions);
-
-      goog.events.listen(serverEditElement, goog.events.EventType.CHANGE, goog.bind(function(e) {
-        e.stopPropagation();
-        // Commit changes
-        this.commitEditFileServerChanges_(rootURLChangedCallback, showErrorMessageCallback);
-      }, this));
-
-      goog.events.listen(serverEditElement, goog.events.EventType.FOCUS, function() {
-        // On focus unselect the currently selected index because onChange event is fired only when the selection changes
-        // (if the same server root URL is choosen we want to trigger the authentication or to request the files again
-        // from the server)
-        this.selectedIndex = -1;
-      });
-
     } else {
       serverEditElement = cD('input', {
         id: 'webdav-browse-url',
         type: 'text',
+        'class': 'oxy-input',
         autocorrect: 'off',
         autocapitalize: 'none',
         autofocus: '',
-        value: getFileServerURLForEdit(rootUrl)
+        value: getFileServerURLForDisplay(this.rootUrl_)
       });
 
-      goog.events.listen(serverEditElement, goog.events.EventType.KEYUP, goog.bind(function(e) {
-        if (e.keyCode === goog.events.KeyCodes.ENTER) {
-          e.stopPropagation();
-          // Commit changes
-          this.commitEditFileServerChanges_(rootURLChangedCallback, showErrorMessageCallback);
-        }
-      }, this));
-
-      goog.events.listen(serverEditElement, goog.events.EventType.KEYUP, goog.bind(function(e) {
-        if (e.keyCode === goog.events.KeyCodes.ESC) {
-          if (rootUrl) {
+      if (this.rootUrl_) {
+        // If we already had a root URL, on Esc go back to the previous state.
+        goog.events.listen(serverEditElement, goog.events.EventType.KEYUP, goog.bind(function(e) {
+          if (e.keyCode === goog.events.KeyCodes.ESC) {
             e.stopPropagation();
-            // Hide errors
-            showErrorMessageCallback(null);
-            // Remove render element and display edit elemenet
-            var serverEditDiv = serverDiv.querySelector('.webdav-repo-editing');
-            goog.dom.removeNode(serverEditDiv);
-            this.createRepoPreviewElement_(rootUrl, serverDiv, true, rootURLChangedCallback, showErrorMessageCallback);
+            this.renderRepoPreviewElement_();
           }
-        }
-      }, this));
+        }, this));
+      }
     }
     return serverEditElement;
   };
 
-  /**
-   * Further processes the url.
-   *
-   * @param {string} url The url to process.
-   *
-   * @return {string} the processed url.
-   */
-  webdavFileServer.processURL_ = function(url) {
-    var processedUrl = url;
+  // -------------------------------------------------------------------------------------------------------------------
 
-    // if the url does not start with 'webdav' prepend it to the url.
-    if((url.indexOf('webdav-') !== 0)) {
-      processedUrl = 'webdav-' + processedUrl;
-    }
-    return processedUrl;
+  var UrlInfoProvider = function(showError) {
+    this.showError_ = showError || goog.bind(console.log, console);
   };
 
   /**
@@ -418,12 +484,11 @@
    *
    * @param {string} url The URL about which we ask for information.
    * @param {function} callback The callback function.
-   * @param {function} showErrorMessageCallback The function to call when an error message must be presented to the user.
    */
-  webdavFileServer.requestUrlInfo_ = function (url, callback, showErrorMessageCallback) {
+  UrlInfoProvider.prototype.requestUrlInfo_ = function (url, callback) {
     goog.net.XhrIo.send(
       '../plugins-dispatcher/webdav-url-info?url=' + encodeURIComponent(url),
-      goog.bind(this.handleUrlInfoReceived_, this, url, callback, showErrorMessageCallback));
+      goog.bind(this.handleUrlInfoReceived_, this, url, callback));
   };
 
   /**
@@ -431,32 +496,29 @@
    *
    * @param {string} url The URL about which we requested info.
    * @param {function} callback the callback method.
-   * @param {function} showErrorMessageCallback The function to call when an error message must be presented to the user.
    * @param {goog.events.Event} e The XHR event.
    */
-  webdavFileServer.handleUrlInfoReceived_ = function (url, callback, showErrorMessageCallback, e) {
+  UrlInfoProvider.prototype.handleUrlInfoReceived_ = function (url, callback, e) {
     var request = /** {@type goog.net.XhrIo} */ (e.target);
     var status = request.getStatus();
 
     if (status === 200) {
       var info = request.getResponseJson();
-      callback(url, info);
+      var currentUrl = convertToWebDAVUrl(url, info.type);
+      var rootUrl = convertToWebDAVUrl(info.rootUrl, 'COLLECTION');
+      callback(rootUrl, currentUrl);
     } else if (status === 401) {
-      this.login(url, goog.bind(function(username) {
+      new LoginManager(url).login(goog.bind(function(username) {
         if (username) {
           // Successful login
-          this.requestUrlInfo_(url, callback, showErrorMessageCallback);
+          this.requestUrlInfo_(url, callback);
         } else {
           // The login was cancelled
         }
       }, this));
     } else {
-      var errorMessage = tr(msgs.INVALID_URL_) + ": " + url;
-      if (showErrorMessageCallback) {
-        showErrorMessageCallback(errorMessage);
-      } else {
-        console.log(errorMessage);
-      }
+      var errorMessage = tr(msgs.INVALID_URL_) + ": " + getFileServerURLForDisplay(url);
+      this.showError_(errorMessage);
     }
   };
 

@@ -85,8 +85,7 @@
     width: 70%;
 }
 .webdav-repo,
-.webdav-repo-preview,
-#webdav-browse-url {
+.webdav-repo-preview{
     display: inline-block;
     height: inherit;
     white-space: nowrap;
@@ -151,4 +150,22 @@
 
 .webdav-logout-container .webdav-username {
     color: #cccccc;
+}
+
+.webdav-login-form {
+    width: 300px;
+    margin: 50px auto;
+    padding: 25px;
+    border: 1px solid lightgrey;
+}
+.webdav-login-form > .webdav-button-container {
+    text-align: right;
+    margin-top: 10px;
+}
+.webdav-repo-editing > .webdav-button-container > .oxy-button {
+    margin-top: 10px;
+    margin-right: 10px;
+}
+.webdav-repo-edit-label {
+    margin-bottom: 5px;
 }

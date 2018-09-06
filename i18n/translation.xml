@@ -7,21 +7,13 @@
         <language description="Japanese" lang="ja_JP"/>
         <language description="Dutch" lang="nl_NL"/>
     </languageList>
-    <key value="AUTHENTICATION_REQUIRED_FOR_" distribution="webauthor">
-        <comment>Title of login dialog.</comment>
-        <val lang="en_US">Authentication required for {$PROD}</val>
-        <val lang="de_DE">Authentication required for {$PROD}</val>
-        <val lang="fr_FR">Authentication required for {$PROD}</val>
-        <val lang="ja_JP">Authentication required for {$PROD}</val>
-        <val lang="nl_NL">Authentication required for {$PROD}</val>
-    </key>
-    <key value="SET_SERVER_URL_" distribution="webauthor">
-        <comment>Tooltip on button for setting server URL</comment>
-        <val lang="en_US">Set server URL</val>
-        <val lang="de_DE">Set server URL</val>
-        <val lang="fr_FR">Set server URL</val>
-        <val lang="ja_JP">Set server URL</val>
-        <val lang="nl_NL">Set server URL</val>
+    <key value="CONNECT_" distribution="webauthor">
+        <comment>Label for a button that connects the user to a specified server.</comment>
+        <val lang="en_US">Connect</val>
+        <val lang="de_DE">Verbinden</val>
+        <val lang="fr_FR">Connexion</val>
+        <val lang="ja_JP">接続</val>
+        <val lang="nl_NL">Verbind</val>
     </key>
     <key value="Lock_resources_on_open" distribution="webauthor">
         <comment>Label for checkbox option, whether to lock resources when a user opens them.</comment>
@@ -72,6 +64,14 @@
             pour l'utilisateur.</val>
         <val lang="ja_JP">メモ：サーバーが強制されると、ユーザーは、この強制されたサーバーのみを参照することができます。しかし、ユーザーが選択できるよう、その他の強制サーバーを他のプラグインに追加することができます。</val>
         <val lang="nl_NL">Opmerking: Zodra een server wordt afgedwongen, kan de gebruiker alleen zoeken op deze afgedwongen server. Andere plug-ins kunnen echter meer afgedwongen servers toevoegen waaruit de gebruiker kan kiezen.</val>
+    </key>
+    <key value="Authentication_required" distribution="webauthor">
+        <comment>Title of login dialog.</comment>
+        <val lang="en_US">Authentication required</val>
+        <val lang="de_DE">Authentifikation erforderlich</val>
+        <val lang="fr_FR">Authentification requise</val>
+        <val lang="ja_JP">認証が必要です</val>
+        <val lang="nl_NL">Verificatie vereist</val>
     </key>
     <key value="Anonymous" distribution="webauthor">
         <comment>Default author name for comments</comment>
