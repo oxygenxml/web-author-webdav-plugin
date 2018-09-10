@@ -57,22 +57,24 @@
    * Login manager.
    *
    * @param {string} serverUrl The URL of the server to login to.
+   * @param {function(string=)} userChangedCallback The callback to be called when the user is changed.
    *
    * @constructor
    */
-  var LoginManager = function(serverUrl) {
+  var LoginManager = function(serverUrl, userChangedCallback) {
     this.serverUrl_ = serverUrl;
-    this.callback = null;
+    this.loginCallback = null;
+    this.userChangedCallback = userChangedCallback;
   };
 
 
   /**
    * Trigger the login procedure.
    *
-   * @param {function(string=)} callback Called with the user that logged in.
+   * @param {function()} callback Called when the login is successful.
    */
   LoginManager.prototype.login = function(callback) {
-    this.callback = callback;
+    this.loginCallback = callback;
     var loginFormContainer = null; //TODO(WA-2194): retrieve the login form container from Web Author
     if (loginFormContainer) {
       // On Dashboard if a folder is opened, show an embedded form.
@@ -138,7 +140,16 @@
 
     goog.net.XhrIo.send(
       '../plugins-dispatcher/login',
-      goog.bind(this.callback, null, user),
+      goog.bind(function() {
+        this.loginCallback();
+        this.userChangedCallback(user);
+        // Save the user name in local storage
+        try {
+          localStorage.setItem("webdav.user", user);
+        } catch (e) {
+          console.warn(e);
+        }
+      }, this),
       'POST',
       // form params
       goog.Uri.QueryData.createFromMap(new goog.structs.Map({
@@ -161,8 +172,6 @@
     loginDialog.onSelect(goog.bind(function(key) {
       if (key === 'ok') {
         this.submitCredentials(loginDialog.getElement());
-      } else {
-        this.callback(null);
       }
       loginDialog.dispose();
     }, this));
@@ -201,7 +210,25 @@
    * @param {function} loginCallback The function to call after the user is logged in on the server.
    */
   webdavFileServer.login = function(serverUrl, loginCallback) {
-    new LoginManager(serverUrl).login(loginCallback);
+    new LoginManager(serverUrl, this.userChangedCallback).login(loginCallback);
+  };
+
+  /**
+   * Get the user name.
+   */
+  webdavFileServer.getUserName = function() {
+    try {
+      return localStorage.getItem("webdav.user");
+    } catch (e) {
+      console.warn(e);
+    }
+  };
+
+  /**
+   * Set the callback method that must be called by the file server when the username is changed.
+   */
+  webdavFileServer.setUserChangedCallback = function(userChangedCallback) {
+    this.userChangedCallback = userChangedCallback;
   };
 
   /**
@@ -210,7 +237,16 @@
    * @param {function} logoutCallback The function to call when the server logout process is completed.
    */
   webdavFileServer.logout = function (logoutCallback) {
-    goog.net.XhrIo.send('../plugins-dispatcher/login?action=logout', logoutCallback, 'POST');
+    goog.net.XhrIo.send('../plugins-dispatcher/login?action=logout', function() {
+        logoutCallback();
+        // Clear the user name saved in local storage
+        try {
+          localStorage.removeItem("webdav.user");
+        } catch (e) {
+          console.warn(e);
+        }
+      }, 'POST'
+    );
   };
 
   /**
@@ -508,14 +544,7 @@
       var rootUrl = convertToWebDAVUrl(info.rootUrl, 'COLLECTION');
       callback(rootUrl, currentUrl);
     } else if (status === 401) {
-      new LoginManager(url).login(goog.bind(function(username) {
-        if (username) {
-          // Successful login
-          this.requestUrlInfo_(url, callback);
-        } else {
-          // The login was cancelled
-        }
-      }, this));
+      new LoginManager(url, webdavFileServer.userChangedCallback).login(goog.bind(this.requestUrlInfo_, this, url, callback));
     } else {
       var errorMessage = tr(msgs.INVALID_URL_) + ": " + getFileServerURLForDisplay(url);
       this.showError_(errorMessage);
