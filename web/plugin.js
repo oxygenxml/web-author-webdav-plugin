@@ -75,7 +75,7 @@
    */
   LoginManager.prototype.login = function(callback) {
     this.loginCallback = callback;
-    var loginFormContainer = null; //TODO(WA-2194): retrieve the login form container from Web Author
+    var loginFormContainer = document.querySelector('.file-server-login-container');
     if (loginFormContainer) {
       // On Dashboard if a folder is opened, show an embedded form.
       this.renderInlineLoginForm(loginFormContainer);
@@ -424,7 +424,9 @@
    */
   RootUrlComponent.prototype.renderRepoEditElement_ = function () {
     var cD = goog.dom.createDom;
-    var okBtn = cD('button', {'class': 'oxy-button oxy-small-button oxy-primary-button'}, tr(msgs.CONNECT_));
+    var okBtn = cD('button', {
+      'class': 'oxy-button oxy-small-button oxy-primary-button webdav-domain-set'
+    }, tr(msgs.CONNECT_));
     goog.events.listen(okBtn, goog.events.EventType.CLICK,
       goog.bind(this.commitEditFileServerChanges_, this));
 
@@ -439,7 +441,7 @@
     this.resetRendering_();
     goog.dom.appendChild(this.serverDiv_,
       cD('div', 'webdav-repo-editing',
-        cD('div', 'webdav-repo-edit-label', tr(msgs.SERVER_URL_)),
+        cD('div', 'webdav-repo-edit-label', tr(msgs.SERVER_URL_) + ':'),
         this.createRootURLEditElement_(),
         cD('div', 'webdav-button-container',
           okBtn,

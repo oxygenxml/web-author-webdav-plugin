@@ -14,7 +14,6 @@
 }
 
 .webdav-domain-edit,
-.webdav-domain-set,
 .domain-icon {
     margin-right: 5px;
     display:inline-block;
@@ -24,8 +23,7 @@
     height:16px;
 }
 
-.webdav-domain-edit,
-.webdav-domain-set {
+.webdav-domain-edit {
     padding-right: 5px;
     width: 20px;
     margin: 0 0 0 10px;
@@ -36,10 +34,6 @@
 
 .webdav-domain-edit {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAXUlEQVR42mNgGBKgoKAgAYj/Q3ECJZrBmCLNRBuASzNRXhhemj8AsQExmgWA+ABZmpEMUQDiC+RqBtnugOQVA1JTG8jWCVCvbIAaCKIboDgAZAFWg////08RptgAAMDo/Jm25cdCAAAAAElFTkSuQmCC);
-}
-
-.webdav-domain-set {
-    background-image: url('SetRootUrl16.png');
 }
 
 .webdav-builtin-server {
@@ -103,13 +97,11 @@
     display: inline;
 }
 
-.webdav-repo:hover .webdav-domain-edit,
-.webdav-repo:hover .webdav-domain-set {
+.webdav-repo:hover .webdav-domain-edit {
     background-color: lightgrey;
 }
 
-.webdav-repo:hover .webdav-domain-edit:hover,
-.webdav-repo:hover .webdav-domain-set:hover {
+.webdav-repo:hover .webdav-domain-edit:hover{
     border-color: grey;
     cursor: pointer;
 }
