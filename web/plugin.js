@@ -75,7 +75,7 @@
    */
   LoginManager.prototype.login = function(callback) {
     this.loginCallback = callback;
-    var loginFormContainer = document.querySelector('.file-server-login-container');
+    var loginFormContainer = document.querySelector('.file-list-login-container');
     if (loginFormContainer) {
       // On Dashboard if a folder is opened, show an embedded form.
       this.renderInlineLoginForm(loginFormContainer);
@@ -269,7 +269,7 @@
    * @param {function} showErrorMessageCallback The function to call when an error message must be presented to the user.
    */
   webdavFileServer.getUrlInfo = function (url, urlInfoCallback, showErrorMessageCallback) {
-    var urlInfoProvider = new UrlInfoProvider(showErrorMessageCallback);
+    var urlInfoProvider = new UrlInfoProvider(null, showErrorMessageCallback);
     urlInfoProvider.requestUrlInfo_(url, urlInfoCallback);
   };
 
@@ -404,7 +404,8 @@
           var rootUrl = convertToWebDAVUrl(url);
           this.rootChangedCb_(rootUrl, rootUrl);
         } else {
-          var urlInfoProvider = new UrlInfoProvider(goog.bind(this.showErrorMessage, this));
+          var urlInfoProvider = new UrlInfoProvider(goog.bind(this.showSpinner_, this),
+            goog.bind(this.showErrorMessage, this));
           urlInfoProvider.requestUrlInfo_(convertToWebDAVUrl(url), this.rootChangedCb_);
         }
       } else {
@@ -414,6 +415,24 @@
     } else {
       // The URL is empty.
       this.showErrorMessage(tr(msgs.INVALID_URL_));
+    }
+  };
+
+  /**
+   * Show a spinner while asking for URL details.
+   *
+   * @param {boolean} show
+   *
+   * @private
+   */
+  RootUrlComponent.prototype.showSpinner_ = function(show) {
+    var connectBtn = document.querySelector('.webdav-domain-set');
+    if (show) {
+      connectBtn.disabled = 'true';
+      goog.dom.classlist.add(connectBtn, 'oxy-spinner');
+    } else {
+      connectBtn.removeAttribute('disabled');
+      goog.dom.classlist.remove(connectBtn, 'oxy-spinner');
     }
   };
 
@@ -433,7 +452,7 @@
     var cancelBtn = null;
     if (this.rootUrl_) {
       // If we have an existing root URL, display a cancel button to fallback to it.
-      cancelBtn = cD('button', {className: 'oxy-button oxy-small-button'}, tr(msgs.CANCEL_));
+      cancelBtn = cD('button', {className: 'oxy-button oxy-small-button webdav-domain-cancel'}, tr(msgs.CANCEL_));
       goog.events.listen(cancelBtn, goog.events.EventType.CLICK,
         goog.bind(this.renderRepoPreviewElement_, this));
     }
@@ -513,8 +532,18 @@
 
   // -------------------------------------------------------------------------------------------------------------------
 
-  var UrlInfoProvider = function(showError) {
+  /**
+   * Class used to obtain information about an URL.
+   *
+   * @param {function(boolean)} reqStatusListener Called with true when the server request started and with false when
+   * it ends.
+   * @param {function(string)} showError Called to display an error.
+   *
+   * @constructor
+   */
+  var UrlInfoProvider = function(reqStatusListener, showError) {
     this.showError_ = showError || goog.bind(console.log, console);
+    this.reqStatusListener_ = reqStatusListener || goog.nullFunction;
   };
 
   /**
@@ -524,6 +553,7 @@
    * @param {function} callback The callback function.
    */
   UrlInfoProvider.prototype.requestUrlInfo_ = function (url, callback) {
+    this.reqStatusListener_(true);
     goog.net.XhrIo.send(
       '../plugins-dispatcher/webdav-url-info?url=' + encodeURIComponent(url),
       goog.bind(this.handleUrlInfoReceived_, this, url, callback));
@@ -537,6 +567,7 @@
    * @param {goog.events.Event} e The XHR event.
    */
   UrlInfoProvider.prototype.handleUrlInfoReceived_ = function (url, callback, e) {
+    this.reqStatusListener_(false);
     var request = /** {@type goog.net.XhrIo} */ (e.target);
     var status = request.getStatus();
 
