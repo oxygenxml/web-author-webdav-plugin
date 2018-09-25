@@ -1,6 +1,7 @@
 .webdav-login-dialog label {
     text-align: left;
     display: block;
+    margin-top:10px;
 }
 
 .webdav-config-dialog input {
@@ -11,6 +12,7 @@
 .webdav-login-dialog input {
     width: 100%;
     display: block;
+    margin-top:5px;
 }
 
 .webdav-domain-edit,
@@ -86,7 +88,9 @@
 }
 
 .webdav-repo {
-    width: 80%;
+    width: 100%;
+    padding-right: 10px;
+    box-sizing: border-box;
 }
 
 #webdav-browse-url {
@@ -148,11 +152,13 @@
     width: 300px;
     margin: 50px auto;
     padding: 25px;
-    border: 1px solid lightgrey;
+    border: 1px solid #cfcfcf;
+    border-radius: 4px;
+    background-color: white;
 }
 .webdav-login-form > .webdav-button-container {
     text-align: right;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 .webdav-repo-editing > .webdav-button-container > .oxy-button {
     margin-top: 10px;
@@ -160,4 +166,10 @@
 }
 .webdav-repo-edit-label {
     margin-bottom: 5px;
+}
+.webdav-login-form-title {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
 }

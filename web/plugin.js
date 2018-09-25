@@ -58,13 +58,15 @@
    *
    * @param {string} serverUrl The URL of the server to login to.
    * @param {function(string=)} userChangedCallback The callback to be called when the user is changed.
+   * @param {boolean=} opt_forceDialog true if we should display the login dialog instead of the inline form.
    *
    * @constructor
    */
-  var LoginManager = function(serverUrl, userChangedCallback) {
+  var LoginManager = function(serverUrl, userChangedCallback, opt_forceDialog) {
     this.serverUrl_ = serverUrl;
     this.loginCallback = null;
     this.userChangedCallback = userChangedCallback;
+    this.forceDialog_ = !!opt_forceDialog;
   };
 
 
@@ -76,7 +78,7 @@
   LoginManager.prototype.login = function(callback) {
     this.loginCallback = callback;
     var loginFormContainer = document.querySelector('.file-list-login-container');
-    if (loginFormContainer) {
+    if (loginFormContainer && !this.forceDialog_) {
       // On Dashboard if a folder is opened, show an embedded form.
       this.renderInlineLoginForm(loginFormContainer);
     } else {
@@ -186,6 +188,8 @@
   LoginManager.prototype.renderInlineLoginForm = function(container) {
     var formElement = goog.dom.createDom('div', 'webdav-login-form');
     goog.dom.removeChildren(container);
+    goog.dom.appendChild(formElement, goog.dom.createDom('div', 'webdav-login-form-title', tr(msgs.AUTHENTICATION_REQUIRED_)));
+
     goog.dom.appendChild(container, formElement);
 
     this.renderLoginForm(formElement);
@@ -577,7 +581,8 @@
       var rootUrl = convertToWebDAVUrl(info.rootUrl, 'COLLECTION');
       callback(rootUrl, currentUrl);
     } else if (status === 401) {
-      new LoginManager(url, webdavFileServer.userChangedCallback).login(goog.bind(this.requestUrlInfo_, this, url, callback));
+      new LoginManager(url, webdavFileServer.userChangedCallback, true)
+        .login(goog.bind(this.requestUrlInfo_, this, url, callback));
     } else {
       var errorMessage = tr(msgs.INVALID_URL_) + ": " + getFileServerURLForDisplay(url);
       this.showError_(errorMessage);
