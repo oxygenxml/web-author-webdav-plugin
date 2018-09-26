@@ -186,7 +186,7 @@
    * @param {HTMLElement} container The container of the login form.
    */
   LoginManager.prototype.renderInlineLoginForm = function(container) {
-    var formElement = goog.dom.createDom('div', 'webdav-login-form');
+    var formElement = goog.dom.createDom('form', 'webdav-login-form');
     goog.dom.removeChildren(container);
     goog.dom.appendChild(formElement, goog.dom.createDom('div', 'webdav-login-form-title', tr(msgs.AUTHENTICATION_REQUIRED_)));
 
