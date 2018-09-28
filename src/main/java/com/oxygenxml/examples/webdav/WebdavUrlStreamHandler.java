@@ -67,7 +67,7 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
     // Build the complete URL that contains the user and password in it.
     StringBuilder completeUrl = new StringBuilder();
     completeUrl.append(protocol).append("://");
-    if (userCredentials != null) {
+    if (userCredentials != null && userCredentials.getPassword().length > 0) {
       String encodedUserName = URLUtil.encodeURIComponent(userCredentials.getUserName());
       String encodedPasswd = URLUtil.encodeURIComponent(new String(userCredentials.getPassword()));
       completeUrl.append(encodedUserName).append(":").append(encodedPasswd).append("@");
