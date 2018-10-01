@@ -83,7 +83,7 @@
     </key>
     <key distribution="webauthor" value="EDIT_SERVER_URL_">
         <comment>Tooltip on button for editing server URL</comment>
-        <val lang="en_US">Edit server URL</val>
+        <val lang="en_US">Change server</val>
         <val lang="de_DE">Server-URL bearbeiten</val>
         <val lang="fr_FR">Éditer l'URL du serveur</val>
         <val lang="ja_JP">サーバーURLを編集する</val>

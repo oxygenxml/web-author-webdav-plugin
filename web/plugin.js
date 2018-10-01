@@ -105,7 +105,7 @@
     });
 
     goog.dom.appendChild(element,
-      cD('div', 'webdav-login-dialog',
+      cD('form', 'webdav-login-dialog',
         cD('label', '',
           tr(msgs.NAME_) + ': ',
           webdavNameInput
