@@ -84,7 +84,7 @@
     } else {
       var loginDialog = this.createLoginDialog();
       loginDialog.show();
-      this.renderLoginForm(loginDialog.getElement());
+      this.renderLoginForm(loginDialog.getElement(), 'form');
     }
   };
 
@@ -92,8 +92,9 @@
    * Create a user & password login form in the given element.
    *
    * @param {HTMLElement} element The element where to render the login form.
+   * @param {String} formTag The element tag of the form.
    */
-  LoginManager.prototype.renderLoginForm = function (element) {
+  LoginManager.prototype.renderLoginForm = function (element, formTag) {
     var cD = goog.dom.createDom;
     var webdavNameInput = cD('input', {
       id: 'webdav-name',
@@ -105,7 +106,7 @@
     });
 
     goog.dom.appendChild(element,
-      cD('form', 'webdav-login-dialog',
+      cD(formTag, 'webdav-login-dialog',
         cD('label', '',
           tr(msgs.NAME_) + ': ',
           webdavNameInput
@@ -192,7 +193,7 @@
 
     goog.dom.appendChild(container, formElement);
 
-    this.renderLoginForm(formElement);
+    this.renderLoginForm(formElement, 'div');
 
     var loginButton = goog.dom.createDom('button', ['oxy-button', 'oxy-primary-button'], tr(msgs.LOGIN_));
     goog.dom.appendChild(formElement,
