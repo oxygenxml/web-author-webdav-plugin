@@ -102,7 +102,8 @@
       'class': 'oxy-input',
       'autocorrect': 'off',
       'autocapitalize': 'none',
-      'autofocus': ''
+      'autofocus': '',
+      'autocomplete': 'username'
     });
 
     goog.dom.appendChild(element,
@@ -113,7 +114,12 @@
         ),
         cD('label', '',
           tr(msgs.PASSWORD_) + ': ',
-          cD('input', {id: 'webdav-passwd', type: 'password', 'class': 'oxy-input'})
+          cD('input', {
+            id: 'webdav-passwd',
+            type: 'password',
+            'class': 'oxy-input',
+            autocomplete: 'current-password'
+          })
         )
       )
     );
