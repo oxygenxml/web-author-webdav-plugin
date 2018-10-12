@@ -1,4 +1,4 @@
-WebDAV Support for oXygen XML Web Author
+WebDAV Support for Oxygen XML Web Author
 ========================================
 
 This project is a very simple integration of oXygen XML Web Author with a WebDAV-enabled server, which can be extended with more features or can be adapted to work with any CMS.
