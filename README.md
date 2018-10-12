@@ -1,14 +1,14 @@
 WebDAV Support for Oxygen XML Web Author
 ========================================
 
-This project is a very simple integration of oXygen XML Web Author with a WebDAV-enabled server, which can be extended with more features or can be adapted to work with any CMS.
+This project is a very simple integration of Oxygen XML Web Author with a WebDAV-enabled server, which can be extended with more features or can be adapted to work with any CMS.
 
 Identifying the requesting user
 ----------------------
 
-In order to implement a CMS connector, in oXygen one needs to implement a `URLStreamHandlerPluginExtension`, that returns an `URLStreamHandler` for the protocol used to communicate with the CMS.
+In order to implement a CMS connector, in Oxygen one needs to implement a `URLStreamHandlerPluginExtension`, that returns an `URLStreamHandler` for the protocol used to communicate with the CMS.
 
-In order to support authentication in the multi-user context of the oXygen XML Web Author, the `URLStreamHandler` instance should 
+In order to support authentication in the multi-user context of the Oxygen XML Web Author, the `URLStreamHandler` instance should 
 extend `URLStreamHandlerWithContext`. The difference from `URLStreamHandler` is that the `openConnectionInContext` method receives the session ID that uniquely identifies the user on behalf of which we are accessing the given URL. 
 
 Credentials management
