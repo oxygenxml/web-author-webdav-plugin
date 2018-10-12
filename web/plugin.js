@@ -281,7 +281,7 @@
    */
   webdavFileServer.getUrlInfo = function (url, urlInfoCallback, showErrorMessageCallback) {
     var urlInfoProvider = new UrlInfoProvider(null, showErrorMessageCallback);
-    urlInfoProvider.requestUrlInfo_(url, urlInfoCallback);
+    urlInfoProvider.requestUrlInfo_(url, urlInfoCallback, showErrorMessageCallback);
   };
 
   /**
@@ -561,23 +561,25 @@
    * Request the URL info from the server.
    *
    * @param {string} url The URL about which we ask for information.
-   * @param {function} callback The callback function.
+   * @param {function} callback The callback on success.
+   * @param {function} failureCallback The callback on failure.
    */
-  UrlInfoProvider.prototype.requestUrlInfo_ = function (url, callback) {
+  UrlInfoProvider.prototype.requestUrlInfo_ = function (url, callback, failureCallback) {
     this.reqStatusListener_(true);
     goog.net.XhrIo.send(
       '../plugins-dispatcher/webdav-url-info?url=' + encodeURIComponent(url),
-      goog.bind(this.handleUrlInfoReceived_, this, url, callback));
+      goog.bind(this.handleUrlInfoReceived_, this, url, callback, failureCallback));
   };
 
   /**
    * URL information received from the server, we can open that URL in the dialog.
    *
    * @param {string} url The URL about which we requested info.
-   * @param {function} callback the callback method.
+   * @param {function} callback The callback on success.
+   * @param {function} failureCallback The callback on failure.
    * @param {goog.events.Event} e The XHR event.
    */
-  UrlInfoProvider.prototype.handleUrlInfoReceived_ = function (url, callback, e) {
+  UrlInfoProvider.prototype.handleUrlInfoReceived_ = function (url, callback, failureCallback, e) {
     this.reqStatusListener_(false);
     var request = /** {@type goog.net.XhrIo} */ (e.target);
     var status = request.getStatus();
@@ -589,10 +591,11 @@
       callback(rootUrl, currentUrl);
     } else if (status === 401) {
       new LoginManager(url, webdavFileServer.userChangedCallback, true)
-        .login(goog.bind(this.requestUrlInfo_, this, url, callback));
+        .login(goog.bind(this.requestUrlInfo_, this, url, callback, failureCallback));
     } else {
       var errorMessage = tr(msgs.INVALID_URL_) + ": " + getFileServerURLForDisplay(url);
       this.showError_(errorMessage);
+      failureCallback && failureCallback(errorMessage);
     }
   };
 
