@@ -525,7 +525,7 @@
         autocorrect: 'off',
         autocapitalize: 'none',
         autofocus: '',
-        value: getFileServerURLForDisplay(this.rootUrl_)
+        value: getFileServerURLForDisplay(this.rootUrl_) || ''
       });
 
       if (this.rootUrl_) {
