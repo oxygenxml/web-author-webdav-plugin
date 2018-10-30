@@ -70,6 +70,10 @@
    */
   UsersManager.saveUser = function(username, serverURL) {
     serverURL = serverURL || UsersManager.editorURL;
+    if(!serverURL) {
+      return;
+    }
+    serverURL = convertToWebDAVUrl(serverURL);
 
     var serverID = UsersManager.computeServerID_(serverURL);
 
@@ -91,6 +95,7 @@
     var userName;
 
     if(serverURL) {
+      serverURL = convertToWebDAVUrl(serverURL);
       var serverID = UsersManager.computeServerID_(serverURL);
       var storedUsers = JSON.parse(localStorage.getItem(UsersManager.STORAGE_KEY) || '{}');
 
@@ -120,7 +125,7 @@
    * Clears user info.
    */
   UsersManager.clearUsers = function(serverURL) {
-    localStorage.setItem(UsersManager.STORAGE_KEY, null);
+    localStorage.removeItem(UsersManager.STORAGE_KEY);
   }
 
 
