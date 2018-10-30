@@ -51,6 +51,81 @@
     return processedUrl;
   }
 
+  // --------- Users Store
+  UsersManager = {};
+
+  /**
+   * @type {string} The key used for localStorage to store the users.
+   */
+  UsersManager.STORAGE_KEY = 'webdav.users';
+
+  /** The current editor URL (it is used before_editor_loaded event) */
+  UsersManager.editorURL = decodeURIComponent(sync.util.getURLParameter('url'));
+
+  /**
+   * Saves the current username for a particular server.
+   *
+   * @param username the username.
+   * @param serverURL the server for which to store the username.
+   */
+  UsersManager.saveUser = function(username, serverURL) {
+    serverURL = serverURL || UsersManager.editorURL;
+
+    var serverID = UsersManager.computeServerID_(serverURL);
+
+    var storedUsers = JSON.parse(localStorage.getItem(UsersManager.STORAGE_KEY) || '{}');
+    storedUsers[serverID] = username;
+
+    localStorage.setItem(UsersManager.STORAGE_KEY, JSON.stringify(storedUsers));
+  };
+
+
+  /**
+   * Saves the current username for a particular server.
+   *
+   * @param username the username.
+   * @param {string} serverURL the server for which to store the username.
+   */
+  UsersManager.getUser = function(serverURL) {
+    serverURL = serverURL || UsersManager.editorURL;
+    debugger;
+
+    var userName;
+
+    if(serverURL) {
+      var serverID = UsersManager.computeServerID_(serverURL);
+      var storedUsers = JSON.parse(localStorage.getItem(UsersManager.STORAGE_KEY) || '{}');
+
+      userName = storedUsers[serverID];
+    }
+    return userName;
+  };
+
+  /**
+   * Compute an ID based on the server's URL.
+   *
+   * @param serverURL the server for which to compute an ID.
+   *
+   * @return {string} The server's ID.
+   */
+  UsersManager.computeServerID_ = function(serverURL) {
+    var serverID = null;
+
+    if(serverURL) {
+      var url = new sync.util.Url(serverURL);
+      serverID = url.getScheme() + url.getDomain() + (url.getPort() || '');
+    }
+    return serverID;
+  };
+
+  /**
+   * Clears user info.
+   */
+  UsersManager.clearUsers = function(serverURL) {
+    localStorage.setItem(UsersManager.STORAGE_KEY, null);
+  }
+
+
   // -------- Login Manager -----------------------------------------------------
 
   /**
@@ -126,7 +201,7 @@
 
     // Pre-populate the form with the last logged in user.
     try {
-      var lastUser = localStorage.getItem('webdav.user');
+      var lastUser = UsersManager.getUser(this.serverUrl_);
     } catch (e) {
       console.warn(e);
     }
@@ -146,6 +221,7 @@
     var user = userField.value.trim();
     var passwdField = formElement.querySelector('#webdav-passwd');
     var passwd = passwdField.value;
+    var serverUrl = this.serverUrl_;
 
     goog.net.XhrIo.send(
       '../plugins-dispatcher/login',
@@ -154,7 +230,7 @@
         this.userChangedCallback(user);
         // Save the user name in local storage
         try {
-          localStorage.setItem("webdav.user", user);
+          UsersManager.saveUser(user, serverUrl);
         } catch (e) {
           console.warn(e);
         }
@@ -229,7 +305,7 @@
    */
   webdavFileServer.getUserName = function() {
     try {
-      return localStorage.getItem("webdav.user");
+      return UsersManager.getUser();
     } catch (e) {
       console.warn(e);
     }
@@ -252,7 +328,7 @@
         logoutCallback();
         // Clear the user name saved in local storage
         try {
-          localStorage.removeItem("webdav.user");
+          UsersManager.clearUsers();
         } catch (e) {
           console.warn(e);
         }
