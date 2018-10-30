@@ -88,8 +88,6 @@
    */
   UsersManager.getUser = function(serverURL) {
     serverURL = serverURL || UsersManager.editorURL;
-    debugger;
-
     var userName;
 
     if(serverURL) {
