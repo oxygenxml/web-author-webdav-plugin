@@ -7,7 +7,7 @@
  name="WebDAV Connector"
  description="Plugin that enables oXygen XML Web Author to connect to a server with WebDAV support."
  version="${project.nosnapshot.version}"
- vendor="SyncRO"
+ vendor="Syncro Soft SRL"
  class="ro.sync.exml.plugin.Plugin">
  
  <runtime>
