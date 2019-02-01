@@ -12,10 +12,16 @@
   <name>Web Author WebDAV Plugin</name>
   <description>Web Author plugin that allows editing files from a WebDAV server</description>	
 
-	<properties>	
-		<oxygen.sdk.version>21.0-SNAPSHOT</oxygen.sdk.version>
+  <licenses>
+    <license>
+      <url>http://www.oxygenxml.com/sdk_agreement.html</url>
+    </license>
+  </licenses>
+
+  <properties>	
+    <oxygen.sdk.version>21.0-SNAPSHOT</oxygen.sdk.version>
     <sonar.sources>src/main/java,web</sonar.sources>
-	</properties>
+  </properties>
 
   <repositories>
     <repository>
