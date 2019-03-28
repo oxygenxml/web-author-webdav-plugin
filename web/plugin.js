@@ -456,7 +456,7 @@
     var editRepoButton = null;
     if (this.canEdit_) {
       // Add an edit button only of there are no enforced servers or there are more than one enforced server.
-      editRepoButton = goog.dom.createDom('div', {className: 'webdav-domain-edit', title: tr(msgs.EDIT_SERVER_URL_)});
+      editRepoButton = goog.dom.createDom('button', {className: 'webdav-domain-edit', title: tr(msgs.EDIT_SERVER_URL_)});
       goog.events.listen(editRepoButton, goog.events.EventType.CLICK,
         goog.bind(this.renderRepoEditElement_, this));
     }
