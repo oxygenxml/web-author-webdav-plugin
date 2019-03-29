@@ -547,14 +547,16 @@
         goog.bind(this.renderRepoPreviewElement_, this));
     }
 
+    var serverInput = this.createRootURLEditElement_();
     this.resetRendering_();
     goog.dom.appendChild(this.serverDiv_,
       cD('div', 'webdav-repo-editing',
         cD('div', 'webdav-repo-edit-label', tr(msgs.SERVER_URL_) + ':'),
-        this.createRootURLEditElement_(),
+        serverInput,
         cD('div', 'webdav-button-container',
           okBtn,
           cancelBtn)));
+    serverInput.focus();
   };
 
   /**
@@ -603,7 +605,7 @@
         'class': 'oxy-input',
         autocorrect: 'off',
         autocapitalize: 'none',
-        autofocus: '',
+        autofocus: true,
         value: getFileServerURLForDisplay(this.rootUrl_) || ''
       });
 
