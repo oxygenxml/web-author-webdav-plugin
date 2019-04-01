@@ -11,9 +11,10 @@ public class WebdavUrlConnectionTest {
 
   @Test
   public void testCommit() throws Exception {
-    WebdavUrlStreamHandler.credentials.put("3", new PasswordAuthentication("ctalau", "oxygen".toCharArray()));
+    WebdavUrlStreamHandler.credentials.put("3", new PasswordAuthentication(
+        "cristitalau", "xxx".toCharArray()));
 
-    URL fileUrl = new URL("http://localhost/svn/project1/ceva.xml");
+    URL fileUrl = new URL("https://svn.riouxsvn.com/mobile-phone/trunk/ceva.xml");
     WebdavUrlConnection webdavConn = new WebdavUrlConnection("3", fileUrl.openConnection());
 
     OutputStream outputStream = webdavConn.getOutputStreamToSVNServer();

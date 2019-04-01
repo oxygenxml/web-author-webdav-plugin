@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.auth.BasicAuthenticationManager;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.wc.ISVNOptions;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
@@ -114,11 +115,13 @@ public class WebdavUrlConnection extends FilterURLConnection {
     if (credentials == null) {
       // TODO: throw exception.
     }
+    
     ISVNOptions options = SVNWCUtil.createDefaultOptions(true);
-    ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(
-        credentials.getUserName(), 
-        credentials.getPassword());
-    final SVNClientManager manager = SVNClientManager.newInstance(options, authManager);
+    ISVNAuthenticationManager authManager = 
+        BasicAuthenticationManager.newInstance(
+            credentials.getUserName(), credentials.getPassword());
+    final SVNClientManager manager = 
+        SVNClientManager.newInstance(options, authManager);
     File tempDir = Files.createTempDir();
     
     URL parentURL = URLUtil.getParentURL(url);
