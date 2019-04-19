@@ -477,6 +477,7 @@
    * @private
    */
   RootUrlComponent.prototype.commitEditFileServerChanges_ = function () {
+    console.log('commit');
     this.hideErrorMessage();
 
     var input = document.getElementById('webdav-browse-url');
@@ -610,10 +611,16 @@
       });
 
       if (this.rootUrl_) {
-        // If we already had a root URL, on Esc go back to the previous state.
-        goog.events.listen(serverEditElement, goog.events.EventType.KEYUP, goog.bind(function(e) {
-          if (e.keyCode === goog.events.KeyCodes.ESC) {
+        // Do not allow the dialog to close while editing the server name.
+        goog.events.listen(serverEditElement, [goog.events.EventType.KEYDOWN, goog.events.EventType.KEYPRESS], function(e) {
+          if (e.keyCode === goog.events.KeyCodes.ESC || e.keyCode === goog.events.KeyCodes.ENTER) {
             e.stopPropagation();
+          }
+        });
+
+        // If we already had a root URL, on Esc go back to the previous state.
+        goog.events.listen(serverEditElement, goog.events.EventType.KEYDOWN, goog.bind(function(e) {
+          if (e.keyCode === goog.events.KeyCodes.ESC) {
             this.renderRepoPreviewElement_();
           }
         }, this));
