@@ -544,7 +544,7 @@
       // If we have an existing root URL, display a cancel button to fallback to it.
       cancelBtn = cD('button', {className: 'oxy-button oxy-small-button webdav-domain-cancel'}, tr(msgs.CANCEL_));
       goog.events.listen(cancelBtn, goog.events.EventType.CLICK,
-        goog.bind(this.renderRepoPreviewElement_, this));
+        goog.bind(this.cancelEditMode_, this));
     }
 
     var serverInput = this.createRootURLEditElement_();
@@ -586,6 +586,18 @@
   };
 
   /**
+   * Focus the edit button.
+   * @private
+   */
+  RootUrlComponent.prototype.cancelEditMode_ = function() {
+    this.renderRepoPreviewElement_();
+    var editButton = this.serverDiv_.querySelector('button');
+    if (editButton) {
+      editButton.focus();
+    }
+  };
+
+  /**
    * Create and add the element that contains the edit server input component.
    *
    * @private
@@ -620,8 +632,8 @@
         // If we already had a root URL, on Esc go back to the previous state.
         goog.events.listen(serverEditElement, goog.events.EventType.KEYDOWN, goog.bind(function(e) {
           if (e.keyCode === goog.events.KeyCodes.ESC) {
-            this.renderRepoPreviewElement_();
-          }
+            this.cancelEditMode_();
+           }
         }, this));
       }
     }
