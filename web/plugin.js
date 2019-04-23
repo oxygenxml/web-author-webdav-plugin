@@ -476,8 +476,7 @@
    *
    * @private
    */
-  RootUrlComponent.prototype.commitEditFileServerChanges_ = function () {
-    console.log('commit');
+  RootUrlComponent.prototype.commitEditFileServerChanges_ = function () {    
     this.hideErrorMessage();
 
     var input = document.getElementById('webdav-browse-url');
