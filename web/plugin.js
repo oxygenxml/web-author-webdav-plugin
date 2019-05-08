@@ -593,7 +593,10 @@
     this.renderRepoPreviewElement_();
     var editButton = this.serverDiv_.querySelector('button');
     if (editButton) {
-      editButton.focus();
+      // WA-2979: If we don't setTimeout some background-images will no longer be shown on edge and IE.
+      setTimeout(function () {
+        editButton.focus();
+      });
     }
   };
 
