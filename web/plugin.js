@@ -443,7 +443,8 @@
     if (this.inplaceNotificator_) {
       this.inplaceNotificator_.dispose();
     }
-    goog.dom.removeChildren(this.serverDiv_);
+    // WA-2979: Always use innerHTML = '' to remove this.serverDiv_'s children, otherwise IE/Edge will miss behave.
+    this.serverDiv_.innerHTML = '';
     this.inplaceNotificator_ = new sync.view.InplaceNotificationReporter(this.serverDiv_);
   };
 
