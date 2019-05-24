@@ -29,6 +29,8 @@
   
  <extension type="WebappStaticResourcesFolder" 
   path="resources/" href="webdav"/>
+
+ <extension type="WebappCSSResource" href="resources/webdav.css"/>
    
  <extension type="LockHandlerFactory"
   class="com.oxygenxml.examples.webdav.WebdavLockHandlerFactory"/>

@@ -6,9 +6,6 @@
   //          -- by using the 'window.addEnforcedWebdavUrl' API
   // Custom - the user can enter a WEBDav server address in the Dashboard WEBDav tab (only of if there are no multiple enforced servers)
 
-  // -------- Load webdav styles --------
-  sync.util.loadCSSFile("../plugin-resources/webdav/webdav.css");
-
   // -----------------------------------------------------------------------------------------------------
 
   /**
