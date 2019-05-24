@@ -518,7 +518,7 @@
     if (show) {
       connectBtn.disabled = 'true';
       goog.dom.classlist.add(connectBtn, 'oxy-spinner');
-    } else {
+    } else if (connectBtn) {
       connectBtn.removeAttribute('disabled');
       goog.dom.classlist.remove(connectBtn, 'oxy-spinner');
     }
@@ -634,7 +634,9 @@
         goog.events.listen(serverEditElement, goog.events.EventType.KEYDOWN, goog.bind(function(e) {
           if (e.keyCode === goog.events.KeyCodes.ESC) {
             this.cancelEditMode_();
-           }
+          } else if (e.keyCode === goog.events.KeyCodes.ENTER) {
+            this.commitEditFileServerChanges_();
+          }
         }, this));
       }
     }
