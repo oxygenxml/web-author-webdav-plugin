@@ -15,7 +15,7 @@
     <val lang="fr_FR">Connexion</val>
     <val lang="ja_JP">接続</val>
     <val lang="nl_NL">Verbind</val>
-    <val lang="zh_CN">Connect</val>
+    <val lang="zh_CN">连接</val>
   </key>
   <key value="Lock_resources_on_open" distribution="webauthor">
     <comment>Label for checkbox option, whether to lock resources when a user opens them.</comment>
@@ -24,7 +24,7 @@
     <val lang="fr_FR">Verrouiller les ressources à l'ouverture</val>
     <val lang="ja_JP">オープン時にリソースをロックする</val>
     <val lang="nl_NL">Bronnen vergrendelen bij openen</val>
-    <val lang="zh_CN">Lock resources on open</val>
+    <val lang="zh_CN">打开时锁定资源</val>
   </key>
   <key value="Autosave_interval" distribution="webauthor">
     <comment>Label for input for adjusting autosave interval.</comment>
@@ -33,7 +33,7 @@
     <val lang="fr_FR">Intervalle de sauvegarde automatique</val>
     <val lang="ja_JP">自動保存間隔</val>
     <val lang="nl_NL">Interval voor automatisch opslaan</val>
-    <val lang="zh_CN">Autosave interval</val>
+    <val lang="zh_CN">自动保存间隔</val>
   </key>
   <key value="Seconds">
     <comment>Message used in document checking option page.</comment>
@@ -42,7 +42,7 @@
     <val lang="fr_FR">secondes</val>
     <val lang="ja_JP">秒</val>
     <val lang="nl_NL">seconden</val>
-    <val lang="zh_CN">seconds</val>
+    <val lang="zh_CN">秒</val>
   </key>
   <key value="Server_URL">
     <comment>Open URL dialog. Input for the server URL.</comment>
@@ -51,7 +51,7 @@
     <val lang="fr_FR">URL du serveur</val>
     <val lang="ja_JP">サーバー URL</val>
     <val lang="nl_NL">Server URL</val>
-    <val lang="zh_CN">Server URL</val>
+    <val lang="zh_CN">服务器URL</val>
   </key>
   <key value="Enforced_server" distribution="webauthor">
     <comment>Label for input setting the enforced server URL.</comment>
@@ -60,7 +60,7 @@
     <val lang="fr_FR">Serveur forcé</val>
     <val lang="ja_JP">強制サーバー</val>
     <val lang="nl_NL">Afgedwongen server</val>
-    <val lang="zh_CN">Enforced server</val>
+    <val lang="zh_CN">强制服务器</val>
   </key>
   <key value="Enforced_server_note" distribution="webauthor">
     <comment>Warning for the 'Enforce server' setting.</comment>
@@ -73,14 +73,11 @@
     <val lang="fr_FR">Note: Une fois qu'un serveur est forcé, l'utilisateur sera uniquement capable
       de naviguer ce serveur forcé. Cependant, il est possible que d'autres plugins ajoutent un ou
       plusieurs serveurs forcé pour l'utilisateur.</val>
-    <val lang="ja_JP"
-      >メモ：サーバーが強制されると、ユーザーは、この強制されたサーバーのみを参照することができます。しかし、ユーザーが選択できるよう、その他の強制サーバーを他のプラグインに追加することができます。</val>
+    <val lang="ja_JP">メモ：サーバーが強制されると、ユーザーは、この強制されたサーバーのみを参照することができます。しかし、ユーザーが選択できるよう、その他の強制サーバーを他のプラグインに追加することができます。</val>
     <val lang="nl_NL">Opmerking: Zodra een server wordt afgedwongen, kan de gebruiker alleen zoeken
       op deze afgedwongen server. Andere plug-ins kunnen echter meer afgedwongen servers toevoegen
       waaruit de gebruiker kan kiezen.</val>
-    <val lang="zh_CN">Note: Once a server is enforced, the user will only be able to browse this
-      enforced server. However, it is possible for other plugins to add more enforced servers for
-      the user to choose from.</val>
+    <val lang="zh_CN">注意：强制服务器后，用户将只能浏览此强制服务器。但是，其他插件可以添加更多的强制服务器供用户选择。</val>
   </key>
   <key value="Authentication_required" distribution="webauthor">
     <comment>Title of login dialog.</comment>
@@ -89,7 +86,7 @@
     <val lang="fr_FR">Authentification requise</val>
     <val lang="ja_JP">認証が必要です</val>
     <val lang="nl_NL">Verificatie vereist</val>
-    <val lang="zh_CN">Authentication required</val>
+    <val lang="zh_CN">需要身份验证</val>
   </key>
   <key value="Anonymous" distribution="webauthor">
     <comment>Default author name for comments</comment>
@@ -98,7 +95,7 @@
     <val lang="fr_FR">Anonyme</val>
     <val lang="ja_JP">匿名</val>
     <val lang="nl_NL">Anoniem</val>
-    <val lang="zh_CN">Anonymous</val>
+    <val lang="zh_CN">匿名</val>
   </key>
   <key distribution="webauthor" value="EDIT_SERVER_URL_">
     <comment>Tooltip on button for editing server URL</comment>
@@ -107,7 +104,7 @@
     <val lang="fr_FR">Éditer l'URL du serveur</val>
     <val lang="ja_JP">サーバーURLを編集する</val>
     <val lang="nl_NL">Server-URL bewerken</val>
-    <val lang="zh_CN">Change server</val>
+    <val lang="zh_CN">更改服务器</val>
   </key>
   <key distribution="webauthor" value="CANNOT_OPEN_URL_">
     <comment>Error shown if URL could not be opened.</comment>
@@ -116,7 +113,7 @@
     <val lang="fr_FR">Impossible d'ouvrir cette URL</val>
     <val lang="ja_JP">このURLを開くことができません</val>
     <val lang="nl_NL">Cannot open this URL</val>
-    <val lang="zh_CN">Cannot open this URL</val>
+    <val lang="zh_CN">无法打开此URL</val>
   </key>
   <key distribution="webauthor" value="UNSAVED_CHANGES_WILL_BE_LOST_">
     <comment>Warning shown when the user tries to logout while having unsaved changes</comment>
@@ -125,7 +122,7 @@
     <val lang="fr_FR">Toutes vos modifications non enregistrées seront perdues</val>
     <val lang="ja_JP">未保存のすべての変更が失われます</val>
     <val lang="nl_NL">All your unsaved changes will be lost</val>
-    <val lang="zh_CN">All your unsaved changes will be lost</val>
+    <val lang="zh_CN">所有未保存的更改都将丢失</val>
   </key>
   <key value="AUTHENTICATION_REQUIRED_" distribution="webauthor">
     <comment>Title of login dialog.</comment>
@@ -134,7 +131,7 @@
     <val lang="fr_FR">Authentification requise</val>
     <val lang="ja_JP">認証が必要です</val>
     <val lang="nl_NL">Verificatie vereist</val>
-    <val lang="zh_CN">Authentication required</val>
+    <val lang="zh_CN">身份验证</val>
   </key>
   <key value="INVALID_URL_">
     <comment>The input URL was not valid.</comment>
@@ -143,7 +140,7 @@
     <val lang="fr_FR">URL invalide</val>
     <val lang="ja_JP">不正なURL</val>
     <val lang="nl_NL">Ongeldige URL</val>
-    <val lang="zh_CN">Invalid URL</val>
+    <val lang="zh_CN">无效的URL</val>
   </key>
   <key value="NAME_">
     <comment>Like in "name and value"</comment>
@@ -152,7 +149,7 @@
     <val lang="fr_FR">Nom</val>
     <val lang="ja_JP">名前</val>
     <val lang="nl_NL">Naam</val>
-    <val lang="zh_CN">Name</val>
+    <val lang="zh_CN">姓名</val>
   </key>
   <key value="PASSWORD_">
     <comment>Open URL dialog. The password for the connection.</comment>
@@ -161,6 +158,6 @@
     <val lang="fr_FR">Mot de passe</val>
     <val lang="ja_JP">パスワード</val>
     <val lang="nl_NL">Wachtwoord</val>
-    <val lang="zh_CN">Password</val>
+    <val lang="zh_CN">密码</val>
   </key>
 </translation>
