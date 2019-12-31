@@ -27,11 +27,11 @@ public class LoginServlet extends WebappServletPluginExtension{
    */
   @Override
   public void doPost(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
-    String userId = httpRequest.getSession().getId();
+    String sessionId = httpRequest.getSession().getId();
     String action = httpRequest.getParameter("action");
     
     if ("logout".equals(action)) {
-      CredentialsStore.invalidate(userId);
+      CredentialsStore.invalidate(sessionId);
     } else {
       String serverId = WebdavUrlStreamHandler
           .computeServerId(httpRequest.getParameter("server"));
@@ -39,10 +39,10 @@ public class LoginServlet extends WebappServletPluginExtension{
       String user = httpRequest.getParameter("user");
       String passwd = httpRequest.getParameter("passwd");
       
-      logger.debug("Credentials submitted for session: " + userId +  ".\n user - " + user + ", passwd - " + passwd + ", serverId -" + serverId);
+      logger.debug("Credentials submitted for session: " + sessionId +  ".\n user - " + user + ", passwd - " + passwd + ", serverId -" + serverId);
       
       // Store the user and password.
-      CredentialsStore.put(userId, serverId, user, passwd);
+      CredentialsStore.put(sessionId, serverId, user, passwd);
     }
   }
       

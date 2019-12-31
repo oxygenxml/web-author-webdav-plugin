@@ -9,18 +9,39 @@ import java.net.URLConnection;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContext;
+import ro.sync.ecss.extensions.api.webapp.plugin.UserContext;
 import ro.sync.basic.util.URLUtil;
 
 /**
  * URL stream handler for a webdav server.
  */
 public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
-  
+
   /**
    * Logger for logging.
    */
-  private static final Logger logger = Logger.getLogger(WebdavUrlStreamHandler.class.getName());
+  static final Logger logger = Logger.getLogger(WebdavUrlStreamHandler.class.getName());
+
+  /**
+   * Map from context id to session id.
+   */
+  static final Cache<String, String> contextIdToSessionIdMap = 
+     CacheBuilder.newBuilder()
+       .concurrencyLevel(10)
+       .maximumSize(10000)
+       .build();
+
+  @Override
+  protected String getContextId(UserContext context) {
+    String sessionId = context.getSessionId();
+    String contextId = String.valueOf(sessionId.hashCode());
+    contextIdToSessionIdMap.put(contextId, sessionId);
+    return contextId;
+  }
 
   /**
    * Computes a server identifier out of the requested URL.
@@ -44,23 +65,24 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
 
   @Override
   protected URLConnection openConnectionInContext(String contextId, URL url, Proxy proxy) throws IOException {
-    URL completeUrl = addCredentials(contextId, url);
+    String sessionId = contextIdToSessionIdMap.getIfPresent(contextId);
+    URL completeUrl = addCredentials(sessionId, url);
     URLConnection urlConnection = completeUrl.openConnection();
     
-    return new WebdavUrlConnection(contextId, urlConnection);
+    return new WebdavUrlConnection(sessionId, urlConnection);
   }
   
   /**
    * Adds credentials associated with a given user context to the URL.
    * 
-   * @param contextId The context Id.
+   * @param sessionId The session Id.
    * @param url The URL, it should no longer contain the "webdav-" prefix.
    * 
    * @return The URL with credentials. 
    */
-  public static URL addCredentials(String contextId, URL url) {
+  static URL addCredentials(String sessionId, URL url) {
     // Obtain the credentials for the current user.
-    PasswordAuthentication userCredentials = CredentialsStore.get(contextId, computeServerId(url.toExternalForm()));
+    PasswordAuthentication userCredentials = CredentialsStore.get(sessionId, computeServerId(url.toExternalForm()));
     
     String protocol = url.getProtocol().substring(WebdavURLHandlerExtension.WEBDAV.length());
 
