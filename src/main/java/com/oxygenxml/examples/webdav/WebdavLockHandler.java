@@ -27,30 +27,27 @@ public class WebdavLockHandler extends LockHandlerWithContext {
 
   @Override
   public boolean isSaveAllowed(String contextId, URL url, int timeoutSeconds) {
-    String sessionId = WebdavUrlStreamHandler.contextIdToSessionIdMap.getIfPresent(contextId);
-    url = WebdavUrlStreamHandler.addCredentials(sessionId, url);
+    url = WebdavUrlStreamHandler.addCredentials(contextId, url);
     
-    return webdavLockHelper.isSaveAllowed(sessionId, url, timeoutSeconds);
+    return webdavLockHelper.isSaveAllowed(contextId, url, timeoutSeconds);
   }
 
   @Override
   public void unlock(String contextId, URL url) throws LockException {
-    String sessionId = WebdavUrlStreamHandler.contextIdToSessionIdMap.getIfPresent(contextId);
-    url = WebdavUrlStreamHandler.addCredentials(sessionId, url);
+    url = WebdavUrlStreamHandler.addCredentials(contextId, url);
     // headers passed to the server. 
     List<String> headerKeys = Collections.emptyList();
     List<String> headerValues = Collections.emptyList();;
     
-    webdavLockHelper.unlock(sessionId, url, headerKeys, headerValues);
+    webdavLockHelper.unlock(contextId, url, headerKeys, headerValues);
   }
 
   @Override
   public void updateLock(String contextId, URL url, int timeoutSeconds) throws LockException {
-    String sessionId = WebdavUrlStreamHandler.contextIdToSessionIdMap.getIfPresent(contextId);
-    url = WebdavUrlStreamHandler.addCredentials(sessionId, url);
+    url = WebdavUrlStreamHandler.addCredentials(contextId, url);
     
     String serverId = WebdavUrlStreamHandler.computeServerId("webdav-" + url.toExternalForm());
-    PasswordAuthentication passwordAuthentication = CredentialsStore.get(sessionId, serverId);
+    PasswordAuthentication passwordAuthentication = CredentialsStore.get(contextId, serverId);
     
     PluginResourceBundle rb = ((WebappPluginWorkspace)PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
     String userName = passwordAuthentication != null ? passwordAuthentication.getUserName() : rb.getMessage(TranslationTags.ANONYMOUS);
@@ -58,9 +55,9 @@ public class WebdavLockHandler extends LockHandlerWithContext {
     // headers passed to the server. 
     List<String> headerKeys = Collections.emptyList();
     List<String> headerValues = Collections.emptyList();;
-    webdavLockHelper.setLockOwner(sessionId, userName);
+    webdavLockHelper.setLockOwner(contextId, userName);
     
-    webdavLockHelper.updateLock(sessionId, url, timeoutSeconds, headerKeys, headerValues);
+    webdavLockHelper.updateLock(contextId, url, timeoutSeconds, headerKeys, headerValues);
   }
 
   @Override

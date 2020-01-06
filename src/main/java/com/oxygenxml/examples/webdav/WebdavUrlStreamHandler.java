@@ -9,12 +9,8 @@ import java.net.URLConnection;
 
 import org.apache.log4j.Logger;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-
-import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContext;
-import ro.sync.ecss.extensions.api.webapp.plugin.UserContext;
 import ro.sync.basic.util.URLUtil;
+import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContext;
 
 /**
  * URL stream handler for a webdav server.
@@ -25,23 +21,6 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
    * Logger for logging.
    */
   static final Logger logger = Logger.getLogger(WebdavUrlStreamHandler.class.getName());
-
-  /**
-   * Map from context id to session id.
-   */
-  static final Cache<String, String> contextIdToSessionIdMap = 
-     CacheBuilder.newBuilder()
-       .concurrencyLevel(10)
-       .maximumSize(10000)
-       .build();
-
-  @Override
-  protected String getContextId(UserContext context) {
-    String sessionId = context.getSessionId();
-    String contextId = String.valueOf(sessionId.hashCode());
-    contextIdToSessionIdMap.put(contextId, sessionId);
-    return contextId;
-  }
 
   /**
    * Computes a server identifier out of the requested URL.
@@ -65,11 +44,10 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
 
   @Override
   protected URLConnection openConnectionInContext(String contextId, URL url, Proxy proxy) throws IOException {
-    String sessionId = contextIdToSessionIdMap.getIfPresent(contextId);
-    URL completeUrl = addCredentials(sessionId, url);
+    URL completeUrl = addCredentials(contextId, url);
     URLConnection urlConnection = completeUrl.openConnection();
     
-    return new WebdavUrlConnection(sessionId, urlConnection);
+    return new WebdavUrlConnection(contextId, urlConnection);
   }
   
   /**
