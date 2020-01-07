@@ -110,20 +110,6 @@
     cursor: pointer;
 }
 
-.autosave-status-clean,
-.autosave-status-saving,
-.autosave-status-error {
-    margin-left: 5px;
-    color: #c0c3c5;
-    cursor: pointer;
-}
-
-.autosave-failed-save-as,
-.autosave-failed-download {
-    font-weight: bold;
-    text-decoration: none;
-}
-
 .webdav-hide-logout .webdav-logout-container {
     display: none;
 }
