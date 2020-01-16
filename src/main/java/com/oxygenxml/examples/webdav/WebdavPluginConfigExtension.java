@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.PluginConfigExtension;
 import ro.sync.exml.plugin.workspace.security.TrustedHostsProvider;
+import ro.sync.exml.plugin.workspace.security.Response;
 import ro.sync.exml.workspace.api.PluginResourceBundle;
 import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
@@ -47,7 +48,7 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
     PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
     if (pluginWorkspace instanceof StandalonePluginWorkspace) {
       ((StandalonePluginWorkspace) pluginWorkspace).addTrustedHostsProvider(
-          new TrustedHostsProvider() {
+          new TrustedHostsProvider(null) {
             @Override
             public Response isTrusted(String hostName) {
               String trustedAddress = null;
