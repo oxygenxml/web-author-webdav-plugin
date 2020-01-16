@@ -698,27 +698,30 @@
     }
   };
 
-  // -------- Initialize the file browser information ------------
-  webdavFileServer.enforcedServers = [];
-  var enforcedServer = sync.options.PluginsOptions.getClientOption('enforced_webdav_server');
-  if(enforcedServer) {
-    webdavFileServer.addEnforcedUrl_(enforcedServer);
+  var hideConnectorTab = sync.options.PluginsOptions.getClientOption('hide_connector_tab');
+  if (hideConnectorTab !== "true") {
+    // -------- Initialize the file browser information ------------
+    webdavFileServer.enforcedServers = [];
+    var enforcedServer = sync.options.PluginsOptions.getClientOption('enforced_webdav_server');
+    if(enforcedServer) {
+      webdavFileServer.addEnforcedUrl_(enforcedServer);
+    }
+    // Declare a global method to register an enforced URL
+    window.addEnforcedWebdavUrl = goog.bind(webdavFileServer.addEnforcedUrl_, webdavFileServer);
+
+    var webdavFileServerDescriptor = {
+      'id' : 'webdav',
+      'name' : 'WebDAV',
+      'icon' : sync.util.computeHdpiIcon('../plugin-resources/webdav/Webdav70.png'), // the large icon url, hidpi enabled.
+      'matches' : function matches(url) {
+        return url.match(/^webdav-https?:/); // Check if the provided URL points to a file or folder from WebDAV file server
+      },
+      'fileServer' : webdavFileServer
+    };
+
+    // -------- Register the Webdav files server ------------
+    workspace.getFileServersManager().registerFileServerConnector(webdavFileServerDescriptor);
   }
-  // Declare a global method to register an enforced URL
-  window.addEnforcedWebdavUrl = goog.bind(webdavFileServer.addEnforcedUrl_, webdavFileServer);
-
-  var webdavFileServerDescriptor = {
-    'id' : 'webdav',
-    'name' : 'WebDAV',
-    'icon' : sync.util.computeHdpiIcon('../plugin-resources/webdav/Webdav70.png'), // the large icon url, hidpi enabled.
-    'matches' : function matches(url) {
-      return url.match(/^webdav-https?:/); // Check if the provided URL points to a file or folder from WebDAV file server
-    },
-    'fileServer' : webdavFileServer
-  };
-
-  // -------- Register the Webdav files server ------------
-  workspace.getFileServersManager().registerFileServerConnector(webdavFileServerDescriptor);
 
   function processEnforcedServers_(){
     // Check if there is an enforced server that must be imposed

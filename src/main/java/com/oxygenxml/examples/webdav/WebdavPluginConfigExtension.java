@@ -27,7 +27,9 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
   final static String LOCKING_ENABLED = "webdav.lock_on_open";
   
   final static String ENFORCED_URL = "webdav.enforced_url";
-  
+
+  private final static String HIDE_CONNECTOR_TAB = "webdav.hide_connector_tab";
+
   /**
    * The auto-save interval (in seconds).
    */
@@ -130,6 +132,7 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
   @Override
   public String getOptionsJson() {
     return "{"
+        + "\"hide_connector_tab\":\"" + getOption(HIDE_CONNECTOR_TAB, "") + "\"," 
         + "\"webdav_autosave_interval\":\"" + getOption(AUTOSAVE_INTERVAL, defaultAutoSaveInterval) + "\","
         + "\"enforced_webdav_server\":\"" + getOption(ENFORCED_URL, "") + "\"," 
         + "\"lock_on_open\":\"" + getOption(LOCKING_ENABLED, "on")
