@@ -38,4 +38,6 @@
  <extension type="WorkspaceAccess"
   class="com.oxygenxml.examples.webdav.UserNameSetterExtension"/>
 
+ <extension type="TrustedHosts"
+  class="com.oxygenxml.examples.webdav.TrustedHostsProvider"/>
 </plugin>

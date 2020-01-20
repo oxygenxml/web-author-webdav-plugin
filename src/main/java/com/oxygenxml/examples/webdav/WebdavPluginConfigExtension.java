@@ -1,19 +1,13 @@
 package com.oxygenxml.examples.webdav;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
 
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.PluginConfigExtension;
-import ro.sync.exml.plugin.workspace.security.TrustedHostsProvider;
-import ro.sync.exml.plugin.workspace.security.Response;
 import ro.sync.exml.workspace.api.PluginResourceBundle;
-import ro.sync.exml.workspace.api.PluginWorkspace;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
-import ro.sync.exml.workspace.api.standalone.StandalonePluginWorkspace;
 
 /**
  * Plugin extension used to handle the configuration of this plugin.
@@ -44,34 +38,6 @@ public class WebdavPluginConfigExtension extends PluginConfigExtension {
     defaultOptions.put(ENFORCED_URL, "");
     defaultOptions.put(AUTOSAVE_INTERVAL, defaultAutoSaveInterval);
     setDefaultOptions(defaultOptions);
-
-    PluginWorkspace pluginWorkspace = PluginWorkspaceProvider.getPluginWorkspace();
-    if (pluginWorkspace instanceof StandalonePluginWorkspace) {
-      ((StandalonePluginWorkspace) pluginWorkspace).addTrustedHostsProvider(
-          new TrustedHostsProvider(null) {
-            @Override
-            public Response isTrusted(String hostName) {
-              String trustedAddress = null;
-
-              String enforcedUrl = getOption(ENFORCED_URL, "");
-              if (enforcedUrl != null && !enforcedUrl.isEmpty()) {
-                try {
-                  URL url = new URL(enforcedUrl);
-                  trustedAddress = url.getHost() + ":" + (url.getPort() != -1 ? url.getPort() : url.getDefaultPort());
-                } catch (MalformedURLException e) {
-                  // Consider it as unknown.
-                }
-              }
-
-              if (hostName.equals(trustedAddress)) {
-                return TrustedHostsProvider.TRUSTED;
-              } else {
-                return TrustedHostsProvider.UNKNOWN;
-              }
-            }
-          }
-        );
-    }
   }
   
   @Override
