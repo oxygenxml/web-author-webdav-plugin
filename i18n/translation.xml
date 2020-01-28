@@ -8,6 +8,15 @@
     <language description="Dutch" lang="nl_NL"/>
     <language description="Chinese" lang="zh_CN"/>
   </languageList>
+  <key distribution="webauthor" value="SERVER_CANNOT_BE_REACHED_">
+     <comment>Error message that the Web Author server cannot be reached.</comment>
+     <val lang="en_US">Web Author server cannot be reached.</val>
+     <val lang="de_DE">Web Author server cannot be reached.</val>
+     <val lang="fr_FR">Web Author server cannot be reached.</val>
+     <val lang="ja_JP">Web Author server cannot be reached.</val>
+     <val lang="nl_NL">Web Author server cannot be reached.</val>
+     <val lang="zh_CN">Web Author server cannot be reached.</val>
+  </key>
   <key value="CONNECT_" distribution="webauthor">
     <comment>Label for a button that connects the user to a specified server.</comment>
     <val lang="en_US">Connect</val>

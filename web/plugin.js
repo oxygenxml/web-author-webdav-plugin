@@ -698,7 +698,12 @@
       new LoginManager(url, webdavFileServer.userChangedCallback, true)
         .login(goog.bind(this.requestUrlInfo_, this, url, callback));
     } else {
-      var errorMessage = tr(msgs.INVALID_URL_) + ": " + getFileServerURLForDisplay(url);
+       var errorMessage;
+       if(status === 0) {
+         errorMessage = tr(msgs.SERVER_CANNOT_BE_REACHED_);
+       } else { 
+         errorMessage = tr(msgs.INVALID_URL_) + ": " + getFileServerURLForDisplay(url);
+       }
       this.showError_(errorMessage);
     }
   };
