@@ -686,9 +686,14 @@
 
     if (status === 200) {
       var info = request.getResponseJson();
-      var currentUrl = convertToWebDAVUrl(url, info.type);
-      var rootUrl = convertToWebDAVUrl(info.rootUrl, 'COLLECTION');
-      callback(rootUrl, currentUrl);
+      
+      if(info.errorMessage) {
+    	  this.showError_(info.errorMessage);
+      } else {
+        var currentUrl = convertToWebDAVUrl(url, info.type);
+        var rootUrl = convertToWebDAVUrl(info.rootUrl, 'COLLECTION');
+        callback(rootUrl, currentUrl);
+      }
     } else if (status === 401) {
       new LoginManager(url, webdavFileServer.userChangedCallback, true)
         .login(goog.bind(this.requestUrlInfo_, this, url, callback));

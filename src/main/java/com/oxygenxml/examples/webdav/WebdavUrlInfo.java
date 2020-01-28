@@ -73,6 +73,7 @@ public class WebdavUrlInfo extends WebappServletPluginExtension {
     
     URL urlWithCredentials = WebdavUrlStreamHandler.addCredentials(sessionId, url);
     ResourceType resourceType = null;
+    String errorMessage = null;
     try {
       resourceType = getResourceType(urlWithCredentials);
     } catch (IOException e) {
@@ -89,17 +90,22 @@ public class WebdavUrlInfo extends WebappServletPluginExtension {
         resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         return;
       } else {
-        throw e;
+        errorMessage = e.getMessage();
       }
     }
     
     String rootUrl = getRootUrl(urlWithCredentials);
     rootUrl = URLUtil.clearUserInfo(new URL(rootUrl)).toExternalForm();
     
-    Map<String, String> info = ImmutableMap.of(
-        "type", resourceType.toString(),
-        "rootUrl", rootUrl);
-
+    Map<String, String> info;
+    if(errorMessage == null) {
+      info = ImmutableMap.of(
+          "type", resourceType.toString(),
+          "rootUrl", rootUrl);
+    } else {
+      info = ImmutableMap.of("errorMessage", errorMessage);
+    }
+    
     new ObjectMapper().writeValue(resp.getOutputStream(), info);
   }
 
