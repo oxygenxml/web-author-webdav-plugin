@@ -2,6 +2,7 @@ package com.oxygenxml.examples.webdav;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.log4j.Logger;
 
@@ -24,7 +25,7 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
   /**
    * Enforced host.
    */
-  private String enforcedHost = null;
+  private AtomicReference<String> enforcedHostRef = new AtomicReference<>(null);
 
   /**
    * Constructor.
@@ -45,13 +46,13 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
    * Update the enforced host field.
    */
   private void updateEnforcedHost(WSOptionsStorage optionsStorage) {
-    this.enforcedHost = null;
+    this.enforcedHostRef.set(null);
 
     String enforcedUrl = optionsStorage.getOption(WebdavPluginConfigExtension.ENFORCED_URL, "");
     if (enforcedUrl != null && !enforcedUrl.isEmpty()) {
       try {
         URL url = new URL(enforcedUrl);
-        this.enforcedHost = url.getHost() + ":" + (url.getPort() != -1 ? url.getPort() : url.getDefaultPort());
+        this.enforcedHostRef.set(url.getHost() + ":" + (url.getPort() != -1 ? url.getPort() : url.getDefaultPort()));
       } catch (MalformedURLException e) {
         logger.warn(e, e);
       }
@@ -60,7 +61,8 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
 
   @Override
   public Response isTrusted(String hostName) {
-    if (hostName.equals(this.enforcedHost)) {
+    String enforcedHost = this.enforcedHostRef.get();
+    if (hostName.equals(enforcedHost)) {
       return TrustedHostsProvider.TRUSTED;
     } else {
       return TrustedHostsProvider.UNKNOWN;
