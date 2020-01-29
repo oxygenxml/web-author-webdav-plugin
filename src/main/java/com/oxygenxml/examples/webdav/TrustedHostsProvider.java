@@ -33,12 +33,10 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
     WSOptionsStorage optionsStorage = PluginWorkspaceProvider.getPluginWorkspace().getOptionsStorage();
     updateEnforcedHost(optionsStorage);
 
-    optionsStorage.addOptionListener(new WSOptionListener() {
+    optionsStorage.addOptionListener(new WSOptionListener(WebdavPluginConfigExtension.ENFORCED_URL) {
       @Override
       public void optionValueChanged(WSOptionChangedEvent event) {
-        if (WebdavPluginConfigExtension.ENFORCED_URL.equals(event.getOptionKey())) {
-          updateEnforcedHost(optionsStorage);
-        }
+        updateEnforcedHost(optionsStorage);
       }
     });
   }
