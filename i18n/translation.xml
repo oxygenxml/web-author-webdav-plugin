@@ -12,7 +12,7 @@
      <comment>Error message that the Web Author server cannot be reached.</comment>
      <val lang="en_US">Web Author server cannot be reached.</val>
      <val lang="de_DE">Web Author server cannot be reached.</val>
-     <val lang="fr_FR">Web Author server cannot be reached.</val>
+     <val lang="fr_FR">Le serveur Web Author n'est pas accessible.</val>
      <val lang="ja_JP">Web Author server cannot be reached.</val>
      <val lang="nl_NL">Web Author server cannot be reached.</val>
      <val lang="zh_CN">Web Author server cannot be reached.</val>
