@@ -88,6 +88,8 @@ public class WebdavUrlConnection extends FilterURLConnection
         public void close() throws IOException {
           try {
             super.close();
+            
+            URLUtil.disconnect(delegateConnection);
           } catch (IOException e) {
             handleException(e);
           }
