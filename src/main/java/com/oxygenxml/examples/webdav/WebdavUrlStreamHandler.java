@@ -7,7 +7,8 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ro.sync.basic.util.URLUtil;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContext;
@@ -20,7 +21,7 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
   /**
    * Logger for logging.
    */
-  static final Logger logger = Logger.getLogger(WebdavUrlStreamHandler.class.getName());
+  static final Logger logger = LogManager.getLogger(WebdavUrlStreamHandler.class.getName());
 
   /**
    * Computes a server identifier out of the requested URL.

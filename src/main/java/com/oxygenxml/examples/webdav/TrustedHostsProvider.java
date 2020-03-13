@@ -4,7 +4,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ro.sync.exml.plugin.workspace.security.Response;
 import ro.sync.exml.plugin.workspace.security.TrustedHostsProviderExtension;
@@ -20,7 +21,7 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
   /**
    * Logger for logging.
    */
-  private static Logger logger = Logger.getLogger(TrustedHostsProvider.class.getName());
+  private static Logger logger = LogManager.getLogger(TrustedHostsProvider.class.getName());
 
   /**
    * Enforced host.
