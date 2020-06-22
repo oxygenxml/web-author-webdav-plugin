@@ -50,8 +50,8 @@
           <configuration>
           <nodeVersion>v12.16.0</nodeVersion>
           <npmVersion>v6.13.4</npmVersion>
-          <nodeDownloadRoot>http://nas.sync.ro/MyWeb/test/jenkins-tools/nodejs/</nodeDownloadRoot>
-          <npmDownloadRoot>http://nas.sync.ro/MyWeb/test/jenkins-tools/npm/</npmDownloadRoot>
+          <nodeDownloadRoot>${node.download.root}</nodeDownloadRoot>
+          <npmDownloadRoot>${npm.download.root}</npmDownloadRoot>
               <installDirectory>target</installDirectory>
           </configuration>
           <executions>
