@@ -1,4 +1,19 @@
 (function() {
+  goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function(e) {
+    var am = e.editor.getEditingSupport().getActionsManager();
+    var action = new sync.actions.SharedSessionAction(e.editor);
+    am.registerAction(sync.actions.SharedSessionAction.ACTION_ID, action);
+    goog.events.listenOnce(e.editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function(e) {
+      var toolbar = e.actionsConfiguration.toolbars[0];
+      if (toolbar && toolbar.name === 'Builtin') {
+        toolbar.children.splice(toolbar.children.length - 1, 0, {
+          id: sync.actions.SharedSessionAction.ACTION_ID,
+          type: 'action'});
+      }
+    });
+  });
+
+
   // There are two types of WEBDav servers:
   //
   // Enforced - it is possible to enforce multiple WEBDav servers:
