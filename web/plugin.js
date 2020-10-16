@@ -1,5 +1,8 @@
 (function() {
   goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function(e) {
+    if (!sync.actions.SharedSessionAction) {
+      return;
+    }
     var am = e.editor.getEditingSupport().getActionsManager();
     var action = new sync.actions.SharedSessionAction(e.editor);
     am.registerAction(sync.actions.SharedSessionAction.ACTION_ID, action);
