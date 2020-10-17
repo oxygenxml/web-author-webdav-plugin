@@ -39,7 +39,7 @@
   class="com.oxygenxml.examples.webdav.UserNameSetterExtension"/>
 
  <extension type="WorkspaceAccess"
-  class="ro.sync.servlet.collaboration.OwnerBasedRoomLifecycleExtension"/>
+  class="com.oxygenxml.examples.webdav.OwnerBasedRoomLifecycleExtension"/>
 
  <extension type="TrustedHosts"
   class="com.oxygenxml.examples.webdav.TrustedHostsProvider"/>
