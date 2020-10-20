@@ -777,21 +777,8 @@
 
 
   if (matchesWebdav(UsersManager.editorURL)) {
-    goog.events.listen(workspace, sync.api.Workspace.EventType.EDITOR_LOADED, function(e) {
-      if (!sync.actions.SharedSessionAction) {
-        return;
-      }
-      var am = e.editor.getEditingSupport().getActionsManager();
-      var action = new sync.actions.SharedSessionAction(e.editor);
-      am.registerAction(sync.actions.SharedSessionAction.ACTION_ID, action);
-      goog.events.listen(e.editor, sync.api.Editor.EventTypes.ACTIONS_LOADED, function(e) {
-        var toolbar = e.actionsConfiguration.toolbars[0];
-        if (toolbar && toolbar.name === 'Builtin') {
-          toolbar.children.splice(toolbar.children.length - 1, 0, {
-            id: sync.actions.SharedSessionAction.ACTION_ID,
-            type: 'action'});
-        }
-      });
+    goog.events.listen(workspace, sync.api.Workspace.EventType.BEFORE_EDITOR_LOADED, function(e) {
+      e.options.sharedSessionCompatible = true;
     });
   }
 })();
