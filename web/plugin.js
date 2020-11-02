@@ -779,6 +779,7 @@
   if (matchesWebdav(UsersManager.editorURL)) {
     goog.events.listen(workspace, sync.api.Workspace.EventType.BEFORE_EDITOR_LOADED, function(e) {
       e.options.sharedSessionCompatible = true;
+      e.options.inplaceReferenceEditingSupported = true;
     });
   }
 })();
