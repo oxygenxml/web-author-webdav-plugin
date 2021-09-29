@@ -163,7 +163,7 @@
   <key value="PASSWORD_">
     <comment>Open URL dialog. The password for the connection.</comment>
     <val lang="en_US">Password</val>
-    <val lang="de_DE">Passwort:</val>
+    <val lang="de_DE">Passwort</val>
     <val lang="fr_FR">Mot de passe</val>
     <val lang="ja_JP">パスワード</val>
     <val lang="nl_NL">Wachtwoord</val>
