@@ -6,6 +6,9 @@
     "type": "git",
     "url": "git+https://github.com/oxygenxml/webapp-webdav-integration.git"
   },
+  "scripts": {
+    "build": "wa-plugin-pack"
+  },
   "author": "",
   "license": "Apache-2.0",
   "bugs": {
@@ -13,9 +16,6 @@
   },
   "homepage": "https://github.com/oxygenxml/webapp-webdav-integration#readme",
   "devDependencies": {
-    "gulp": "4.0.2",
-    "gulp-concat": "2.6.0",
-    "gulp-uglify": "1.5.3",
-    "sync-i18n": "0.0.x"
+    "@oxygenxml/webauthor-plugin-build-script": "0.0.x"
   }
 }

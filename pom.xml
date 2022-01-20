@@ -73,6 +73,16 @@
                   <phase>generate-resources</phase>
               </execution>
               <execution>
+                  <id>npm registry config</id>
+                  <goals>
+                      <goal>npm</goal>
+                  </goals>
+                  <phase>generate-resources</phase>
+                  <configuration>
+                      <arguments>config set @oxygenxml:registry ${npm.registry.url}</arguments>
+                  </configuration>
+              </execution>
+              <execution>
                   <id>npm install</id>
                   <goals>
                       <goal>npm</goal>
@@ -80,13 +90,13 @@
                   <phase>generate-resources</phase>
               </execution>
               <execution>
-                  <id>gulp build</id>
+                  <id>wa-build</id>
                   <goals>
-                      <goal>gulp</goal>
+                      <goal>npm</goal>
                   </goals>
                   <phase>prepare-package</phase>
                   <configuration>
-                      <arguments>prepare-package</arguments>
+                      <arguments>run build</arguments>
                   </configuration>
               </execution>
           </executions>
