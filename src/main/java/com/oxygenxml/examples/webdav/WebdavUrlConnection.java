@@ -10,11 +10,11 @@ import java.net.URLConnection;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.Closeables;
 
+import lombok.extern.slf4j.Slf4j;
+import ro.sync.basic.util.URLUtil;
 import ro.sync.ecss.extensions.api.webapp.WebappMessage;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
 import ro.sync.ecss.extensions.api.webapp.plugin.FilterURLConnection;
@@ -24,7 +24,6 @@ import ro.sync.exml.workspace.api.PluginResourceBundle;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 import ro.sync.net.protocol.FolderEntryDescriptor;
 import ro.sync.net.protocol.http.WebdavLockHelper;
-import ro.sync.basic.util.URLUtil;
 
 /**
  * Wrapper over an URLConnection that reports 401 exceptions as 
@@ -32,15 +31,10 @@ import ro.sync.basic.util.URLUtil;
  * 
  * @author cristi_talau
  */
+@Slf4j
 public class WebdavUrlConnection extends FilterURLConnection 
     implements CacheableUrlConnection {
 
-  /**
-   * Logger for logging.
-   */
-  private static final Logger logger = LogManager.getLogger(
-      WebdavUrlConnection.class.getName());
-  
   /**
    * The session ID.
    */
@@ -122,10 +116,10 @@ public class WebdavUrlConnection extends FilterURLConnection
         String user = URLUtil.extractUser(userInfo);
         String password = URLUtil.extractPassword(userInfo);
         if (user != null && !user.trim().isEmpty() && password != null && !password.trim().isEmpty()) {
-          logger.warn("Failed login attempt of user " + user + " for " + URLUtil.getDescription(url));
+          log.warn("Failed login attempt of user " + user + " for " + URLUtil.getDescription(url));
         }
       }
-      logger.debug("WebDAV not authorized exception " + e.getMessage());
+      log.debug("WebDAV not authorized exception " + e.getMessage());
       PluginResourceBundle rb = ((WebappPluginWorkspace)PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
       throw new UserActionRequiredException(new WebappMessage(
           WebappMessage.MESSAGE_TYPE_CUSTOM, 

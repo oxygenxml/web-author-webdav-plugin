@@ -17,8 +17,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -28,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.Uninterruptibles;
 
+import lombok.extern.slf4j.Slf4j;
 import ro.sync.basic.util.URLUtil;
 import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
 
@@ -36,17 +35,13 @@ import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
  *  
  * @author cristi_talau
  */
+@Slf4j
 public class WebdavUrlInfo extends WebappServletPluginExtension {
 
   /**
    * The time allocated for server root computation.
    */
   private static final int SERVER_ROOT_COMPUTATION_ALLOCATION = 3;
-  
-  /**
-   * Logger for logging.
-   */
-  private static final Logger logger = LogManager.getLogger(WebdavUrlInfo.class.getName());
 
   /**
    * The resource type
@@ -84,7 +79,7 @@ public class WebdavUrlInfo extends WebappServletPluginExtension {
           String user = URLUtil.extractUser(userInfo);
           String password = URLUtil.extractPassword(userInfo);
           if (user != null && !user.trim().isEmpty() && password != null && !password.trim().isEmpty()) {
-            logger.warn("Failed login attempt of user " + user + " for " + URLUtil.getDescription(url));
+            log.warn("Failed login attempt of user " + user + " for " + URLUtil.getDescription(url));
           }
         }
         // We need credentials.
@@ -128,13 +123,13 @@ public class WebdavUrlInfo extends WebappServletPluginExtension {
         String candidateRoot = urlWithCredentials.getProtocol() + "://" + urlWithCredentials.getAuthority();
         String[] pathParts = urlWithCredentials.getPath().split("/");
         
-        if (logger.isDebugEnabled()) {
-          logger.debug(Arrays.toString(pathParts));
+        if (log.isDebugEnabled()) {
+          log.debug(Arrays.toString(pathParts));
         }
         
         for (String pathPart: pathParts) {
           if (Thread.interrupted()) {
-            logger.debug("Time's up searching for server root URL");
+            log.debug("Time's up searching for server root URL");
             break;
           }
           candidateRoot += pathPart + "/";
@@ -143,10 +138,10 @@ public class WebdavUrlInfo extends WebappServletPluginExtension {
           try {
             candidateResourceType = getResourceType(new URL(candidateRoot));
           } catch (IOException e) {
-            logger.debug(e, e);
+            log.debug(e, e);
           }
           if (candidateResourceType == ResourceType.COLLECTION) {
-            logger.debug("Found server root URL: " + candidateRoot);
+            log.debug("Found server root URL: " + candidateRoot);
             break;
           }
         }
@@ -155,7 +150,7 @@ public class WebdavUrlInfo extends WebappServletPluginExtension {
     thread.start();
     Uninterruptibles.joinUninterruptibly(thread, SERVER_ROOT_COMPUTATION_ALLOCATION, TimeUnit.SECONDS);
     if (thread.isAlive()) {
-      logger.warn("Did not manage to determine the server root in the allocated time.");
+      log.warn("Did not manage to determine the server root in the allocated time.");
       thread.interrupt();
     }
     return foundRoot.get();

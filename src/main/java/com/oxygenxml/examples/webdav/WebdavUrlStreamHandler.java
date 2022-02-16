@@ -7,21 +7,15 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import lombok.extern.slf4j.Slf4j;
 import ro.sync.basic.util.URLUtil;
 import ro.sync.ecss.extensions.api.webapp.plugin.URLStreamHandlerWithContext;
 
 /**
  * URL stream handler for a webdav server.
  */
+@Slf4j
 public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
-
-  /**
-   * Logger for logging.
-   */
-  static final Logger logger = LogManager.getLogger(WebdavUrlStreamHandler.class.getName());
 
   /**
    * Computes a server identifier out of the requested URL.
@@ -31,15 +25,15 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
    * @return the server identifier.
    */
   public static String computeServerId(String serverUrl) {
-    logger.debug("Server for which to compute the serverID :" + serverUrl);
+    log.debug("Server for which to compute the serverID :" + serverUrl);
     String serverId = null;
     try {
       URL url = new URL(serverUrl);
       serverId = url.getProtocol() + url.getHost() + url.getPort();
     } catch(MalformedURLException e) {
-      logger.error("Malformed url in computeServerId", e);
+      log.error("Malformed url in computeServerId", e);
     }
-    logger.debug("serverID :" + serverId);
+    log.debug("serverID :" + serverId);
     return serverId;
   }
 
@@ -87,7 +81,7 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
       completeUrl.append("#").append(url.getRef());
     }
     
-    logger.debug("HTTP URL with credentials: " + completeUrl.toString());
+    log.debug("HTTP URL with credentials: " + completeUrl.toString());
     try {
       return new URL(completeUrl.toString());
     } catch (MalformedURLException e) {

@@ -4,9 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import lombok.extern.slf4j.Slf4j;
 import ro.sync.exml.plugin.workspace.security.Response;
 import ro.sync.exml.plugin.workspace.security.TrustedHostsProviderExtension;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
@@ -17,11 +15,8 @@ import ro.sync.exml.workspace.api.options.WSOptionsStorage;
 /**
  * {@link TrustedHostsProviderExtension} implementation that trust imposed host.
  */
+@Slf4j
 public class TrustedHostsProvider implements TrustedHostsProviderExtension {
-  /**
-   * Logger for logging.
-   */
-  private static Logger logger = LogManager.getLogger(TrustedHostsProvider.class.getName());
 
   /**
    * Enforced host.
@@ -55,7 +50,7 @@ public class TrustedHostsProvider implements TrustedHostsProviderExtension {
         URL url = new URL(enforcedUrl);
         this.enforcedHostRef.set(url.getHost() + ":" + (url.getPort() != -1 ? url.getPort() : url.getDefaultPort()));
       } catch (MalformedURLException e) {
-        logger.warn(e, e);
+        log.warn(e, e);
       }
     }
   }
