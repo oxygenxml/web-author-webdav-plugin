@@ -2,19 +2,18 @@ package com.oxygenxml.examples.webdav;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import lombok.extern.slf4j.Slf4j;
-import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
+import ro.sync.ecss.extensions.api.webapp.plugin.ServletPluginExtension;
+import ro.sync.ecss.extensions.api.webapp.plugin.servlet.ServletException;
+import ro.sync.ecss.extensions.api.webapp.plugin.servlet.http.HttpServletRequest;
+import ro.sync.ecss.extensions.api.webapp.plugin.servlet.http.HttpServletResponse;
 
 /**
  * Servlet used to receive user credentials and propagate them to the 
  * URLStreamHandler.
  */
 @Slf4j
-public class LoginServlet extends WebappServletPluginExtension{
+public class LoginServlet extends ServletPluginExtension {
   
   /**
    * Receives the user and the password for a given host. 

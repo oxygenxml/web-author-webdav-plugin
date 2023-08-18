@@ -10,9 +10,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,7 +25,11 @@ import com.google.common.util.concurrent.Uninterruptibles;
 
 import lombok.extern.slf4j.Slf4j;
 import ro.sync.basic.util.URLUtil;
-import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
+import ro.sync.ecss.extensions.api.webapp.plugin.ServletPluginExtension;
+import ro.sync.ecss.extensions.api.webapp.plugin.servlet.ServletException;
+import ro.sync.ecss.extensions.api.webapp.plugin.servlet.http.HttpServletRequest;
+import ro.sync.ecss.extensions.api.webapp.plugin.servlet.http.HttpServletResponse;
+
 
 /**
  * Servlet that computes some information about an WebDAV URL that was introduced by the user.
@@ -36,7 +37,7 @@ import ro.sync.ecss.extensions.api.webapp.plugin.WebappServletPluginExtension;
  * @author cristi_talau
  */
 @Slf4j
-public class WebdavUrlInfo extends WebappServletPluginExtension {
+public class WebdavUrlInfo extends ServletPluginExtension {
 
   /**
    * The time allocated for server root computation.
@@ -60,7 +61,7 @@ public class WebdavUrlInfo extends WebappServletPluginExtension {
    *  
    * If the user is not authorized to access the given URL, return 401.
    *
-   * @see WebappServletPluginExtension#doGet(HttpServletRequest, HttpServletResponse)
+   * @see ServletPluginExtension#doGet(HttpServletRequest, HttpServletResponse)
    */
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

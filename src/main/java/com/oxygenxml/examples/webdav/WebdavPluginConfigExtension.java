@@ -2,17 +2,16 @@ package com.oxygenxml.examples.webdav;
 
 import java.util.HashMap;
 
-import javax.servlet.ServletException;
-
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
-import ro.sync.ecss.extensions.api.webapp.plugin.PluginConfigExtension;
+import ro.sync.ecss.extensions.api.webapp.plugin.ServletPluginConfigExtension;
+import ro.sync.ecss.extensions.api.webapp.plugin.servlet.ServletException;
 import ro.sync.exml.workspace.api.PluginResourceBundle;
 import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
 
 /**
  * Plugin extension used to handle the configuration of this plugin.
  */
-public class WebdavPluginConfigExtension extends PluginConfigExtension {
+public class WebdavPluginConfigExtension extends ServletPluginConfigExtension {
 
   private static final String defaultAutoSaveInterval = "5";
 

@@ -241,8 +241,9 @@
       goog.Uri.QueryData.createFromMap(new goog.structs.Map({
         user: user,
         passwd: passwd,
-        server: convertToWebDAVUrl(this.serverUrl_)
-      })).toString()
+        server: convertToWebDAVUrl(this.serverUrl_),
+      })).toString(),
+      {"X-Requested-With": "dav"}
     );
   };
 
@@ -333,7 +334,9 @@
         } catch (e) {
           console.warn(e);
         }
-      }, 'POST'
+      }, 'POST',
+      null,
+      {"X-Requested-With": "dav"}
     );
   };
 

@@ -36,8 +36,8 @@ public class WebdavLockHandler extends LockHandlerWithContext {
   public void unlock(String contextId, URL url) throws LockException {
     url = WebdavUrlStreamHandler.addCredentials(contextId, url);
     // headers passed to the server. 
-    List<String> headerKeys = Collections.emptyList();
-    List<String> headerValues = Collections.emptyList();;
+    List<String> headerKeys = Collections.singletonList("X-Requested-With");
+    List<String> headerValues = Collections.singletonList("x");
     
     webdavLockHelper.unlock(contextId, url, headerKeys, headerValues);
   }
@@ -53,8 +53,8 @@ public class WebdavLockHandler extends LockHandlerWithContext {
     String userName = passwordAuthentication != null ? passwordAuthentication.getUserName() : rb.getMessage(TranslationTags.ANONYMOUS);
     
     // headers passed to the server. 
-    List<String> headerKeys = Collections.emptyList();
-    List<String> headerValues = Collections.emptyList();;
+    List<String> headerKeys = Collections.singletonList("X-Requested-With");
+    List<String> headerValues = Collections.singletonList("x");
     webdavLockHelper.setLockOwner(contextId, userName);
     
     webdavLockHelper.updateLock(contextId, url, timeoutSeconds, headerKeys, headerValues);
