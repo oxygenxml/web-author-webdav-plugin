@@ -77,6 +77,7 @@ public class WebdavUrlConnection extends FilterURLConnection
     // Before trying to save a resource, add the lock header if we have one.
     new WebdavLockHelper().addLockHeader(
         this.contextId, (HttpURLConnection) delegateConnection);
+    this.addRequestProperty("X-Requested-With", "WA");
     try {
       return new FilterOutputStream(super.getOutputStream()) {
         @Override
