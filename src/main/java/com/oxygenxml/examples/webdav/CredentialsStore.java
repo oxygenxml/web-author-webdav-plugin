@@ -68,7 +68,19 @@ public class CredentialsStore {
     String encryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().encrypt(password);
     getSessionStore().putIfAbsent(sessionId, getCredentialsKey(serverId), new UsrPass(userName, encryptedPass));
   }
-  
+
+  /**
+   * Stores the given credentials if they are not already present.
+   * @param sessionId The session id.
+   * @param serverId The server id.
+   * @param userName The user name.
+   * @param password The password.
+   */
+  public static void putIfAbsentWithoutSessionCookieRefresh(String sessionId, String serverId, String userName, String password) {
+    String encryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().encrypt(password);
+    getSessionStore().putIfAbsentWithoutSessionCookieRefresh(sessionId, getCredentialsKey(serverId), new UsrPass(userName, encryptedPass));
+  }
+
   /**
    * Retrieves the password authentication for the given session and server ids.
    * @param sessionId The session id.

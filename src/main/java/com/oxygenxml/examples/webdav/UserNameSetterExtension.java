@@ -56,10 +56,9 @@ public class UserNameSetterExtension implements WorkspaceAccessPluginExtension {
           }
           
           String serverId = WebdavUrlStreamHandler.computeServerId(systemId.toExternalForm());
-          CredentialsStore.putIfAbsent(sessionId, serverId, userName, "");
+          CredentialsStore.putIfAbsentWithoutSessionCookieRefresh(sessionId, serverId, userName, "");
         }
       }
-
     });
     
   }
