@@ -79,7 +79,7 @@
     <val lang="de_DE">Hinweis: Sobald ein Server erzwungen wurde, kann der Benutzer nur den
       erzwungenen Server durchsuchen. Allerdings ist es anderen Plugins möglich, weitere erzwungene
       Server für den Benutzer zur Auswahl zu stellen.</val>
-    <val lang="fr_FR">Note: Une fois qu'un serveur est forcé, l'utilisateur sera uniquement capable
+    <val lang="fr_FR">Note : Une fois qu'un serveur est forcé, l'utilisateur sera uniquement capable
       de naviguer ce serveur forcé. Cependant, il est possible que d'autres plugins ajoutent un ou
       plusieurs serveurs forcé pour l'utilisateur.</val>
     <val lang="ja_JP">メモ：サーバーが強制されると、ユーザーは、この強制されたサーバーのみを参照することができます。しかし、ユーザーが選択できるよう、その他の強制サーバーを他のプラグインに追加することができます。</val>
