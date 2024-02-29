@@ -279,7 +279,7 @@
 
     this.renderLoginForm(formElement, 'div');
 
-    var loginButton = goog.dom.createDom('button', ['oxy-button', 'oxy-primary-button'], tr(msgs.LOGIN_));
+    var loginButton = goog.dom.createDom('button', ['oxy-button', 'oxy-primary-button'], tr(msgs.CONNECT_));
     goog.dom.appendChild(formElement,
       goog.dom.createDom('div', 'webdav-button-container', loginButton));
 
