@@ -43,11 +43,11 @@ public interface TranslationTags {
   String ENFORCED_SERVER_NOTE = "Enforced_server_note";
   
   /**
-   * Title of login dialog.
+   * Title of the connect dialog.
    * 
-   * en: Authentication required
+   * en: Connect
    */
-  String AUTHENTICATION_REQUIRED = "Authentication_required";
+  String CONNECT = "CONNECT_";
   
   /**
    * Default author name for comments.

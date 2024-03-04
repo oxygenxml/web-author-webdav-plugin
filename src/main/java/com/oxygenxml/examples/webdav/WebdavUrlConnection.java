@@ -124,7 +124,7 @@ public class WebdavUrlConnection extends FilterURLConnection
       PluginResourceBundle rb = ((WebappPluginWorkspace)PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();
       throw new UserActionRequiredException(new WebappMessage(
           WebappMessage.MESSAGE_TYPE_CUSTOM, 
-          rb.getMessage(TranslationTags.AUTHENTICATION_REQUIRED), 
+          rb.getMessage(TranslationTags.CONNECT), 
           // send back the URL for which to authenticate.
           this.delegateConnection.getURL().toExternalForm(), 
           true));  

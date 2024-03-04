@@ -254,7 +254,7 @@
    */
   LoginManager.prototype.createLoginDialog = function() {
     var loginDialog = workspace.createDialog();
-    loginDialog.setTitle(tr(msgs.AUTHENTICATION_REQUIRED_));
+    loginDialog.setTitle(tr(msgs.CONNECT_));
     loginDialog.setPreferredSize(300, null);
     loginDialog.onSelect(goog.bind(function(key) {
       if (key === 'ok') {
@@ -273,7 +273,7 @@
   LoginManager.prototype.renderInlineLoginForm = function(container) {
     var formElement = goog.dom.createDom('form', 'webdav-login-form');
     goog.dom.removeChildren(container);
-    goog.dom.appendChild(formElement, goog.dom.createDom('div', 'webdav-login-form-title', tr(msgs.AUTHENTICATION_REQUIRED_)));
+    goog.dom.appendChild(formElement, goog.dom.createDom('div', 'webdav-login-form-title', tr(msgs.CONNECT_)));
 
     goog.dom.appendChild(container, formElement);
 

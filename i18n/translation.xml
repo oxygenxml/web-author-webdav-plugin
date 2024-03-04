@@ -88,15 +88,6 @@
       waaruit de gebruiker kan kiezen.</val>
     <val lang="zh_CN">注意：强制服务器后，用户将只能浏览此强制服务器。但是，其他插件可以添加更多的强制服务器供用户选择。</val>
   </key>
-  <key value="Authentication_required" distribution="webauthor">
-    <comment>Title of login dialog.</comment>
-    <val lang="en_US">Authentication required</val>
-    <val lang="de_DE">Authentifikation erforderlich</val>
-    <val lang="fr_FR">Authentification requise</val>
-    <val lang="ja_JP">認証が必要です</val>
-    <val lang="nl_NL">Verificatie vereist</val>
-    <val lang="zh_CN">需要身份验证</val>
-  </key>
   <key value="Anonymous" distribution="webauthor">
     <comment>Default author name for comments</comment>
     <val lang="en_US">Anonymous</val>
@@ -132,15 +123,6 @@
     <val lang="ja_JP">未保存のすべての変更が失われます</val>
     <val lang="nl_NL">All your unsaved changes will be lost</val>
     <val lang="zh_CN">所有未保存的更改都将丢失</val>
-  </key>
-  <key value="AUTHENTICATION_REQUIRED_" distribution="webauthor">
-    <comment>Title of login dialog.</comment>
-    <val lang="en_US">Authentication required</val>
-    <val lang="de_DE">Authentifikation erforderlich</val>
-    <val lang="fr_FR">Authentification requise</val>
-    <val lang="ja_JP">認証が必要です</val>
-    <val lang="nl_NL">Verificatie vereist</val>
-    <val lang="zh_CN">身份验证</val>
   </key>
   <key value="INVALID_URL_">
     <comment>The input URL was not valid.</comment>
