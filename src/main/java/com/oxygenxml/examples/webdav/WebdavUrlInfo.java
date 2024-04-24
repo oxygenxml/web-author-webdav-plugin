@@ -29,6 +29,7 @@ import ro.sync.ecss.extensions.api.webapp.plugin.ServletPluginExtension;
 import ro.sync.ecss.extensions.api.webapp.plugin.servlet.ServletException;
 import ro.sync.ecss.extensions.api.webapp.plugin.servlet.http.HttpServletRequest;
 import ro.sync.ecss.extensions.api.webapp.plugin.servlet.http.HttpServletResponse;
+import ro.sync.net.protocol.http.HttpExceptionWithDetails;
 
 
 /**
@@ -181,13 +182,14 @@ public class WebdavUrlInfo extends ServletPluginExtension {
         "<a:prop><a:resourcetype/></a:prop>\r\n" + 
         "</a:propfind>";
    
-    OutputStream outputStream = conn.getOutputStream();
-    try {
+    try (OutputStream outputStream = conn.getOutputStream()){
       outputStream.write(reqBody.getBytes());
-    } finally {
-      outputStream.close();
+    } catch (HttpExceptionWithDetails e) {
+      URL urlToDisplay = URLUtil.clearUserInfo(urlWithCredentials.toExternalForm());
+      log.debug("Resource type could not be determined for " + urlToDisplay + ": " + e.getReasonCode() + " - " + e.getReason());
+      throw e;
     }
-
+    
     // Parse the response.
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setNamespaceAware(true);
