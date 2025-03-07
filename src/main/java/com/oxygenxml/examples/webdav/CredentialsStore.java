@@ -101,9 +101,10 @@ public class CredentialsStore {
   /**
    * Invalidates a session's credentials.
    * @param sessionId The session id.
+   * @param serverId The server id.
    */
-  public static void invalidate(String sessionId) {
-    getSessionStore().invalidate(sessionId);
+  public static void invalidate(String sessionId, String serverId) {
+    getSessionStore().put(sessionId, getCredentialsKey(serverId), null);
   }
 
   /**
