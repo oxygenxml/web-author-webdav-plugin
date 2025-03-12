@@ -335,7 +335,10 @@
           console.warn(e);
         }
       }, 'POST',
-      null,
+        // form params
+        goog.Uri.QueryData.createFromMap(new goog.structs.Map({
+          server: localStorage.getItem("webdav.latestRootUrl"),
+        })).toString(),
       {"X-Requested-With": "dav"}
     );
   };

@@ -104,7 +104,7 @@ public class CredentialsStore {
    * @param serverId The server id.
    */
   public static void invalidate(String sessionId, String serverId) {
-    getSessionStore().put(sessionId, getCredentialsKey(serverId), null);
+    getSessionStore().remove(sessionId, getCredentialsKey(serverId));
   }
 
   /**
