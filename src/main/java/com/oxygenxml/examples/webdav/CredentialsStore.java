@@ -57,13 +57,13 @@ public class CredentialsStore {
   public synchronized static void put(String sessionId, String serverId, String userName, String password) {
     String encryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().encrypt(password);
     
-    Map<String, UsrPass> webdavServersCredentiasls = getSessionStore().get(sessionId, getCredentialsKey());
-    if (webdavServersCredentiasls == null) {
-      webdavServersCredentiasls = new HashMap<>();
-      getSessionStore().put(sessionId, getCredentialsKey(), webdavServersCredentiasls);
+    Map<String, UsrPass> webdavServersCredentials = getSessionStore().get(sessionId, getCredentialsKey());
+    if (webdavServersCredentials == null) {
+      webdavServersCredentials = new HashMap<>();
+      getSessionStore().put(sessionId, getCredentialsKey(), webdavServersCredentials);
     }
     
-    webdavServersCredentiasls.put(serverId, new UsrPass(userName, encryptedPass));
+    webdavServersCredentials.put(serverId, new UsrPass(userName, encryptedPass));
   }
 
   /**
