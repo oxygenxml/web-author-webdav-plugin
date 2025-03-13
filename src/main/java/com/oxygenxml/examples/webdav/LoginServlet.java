@@ -24,9 +24,7 @@ public class LoginServlet extends ServletPluginExtension {
     String action = httpRequest.getParameter("action");
     
     if ("logout".equals(action)) {
-      String serverId = WebdavUrlStreamHandler
-          .computeServerId(httpRequest.getParameter("server"));
-      CredentialsStore.invalidate(sessionId, serverId);
+      CredentialsStore.invalidate(sessionId);
     } else {
       String serverId = WebdavUrlStreamHandler
           .computeServerId(httpRequest.getParameter("server"));
