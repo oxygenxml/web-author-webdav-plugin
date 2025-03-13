@@ -2,6 +2,8 @@ package com.oxygenxml.examples.webdav;
 
 import java.io.Serializable;
 import java.net.PasswordAuthentication;
+import java.util.HashMap;
+import java.util.Map;
 
 import ro.sync.ecss.extensions.api.webapp.SessionStore;
 import ro.sync.ecss.extensions.api.webapp.access.WebappPluginWorkspace;
@@ -52,9 +54,16 @@ public class CredentialsStore {
    * @param userName The user name.
    * @param password The password.
    */
-  public static void put(String sessionId, String serverId, String userName, String password) {
+  public synchronized static void put(String sessionId, String serverId, String userName, String password) {
     String encryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().encrypt(password);
-    getSessionStore().put(sessionId, getCredentialsKey(serverId), new UsrPass(userName, encryptedPass));
+    
+    Map<String, UsrPass> webdavServersCredentiasls = getSessionStore().get(sessionId, getCredentialsKey());
+    if (webdavServersCredentiasls == null) {
+      webdavServersCredentiasls = new HashMap<>();
+      getSessionStore().put(sessionId, getCredentialsKey(), webdavServersCredentiasls);
+    }
+    
+    webdavServersCredentiasls.put(serverId, new UsrPass(userName, encryptedPass));
   }
 
   /**
@@ -64,21 +73,17 @@ public class CredentialsStore {
    * @param userName The user name.
    * @param password The password.
    */
-  public static void putIfAbsent(String sessionId, String serverId, String userName, String password) {
+  public synchronized static void putIfAbsentWithoutSessionCookieRefresh(String sessionId, String serverId, String userName, String password) {
     String encryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().encrypt(password);
-    getSessionStore().putIfAbsent(sessionId, getCredentialsKey(serverId), new UsrPass(userName, encryptedPass));
-  }
-
-  /**
-   * Stores the given credentials if they are not already present.
-   * @param sessionId The session id.
-   * @param serverId The server id.
-   * @param userName The user name.
-   * @param password The password.
-   */
-  public static void putIfAbsentWithoutSessionCookieRefresh(String sessionId, String serverId, String userName, String password) {
-    String encryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().encrypt(password);
-    getSessionStore().putIfAbsentWithoutSessionCookieRefresh(sessionId, getCredentialsKey(serverId), new UsrPass(userName, encryptedPass));
+    
+    Map<String, UsrPass> webdavServersCredentiasls = getSessionStore().get(sessionId, getCredentialsKey());
+    if (webdavServersCredentiasls == null) {
+      webdavServersCredentiasls = new HashMap<>();
+      webdavServersCredentiasls.put(serverId, new UsrPass(userName, encryptedPass));
+      getSessionStore().putWithoutSessionCookieRefresh(sessionId, getCredentialsKey(), webdavServersCredentiasls);
+    } else {
+      webdavServersCredentiasls.putIfAbsent(serverId, new UsrPass(userName, encryptedPass));
+    }
   }
 
   /**
@@ -87,12 +92,16 @@ public class CredentialsStore {
    * @param serverId The server id.
    * @return The password authentication if present or <code>null</code>
    */
-  public static PasswordAuthentication get(String sessionId, String serverId) {
-    UsrPass usrPass = getSessionStore().get(sessionId, getCredentialsKey(serverId));
+  public synchronized static PasswordAuthentication get(String sessionId, String serverId) {
+    Map<String, UsrPass> webdavServersCredentiasls = getSessionStore().get(sessionId, getCredentialsKey());
     
-    if (usrPass != null) {
-      String decryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().decrypt(usrPass.encryptedPassword);
-      return new PasswordAuthentication(usrPass.username, decryptedPass.toCharArray());
+    if (webdavServersCredentiasls != null) {
+      UsrPass usrPass = webdavServersCredentiasls.get(serverId);
+      
+      if (usrPass != null) {
+        String decryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().decrypt(usrPass.encryptedPassword);
+        return new PasswordAuthentication(usrPass.username, decryptedPass.toCharArray());
+      }
     }
     
     return null;
@@ -101,10 +110,9 @@ public class CredentialsStore {
   /**
    * Invalidates a session's credentials.
    * @param sessionId The session id.
-   * @param serverId The server id.
    */
-  public static void invalidate(String sessionId, String serverId) {
-    getSessionStore().remove(sessionId, getCredentialsKey(serverId));
+  public synchronized static void invalidate(String sessionId) {
+    getSessionStore().remove(sessionId, getCredentialsKey());
   }
 
   /**
@@ -112,8 +120,8 @@ public class CredentialsStore {
    * @param serverId The id of the server for which to store credentials.
    * @return The key used to store credentials.
    */
-  public static String getCredentialsKey(String serverId) {
-    return "webdav.creds." + serverId;
+  private static String getCredentialsKey() {
+    return "webdav.creds";
   }
   
   /**
