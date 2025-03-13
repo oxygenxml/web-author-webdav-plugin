@@ -76,13 +76,13 @@ public class CredentialsStore {
   public synchronized static void putIfAbsentWithoutSessionCookieRefresh(String sessionId, String serverId, String userName, String password) {
     String encryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().encrypt(password);
     
-    Map<String, UsrPass> webdavServersCredentiasls = getSessionStore().get(sessionId, getCredentialsKey());
-    if (webdavServersCredentiasls == null) {
-      webdavServersCredentiasls = new HashMap<>();
-      webdavServersCredentiasls.put(serverId, new UsrPass(userName, encryptedPass));
-      getSessionStore().putWithoutSessionCookieRefresh(sessionId, getCredentialsKey(), webdavServersCredentiasls);
+    Map<String, UsrPass> webdavServersCredentials = getSessionStore().get(sessionId, getCredentialsKey());
+    if (webdavServersCredentials == null) {
+      webdavServersCredentials = new HashMap<>();
+      webdavServersCredentials.put(serverId, new UsrPass(userName, encryptedPass));
+      getSessionStore().putWithoutSessionCookieRefresh(sessionId, getCredentialsKey(), webdavServersCredentials);
     } else {
-      webdavServersCredentiasls.putIfAbsent(serverId, new UsrPass(userName, encryptedPass));
+      webdavServersCredentials.putIfAbsent(serverId, new UsrPass(userName, encryptedPass));
     }
   }
 
@@ -93,10 +93,10 @@ public class CredentialsStore {
    * @return The password authentication if present or <code>null</code>
    */
   public synchronized static PasswordAuthentication get(String sessionId, String serverId) {
-    Map<String, UsrPass> webdavServersCredentiasls = getSessionStore().get(sessionId, getCredentialsKey());
+    Map<String, UsrPass> webdavServersCredentials = getSessionStore().get(sessionId, getCredentialsKey());
     
-    if (webdavServersCredentiasls != null) {
-      UsrPass usrPass = webdavServersCredentiasls.get(serverId);
+    if (webdavServersCredentials != null) {
+      UsrPass usrPass = webdavServersCredentials.get(serverId);
       
       if (usrPass != null) {
         String decryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().decrypt(usrPass.encryptedPassword);
