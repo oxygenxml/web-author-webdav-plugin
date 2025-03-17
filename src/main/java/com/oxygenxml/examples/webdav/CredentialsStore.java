@@ -56,13 +56,13 @@ public class CredentialsStore {
    */
   public synchronized static void put(String sessionId, String serverId, String userName, String password) {
     String encryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().encrypt(password);
-    
+
     Map<String, UsrPass> webdavServersCredentials = getSessionStore().get(sessionId, getCredentialsKey());
     if (webdavServersCredentials == null) {
       webdavServersCredentials = new HashMap<>();
       getSessionStore().put(sessionId, getCredentialsKey(), webdavServersCredentials);
     }
-    
+
     webdavServersCredentials.put(serverId, new UsrPass(userName, encryptedPass));
   }
 
@@ -75,7 +75,7 @@ public class CredentialsStore {
    */
   public synchronized static void putIfAbsentWithoutSessionCookieRefresh(String sessionId, String serverId, String userName, String password) {
     String encryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().encrypt(password);
-    
+
     Map<String, UsrPass> webdavServersCredentials = getSessionStore().get(sessionId, getCredentialsKey());
     if (webdavServersCredentials == null) {
       webdavServersCredentials = new HashMap<>();
@@ -97,7 +97,7 @@ public class CredentialsStore {
     
     if (webdavServersCredentials != null) {
       UsrPass usrPass = webdavServersCredentials.get(serverId);
-      
+
       if (usrPass != null) {
         String decryptedPass = PluginWorkspaceProvider.getPluginWorkspace().getUtilAccess().decrypt(usrPass.encryptedPassword);
         return new PasswordAuthentication(usrPass.username, decryptedPass.toCharArray());
