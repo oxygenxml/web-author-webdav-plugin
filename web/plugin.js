@@ -717,6 +717,10 @@
     // -------- Initialize the file browser information ------------
     webdavFileServer.enforcedServers = [];
     var enforcedServer = sync.options.PluginsOptions.getClientOption('enforced_webdav_server');
+    if (enforcedServer !== localStorage.getItem("webdav.enforcedServer")) {
+      localStorage.removeItem("webdav.latestUrl");
+      localStorage.setItem("webdav.enforcedServer", enforcedServer);
+    }
     if(enforcedServer) {
       webdavFileServer.addEnforcedUrl_(enforcedServer);
     }
