@@ -63,7 +63,7 @@
         <groupId>ro.sync.compliance</groupId>
         <artifactId>compliance-mvn-dependency-check-to-sbom</artifactId>
         <configuration>
-          <tags>jira-wa</tags>
+          <tags>jira-wa, plugin-wa</tags>
         </configuration>
       </plugin>
       <plugin>
