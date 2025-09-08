@@ -64,6 +64,7 @@
         <artifactId>compliance-mvn-dependency-check-to-sbom</artifactId>
         <configuration>
           <tags>jira-wa, plugin-wa</tags>
+          <skipUploadToDependencyTrack>true</skipUploadToDependencyTrack>
         </configuration>
       </plugin>
       <plugin>
