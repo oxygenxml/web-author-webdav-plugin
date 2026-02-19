@@ -55,7 +55,10 @@ public class WebdavUrlStreamHandler extends URLStreamHandlerWithContext {
    */
   static URL addCredentials(String sessionId, URL url) {
     // Obtain the credentials for the current user.
-    PasswordAuthentication userCredentials = CredentialsStore.get(sessionId, computeServerId(url.toExternalForm()));
+    PasswordAuthentication userCredentials = null;
+    if (sessionId != null) {
+      userCredentials = CredentialsStore.get(sessionId, computeServerId(url.toExternalForm()));
+    }
     
     String protocol = url.getProtocol().substring(WebdavURLHandlerExtension.WEBDAV.length());
 
