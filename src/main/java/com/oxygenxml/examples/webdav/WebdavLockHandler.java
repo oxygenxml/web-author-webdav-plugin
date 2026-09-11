@@ -44,6 +44,13 @@ public class WebdavLockHandler extends LockHandlerWithContext {
 
   @Override
   public void updateLock(String contextId, URL url, int timeoutSeconds) throws LockException {
+    if (!isLockEnabled()) {
+      // Locking is disabled for this server. Nothing takes a lock when the document is opened, so
+      // the only caller left is the keep-alive request of a document that was never locked - and
+      // taking a lock here would leave one on the server that the user did not ask for and that
+      // LockManager.unlockURL() then refuses to release.
+      return;
+    }
     url = WebdavUrlStreamHandler.addCredentials(contextId, url);
     
     String serverId = WebdavUrlStreamHandler.computeServerId("webdav-" + url.toExternalForm());
